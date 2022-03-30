@@ -9,6 +9,7 @@ namespace SteadyState.Test.Models
 {
     internal class Edge: IEdge
     {
+        public bool IsAdjacent { get; set; }
         public int Id { get; set; }
         public bool On1 { get; set; } = true;
         public bool On2 { get; set; } = true;

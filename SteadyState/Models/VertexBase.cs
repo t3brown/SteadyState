@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using SteadyState.Interfaces;
 
-namespace SteadyState.Test.Models
+namespace SteadyState.Models
 {
-    internal class Vertex: IVertex
+    internal class VertexBase: IVertex
     {
         public int Id { get; set; }
         public bool IsAdjacent { get; set; }

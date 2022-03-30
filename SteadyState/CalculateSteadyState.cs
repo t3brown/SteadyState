@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using SteadyState.Interfaces;
+using SteadyState.Models;
 using static SteadyState.MatrixOperation;
 
 namespace SteadyState
@@ -26,18 +27,67 @@ namespace SteadyState
         internal static List<IVertex> _vertices;
         internal static List<IEdge> _edges;
 
+       
+
+        private static void DFSUtil(IVertex vertex)
+        {
+            vertex.IsAdjacent = true;
+            IEnumerable<IEdge> edges = _edges.Where(o => o.V1 == vertex || o.V2 == vertex).ToList();
+            foreach (IEdge edge in edges)
+            {
+                var neighbor = _vertices.FirstOrDefault(o => !o.IsAdjacent && (o == edge.V1 || o == edge.V2));
+                if (neighbor != null)
+                {
+                    if (neighbor.VoltNom is null && neighbor == edge.V2)
+                        neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U2 / edge.U1;
+                    if (neighbor.VoltNom is null && neighbor == edge.V1)
+                        neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;
+                    DFSUtil(neighbor);
+                }
+                //if (edge.V1.IsAdjacent && edge.V2.IsAdjacent)
+                //    edge.IsAdjacent = true;
+            }
+        }
+
         public static void Calculate(IEnumerable<IVertex> vertices, IEnumerable<IEdge> edges, float eps, int count = 100)
         {
+            _vertices = vertices.ToList();
+            _edges = edges.Where(a => a.On1 || a.On2).Select(edge =>
+            {
+                if (!edge.On1)
+                {
+                    IVertex vertex = new VertexBase() { VoltNom = edge.V1.VoltNom };
+                    _vertices.Add(vertex);
+                    edge.V1 = vertex;
+                }
+                if (!edge.On2)
+                {
+                    IVertex vertex = new VertexBase() { VoltNom = edge.V2.VoltNom };
+                    _vertices.Add(vertex);
+                    edge.V2 = vertex;
+                }
+                return edge;
+            }).ToList();
+            var basic = _vertices.FirstOrDefault(o => o.IsBasic);
+            if (basic is null)
+            {
+                return; //если отсутсвует базисный узел
+            }
+            DFSUtil(basic);
+            _vertices = _vertices.Where(a => a.IsAdjacent).ToList();
+            _edges = _edges.Where(a =>
+            {
+                if (a.V1.IsAdjacent && a.V2.IsAdjacent)
+                    a.IsAdjacent = true;
+                return a.IsAdjacent;
+            }).ToList();
+            _vertices.Remove(basic);
+            _vertices.Add(basic);
             _count = count;
             _eps = eps;
-            _vertices = vertices.Where(a => a.On).ToList();
-            _edges = edges.Where(a => a.On1 || a.On2).ToList();
             n = _vertices.Count;
             P = new double[n];
             Q = new double[n];
-            var basic = _vertices.First(o => o.IsBasic);
-            _vertices.Remove(basic);
-            _vertices.Add(basic);
             (g, b) = CreateVertexConductivityMatrix();
             X = new double[2 * (n - 1),1]; //матрица-стобец X - матрица-столбец искомых узловых напряжений
             reU = new double[n]; //активная часть узловых напряжений
@@ -75,7 +125,7 @@ namespace SteadyState
                 _vertices[i].VoltIm = imU[i];
             }
         }
-        private static double Q_gen(int i)
+        private static double CalculatePowerImGen(int i)
         {
             double A = b[i, i] * Math.Sqrt(reU[i] * reU[i] + imU[i] * imU[i]) * Math.Sqrt(reU[i] * reU[i] + imU[i] * imU[i]);
             double B = 0;
@@ -161,7 +211,7 @@ namespace SteadyState
             Complex[,] By = Multiplication(Multiplication(matrix, B), matrixT);
             var Yy = Multiplication(Multiplication(matrix, Y), matrixT);
 
-            int row = matrix.GetLength(0), col = matrix.GetLength(1);
+            int row = Yy.GetLength(0), col = Yy.GetLength(1);
             double[,] g = new double[row, col];
             double[,] b = new double[row, col];
             for (int i = 0; i < row; i++)
@@ -207,7 +257,7 @@ namespace SteadyState
             for (int i = 0; i < refIndices.Length; i++)
             {
                 var vertex = _vertices[refIndices[i]];
-                double genQ = Q_gen(i);
+                double genQ = CalculatePowerImGen(i);
                 if (genQ < vertex.MinQ)
                 {
                     genQ = (double)vertex.MinQ;

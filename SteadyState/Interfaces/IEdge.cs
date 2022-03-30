@@ -8,6 +8,7 @@ namespace SteadyState.Interfaces
 {
     public interface IEdge
     {
+        public bool IsAdjacent { get; set; }
         public int Id { get; set; }
         public bool On1 { get; set; }
         public bool On2 { get; set; }

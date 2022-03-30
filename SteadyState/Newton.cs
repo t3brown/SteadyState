@@ -29,8 +29,6 @@ namespace SteadyState
                 X = Difference(X, C); //уточнение напряжений узлов
                 for (int i = 0; i < 2 * (n - 1); i++) //уточнение напряжений узлов для матрицы Якоби
                 {
-                    if (Math.Abs(B[i, 0]) < _eps)
-                        return;
                     if (i < n - 1)
                         reU[i] = X[i, 0];
                     if (i >= n - 1)
