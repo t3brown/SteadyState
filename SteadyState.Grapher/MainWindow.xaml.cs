@@ -35,7 +35,7 @@ namespace SteadyState.Grapher
             InitializeComponent();
             Vertices = new ObservableCollection<IVertex>();
             Edges = new ObservableCollection<IEdge>();
-            CalculateSteadyState.SetCollection(Vertices, Edges);
+            CalculateSteadyState.SetCollections(Vertices, Edges);
 
 
         }

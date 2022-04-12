@@ -24,6 +24,15 @@
 				<ResourceDictionary Source="Resources\ColorsDictionary.xaml"/>
 
 			</ResourceDictionary.MergedDictionaries>
-			</ResourceDictionary>
+
+			<Style TargetType="TabItem" BasedOn="{StaticResource ModernTabItemStyle}"/>
+			<Style TargetType="Button" BasedOn="{StaticResource ModernButton}"/>
+			<Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBarStyle}"/>
+			<Style TargetType="DataGrid" BasedOn="{StaticResource CustomDataGridStyle1}"/>
+			<!--<Style TargetType="controls:CustomDataGrid" BasedOn="{StaticResource CustomDataGridStyle2}"/>-->
+			<Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle}"/>
+			<Style TargetType="CheckBox" BasedOn="{StaticResource CheckBoxStyle}"/>
+			<Style TargetType="RadioButton" BasedOn="{StaticResource RadioButtonStyle}"/>
+		</ResourceDictionary>
 	</Application.Resources>
 </Application>

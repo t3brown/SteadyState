@@ -38,7 +38,7 @@ List<Edge> edges = new List<Edge>()
     //CalculateSteadyState.CheckConnectionWithBasic(vertices,edges);
 
 
-CalculateSteadyState.Calculate(vertices, edges, 0.001f);
+CalculateSteadyState.Calculate(0.001f);
 
 
 foreach (var vertex in vertices)
@@ -49,7 +49,7 @@ foreach (var vertex in vertices)
 Console.WriteLine("Steady State Test 2");
 
 edges[1].On1 = false;
-CalculateSteadyState.Calculate(vertices, edges, 0.001f);
+CalculateSteadyState.Calculate(0.001f);
 
 foreach (var vertex in vertices)
 {
@@ -59,7 +59,7 @@ foreach (var vertex in vertices)
 Console.WriteLine("Steady State Test 3");
 
 edges[1].On1 = true;
-CalculateSteadyState.Calculate(vertices, edges, 0.001f);
+CalculateSteadyState.Calculate(0.001f);
 
 foreach (var vertex in vertices)
 {

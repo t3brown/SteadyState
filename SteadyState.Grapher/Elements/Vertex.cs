@@ -22,7 +22,9 @@ namespace SteadyState.Grapher.Elements
 {
     public class Vertex : CircuitElement, IVertex
     {
-        public event Action<IVertex> OnBasicVertexChanged;
+        public event Action<IVertex> BasicVertexChanged;
+
+        public event Action<IVertex> VoltNomChanged;
 
         public static readonly DependencyProperty AngleProperty = DependencyProperty.Register(
             "Angle", typeof(double), typeof(Vertex), new PropertyMetadata(default(double)));
@@ -55,12 +57,22 @@ namespace SteadyState.Grapher.Elements
 
         public Vertex()
         {
-            OnBasicVertexChanged += Vertex_OnBasicVertexChanged;
+            BasicVertexChanged += VertexBasicVertexChanged;
+			VoltNomChanged += Vertex_VoltNomChanged;
         }
 
-        #region properties
+		private void Vertex_VoltNomChanged(IVertex obj)
+		{
+			if (SchematicEditor.BasicVertex != null)
+			{
+				DepthFirstSearch.DFS(SchematicEditor.BasicVertex);
+            }
 
-        public int Id
+		}
+
+		#region properties
+
+		public int Id
         {
             get => _id;
             set
@@ -89,6 +101,7 @@ namespace SteadyState.Grapher.Elements
             {
                 if (Nullable.Equals(value, _voltNom)) return;
                 _voltNom = value;
+                VoltNomChanged?.Invoke(this);
                 OnPropertyChanged();
             }
         }
@@ -104,7 +117,7 @@ namespace SteadyState.Grapher.Elements
                         SchematicEditor.BasicVertex.IsBasic = false;
                 SchematicEditor.BasicVertex = this;
                 _isBasic = value;
-                OnBasicVertexChanged?.Invoke(this);
+                BasicVertexChanged?.Invoke(this);
                 OnPropertyChanged();
             }
         }
@@ -221,7 +234,7 @@ namespace SteadyState.Grapher.Elements
 
         #endregion
 
-        private void Vertex_OnBasicVertexChanged(IVertex obj)
+        private void VertexBasicVertexChanged(IVertex obj)
         {
             //запускается посик в глубину при смене базисного узла.
             DepthFirstSearch.DFS(obj);

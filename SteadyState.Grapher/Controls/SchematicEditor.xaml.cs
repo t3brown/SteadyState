@@ -150,12 +150,21 @@ namespace SteadyState.Grapher.Controls
         {
             if (obj is Vertex vertex)
             {
-	           VerticesSource?.Add(vertex);
+	            if (VerticesSource != null)
+	            {
+		            VerticesSource.Add(vertex);
+		            vertex.Id = VerticesSource.Max(a => a.Id) + 1;
+	            }
             }
 
             if (obj is Edge edge)
             {
-                EdgesSource?.Add(edge);
+
+	            if (EdgesSource != null)
+	            {
+		            EdgesSource.Add(edge);
+		            edge.Id = EdgesSource.Max(a => a.Id) + 1;
+                }
 
                 edge.OldV1 = edge.V1 as Vertex;
                 edge.OldV2 = edge.V2 as Vertex;
@@ -195,12 +204,14 @@ namespace SteadyState.Grapher.Controls
 			        {
 				        case Switch.Q1:
 					        _edge.OldV1 = edge.V1 as Vertex;
+					        vertex.VoltNom = _edge.OldV1.VoltNom;
 					        edge.V1 = vertex;
 					        break;
 
 				        case Switch.Q2:
 					        _edge.OldV2 = edge.V2 as Vertex;
-					        edge.V2 = vertex;
+					        vertex.VoltNom = _edge.OldV2.VoltNom;
+                            edge.V2 = vertex;
 					        break;
 			        }
 			        VerticesSource?.Add(vertex);

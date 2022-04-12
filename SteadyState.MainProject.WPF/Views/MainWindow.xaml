@@ -9,11 +9,13 @@
         xmlns:converters="clr-namespace:SteadyState.MainProject.WPF.Converters"
         xmlns:infrastructure="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
         xmlns:controls="clr-namespace:SteadyState.MainProject.WPF.Controls"
+        xmlns:grapher="clr-namespace:SteadyState.Grapher.Controls;assembly=SteadyState.Grapher"
+        xmlns:components="clr-namespace:SteadyState.MainProject.WPF.Components"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800">
-    <Window.DataContext>
-        <viewModels:ApplicationViewModel/>
-    </Window.DataContext>
+	<Window.DataContext>
+		<viewModels:ApplicationViewModel/>
+	</Window.DataContext>
 
 	<Window.Resources>
 		<Style TargetType="TabItem" BasedOn="{StaticResource TabItem95Style}"/>
@@ -81,7 +83,7 @@
 			</MenuItem>-->
 		</Menu>
 
-		<StackPanel Margin="5,0" Grid.Row="1" Orientation="Horizontal">
+		<DockPanel Margin="5,0" Grid.Row="1">
 
 			<Button Command="{Binding CreateTabCommand}"
                     Style="{StaticResource ModernButton}"
@@ -107,7 +109,7 @@
                     FontSize="16"
                     Content="&#xe74e;"/>
 
-			<Button Style="{StaticResource RegimeButtonStyle}" FontSize="13.25" Content="Режим" Command="{Binding SelectedTab.ViewModel.RegimeCommand}"
+			<Button Style="{StaticResource RegimeButtonStyle}" FontSize="13.25" Content="Режим" Command="{Binding RegimeCommand}"
                     Margin="10,5,0,5" Padding="8,4" Height="auto"/>
 			<!--Background="#38C974"  
                     Foreground="White"/>-->
@@ -127,12 +129,62 @@
                     FontFamily="{StaticResource SegoeFluentIcons}"
                     FontSize="16"
                     Content="&#xe7a6;"/>
-		</StackPanel>
+
+			<Button Command="{Binding OpenInNewWindowCommand}"
+                    DockPanel.Dock="Right"
+					HorizontalAlignment="Right"
+			        Style="{StaticResource ModernButton}"
+			        Padding="0" Background="Transparent" BorderThickness="0" Width="32"
+			        FontFamily="{StaticResource SegoeFluentIcons}"
+			        FontSize="16"
+			        Content="&#xe8a7;"/>
+		</DockPanel>
 
 		<Grid Grid.Row="2">
 
-            
-			
+			<Grid.Resources>
+				<grapher:SchematicEditor x:Key="SchematicEditor"
+                                         VerticesSource="{Binding Vertices}"
+                                         EdgesSource="{Binding Edges}"/>
+				<DataGrid x:Key="VerticesGrid"
+				          ItemsSource="{Binding Vertices}"/>
+				<DataGrid x:Key="EdgesGrid"
+				          ItemsSource="{Binding Edges}">
+					<DataGrid.RowDetailsTemplate>
+						<DataTemplate>
+							<components:ElectricalCircuit  Stroke="Black"
+							                               StrokeThickness="2.25"
+							                               Foreground="Black"
+                                                           HorizontalAlignment="Left"
+							                               Margin="100,0,0,0"
+                                                           V2="{Binding V2.Id}"
+                                                           R="{Binding R}"
+                                                           X="{Binding X}"
+                                                           B="{Binding B}"
+                                                           U1="{Binding U1}"
+                                                           U2="{Binding U2}"
+                                                           PwrStRe="{Binding PwrStRe}"
+                                                           PwrStIm="{Binding PwrStIm}"
+                                                           PwrEndRe="{Binding PwrEndRe}"
+                                                           PwrEndIm="{Binding PwrEndIm}"
+                                                           VisibilityPwrStRe="Collapsed"
+                                                           VisibilityPwrStIm="Collapsed"
+                                                           VisibilityPwrEndRe="Collapsed"
+                                                           VisibilityPwrEndIm="Collapsed"/>
+						</DataTemplate>
+					</DataGrid.RowDetailsTemplate>
+				</DataGrid>
+			</Grid.Resources>
+
+			<TabControl BorderThickness="0"
+			            SelectedItem="{Binding SelectedTab}">
+				<TabItem Header="Схема" Content="{StaticResource SchematicEditor}"/>
+				<TabItem Header="Узлы" Content="{StaticResource VerticesGrid}"/>
+				<TabItem Header="Ветви" Content="{StaticResource EdgesGrid}"/>
+				<TabItem Header="РПН (ПБВ)"/>
+				<TabItem Header="СХН"/>
+			</TabControl>
+
 		</Grid>
 
 	</Grid>
