@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SteadyState.Grapher\SteadyState.Grapher.csproj" />
+		<ProjectReference Include="..\SteadyState\SteadyState.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\Segoe-Fluent-Icons.ttf" />
+		<Resource Include="Resources\Segoe-UI-Variable-Static-Display.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Infrastructure\" />
+	</ItemGroup>
+
+</Project>

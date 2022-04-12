@@ -10,8 +10,8 @@ namespace SteadyState.Test.Models
     internal class Vertex: IVertex
     {
         public int Id { get; set; }
-        public bool IsAdjacent { get; set; }
-        public string Name { get; set; }
+        public bool IsConnected { get; set; }
+        public string VertexName { get; set; }
         public double? VoltNom { get; set; }
         public bool IsBasic { get; set; }
         public IShn Shn { get; set; }

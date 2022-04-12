@@ -8,13 +8,15 @@ namespace SteadyState.Interfaces
 {
     public interface IEdge
     {
-        public bool IsAdjacent { get; set; }
+        public bool IsConnected { get; set; }
         public int Id { get; set; }
         public bool On1 { get; set; }
         public bool On2 { get; set; }
         public string Name { get; set; }
         public IVertex V1 { get; set; }
         public IVertex V2 { get; set; }
+        //public IVertex OldV1 { get; set; }
+        //public IVertex OldV2 { get; set; }
         public double? R { get; set; }
         public double? X { get; set; }
         public double? B { get; set; }

@@ -9,9 +9,10 @@ namespace SteadyState.Models
 {
     internal class VertexBase: IVertex
     {
+        public IVertex VertexOwner { get; set; }
         public int Id { get; set; }
-        public bool IsAdjacent { get; set; }
-        public string Name { get; set; }
+        public bool IsConnected { get; set; }
+        public string VertexName { get; set; }
         public double? VoltNom { get; set; }
         public bool IsBasic { get; set; }
         public IShn Shn { get; set; }

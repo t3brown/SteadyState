@@ -1,0 +1,125 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="FocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Margin="2" StrokeDashArray="1 2" SnapsToDevicePixels="true" StrokeThickness="1" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="OptionMarkFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Margin="14,0,0,0" StrokeDashArray="1 2" SnapsToDevicePixels="true" StrokeThickness="1" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="OptionMark.Static.Background" Color="#EDEDED"/>
+    <SolidColorBrush x:Key="OptionMark.Static.Border" Color="#858585"/>
+    <SolidColorBrush x:Key="OptionMark.MouseOver.Background" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="OptionMark.Pressed.Background" Color="#DCDCDC"/>
+    <SolidColorBrush x:Key="OptionMark.Pressed.Border" Color="#B6B6B6"/>
+    <SolidColorBrush x:Key="OptionMark.Checked" Color="#0067C0"/>
+    <SolidColorBrush x:Key="OptionMark.Checked.Foreground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="OptionMark.Checked.MouseOver" Color="#1975C5"/>
+    <SolidColorBrush x:Key="OptionMark.Checked.Pressed.Background" Color="#3183CA"/>
+
+    <SolidColorBrush x:Key="RadioButton.Disabled.Background" Color="#FFE6E6E6"/>
+    <SolidColorBrush x:Key="RadioButton.Disabled.Border" Color="#FFBCBCBC"/>
+    <SolidColorBrush x:Key="RadioButton.Disabled.Glyph" Color="#FF707070"/>
+
+    <Style x:Key="RadioButtonStyle" TargetType="{x:Type RadioButton}">
+        <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled"/>
+        <Setter Property="IsChecked" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="UseLayoutRounding" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <Grid x:Name="templateRoot" Background="Transparent" UseLayoutRounding="{TemplateBinding UseLayoutRounding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!--<Border x:Name="radioButtonBorder" Width="14" Height="14" Background="Transparent" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="100" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">-->
+
+                        <Grid x:Name="markGrid" Margin="0" UseLayoutRounding="{TemplateBinding UseLayoutRounding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <TextBlock x:Name="radioBackground" TextAlignment="Center" VerticalAlignment="Center" Opacity="1" Width="14"
+                                           Foreground="{StaticResource OptionMark.Static.Background}"
+                                               FontFamily="{StaticResource SegoeFluentIcons}"
+                                               FontSize="13" 
+                                               Text="&#xe91f;"
+                                       UseLayoutRounding="{TemplateBinding UseLayoutRounding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <TextBlock x:Name="radioBorder" TextAlignment="Center" VerticalAlignment="Center" Opacity="1" Width="14" Foreground="{StaticResource OptionMark.Static.Border}"
+                                               FontFamily="{StaticResource SegoeFluentIcons}"
+                                               FontSize="13" 
+                                               Text="&#xecca;"
+                                       UseLayoutRounding="{TemplateBinding UseLayoutRounding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <TextBlock x:Name="optionMark" TextAlignment="Center" VerticalAlignment="Center" Opacity="0" Width="14" Foreground="{StaticResource OptionMark.Checked.Foreground}"
+                                               FontFamily="{StaticResource SegoeFluentIcons}"
+                                               FontSize="13" 
+                                               Text="&#xeccc;"
+                                       UseLayoutRounding="{TemplateBinding UseLayoutRounding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Grid>
+                        <!--</Border>-->
+                        <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" UseLayoutRounding="{TemplateBinding UseLayoutRounding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="false"/>
+                                <Condition Property="IsMouseOver" Value="true"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" TargetName="radioBackground" Value="{StaticResource OptionMark.MouseOver.Background}"/>
+                        </MultiTrigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="false"/>
+                                <Condition Property="IsPressed" Value="true"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" TargetName="radioBackground" Value="{StaticResource OptionMark.Pressed.Background}"/>
+                            <Setter Property="Foreground" TargetName="radioBorder" Value="{StaticResource OptionMark.Pressed.Border}"/>
+                            <Setter Property="Opacity" TargetName="optionMark" Value="1"/>
+                        </MultiTrigger>
+
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Opacity" TargetName="optionMark" Value="1"/>
+                            <Setter Property="Opacity" TargetName="radioBorder" Value="0"/>
+                            <Setter Property="Foreground" TargetName="radioBackground" Value="{StaticResource OptionMark.Checked}"/>
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="true"/>
+                                <Condition Property="IsMouseOver" Value="true"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" TargetName="radioBackground" Value="{StaticResource OptionMark.Checked.MouseOver}"/>
+                        </MultiTrigger>
+
+
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" TargetName="radioBackground" Value="{StaticResource RadioButton.Disabled.Background}"/>
+                            <Setter Property="Foreground" TargetName="radioBorder" Value="{StaticResource RadioButton.Disabled.Border}"/>
+                            <Setter Property="Foreground" TargetName="optionMark" Value="{StaticResource RadioButton.Disabled.Glyph}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter Property="Opacity" TargetName="optionMark" Value="0.56"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

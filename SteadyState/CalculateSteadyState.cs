@@ -24,83 +24,103 @@ namespace SteadyState
         internal static double[,] b;
         internal static double[,] X;
         internal static int[] refIndices;
-        internal static List<IVertex> _vertices;
-        internal static List<IEdge> _edges;
+        internal static List<IVertex> vertices;
+        internal static List<IEdge> edges;
 
-       
+        internal static IEnumerable<IVertex> _vertices;
+        internal static IEnumerable<IEdge> _edges;
+
+        private static List<(IVertex, IVertex)> _linkedVertices;
+
+        public static void SetCollection(IEnumerable<IVertex> vertices, IEnumerable<IEdge> edges)
+        {
+            _vertices = vertices;
+            _edges = edges;
+        }
+
+        static CalculateSteadyState()
+        {
+            _linkedVertices = new List<(IVertex, IVertex)>();
+        }
 
         private static void DFSUtil(IVertex vertex)
         {
-            vertex.IsAdjacent = true;
-            IEnumerable<IEdge> edges = _edges.Where(o => o.V1 == vertex || o.V2 == vertex).ToList();
+            vertex.IsConnected = true;
+            IEnumerable<IEdge> edges = CalculateSteadyState.edges.Where(o => o.V1 == vertex || o.V2 == vertex).ToList();
             foreach (IEdge edge in edges)
             {
-                var neighbor = _vertices.FirstOrDefault(o => !o.IsAdjacent && (o == edge.V1 || o == edge.V2));
+                var neighbor = vertices.FirstOrDefault(o => !o.IsConnected && (o == edge.V1 || o == edge.V2));
                 if (neighbor != null)
                 {
-                    if (neighbor.VoltNom is null && neighbor == edge.V2)
-                        neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U2 / edge.U1;
-                    if (neighbor.VoltNom is null && neighbor == edge.V1)
-                        neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;
+                    //if (neighbor.VoltNom is null && neighbor == edge.V2)
+                    //    neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U2 / edge.U1;
+                    //if (neighbor.VoltNom is null && neighbor == edge.V1)
+                    //    neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;
                     DFSUtil(neighbor);
                 }
-                //if (edge.V1.IsAdjacent && edge.V2.IsAdjacent)
-                //    edge.IsAdjacent = true;
+                //if (edge.V1.IsConnected && edge.V2.IsConnected)
+                //    edge.IsConnected = true;
             }
         }
 
         public static void Calculate(IEnumerable<IVertex> vertices, IEnumerable<IEdge> edges, float eps, int count = 100)
         {
-            _vertices = vertices.ToList();
-            _edges = edges.Where(a => a.On1 || a.On2).Select(edge =>
+            CalculateSteadyState.vertices = vertices.Select(a =>
+            {
+                a.IsConnected = false;
+                return a;
+            }).ToList();
+            CalculateSteadyState.edges = edges.Where(a => a.On1 || a.On2).Select(edge =>
             {
                 if (!edge.On1)
                 {
                     IVertex vertex = new VertexBase() { VoltNom = edge.V1.VoltNom };
-                    _vertices.Add(vertex);
+                    CalculateSteadyState.vertices.Add(vertex);
+                    _linkedVertices.Add((edge.V1, vertex));
                     edge.V1 = vertex;
                 }
                 if (!edge.On2)
                 {
                     IVertex vertex = new VertexBase() { VoltNom = edge.V2.VoltNom };
-                    _vertices.Add(vertex);
+                    CalculateSteadyState.vertices.Add(vertex);
+                    _linkedVertices.Add((edge.V2, vertex));
                     edge.V2 = vertex;
                 }
                 return edge;
             }).ToList();
-            var basic = _vertices.FirstOrDefault(o => o.IsBasic);
+            var basic = CalculateSteadyState.vertices.FirstOrDefault(o => o.IsBasic);
             if (basic is null)
             {
                 return; //если отсутсвует базисный узел
             }
             DFSUtil(basic);
-            _vertices = _vertices.Where(a => a.IsAdjacent).ToList();
-            _edges = _edges.Where(a =>
+            CalculateSteadyState.vertices = CalculateSteadyState.vertices.Where(a => a.IsConnected).ToList();
+            CalculateSteadyState.edges = CalculateSteadyState.edges.Where(a =>
             {
-                if (a.V1.IsAdjacent && a.V2.IsAdjacent)
-                    a.IsAdjacent = true;
-                return a.IsAdjacent;
+                if (a.V1.IsConnected && a.V2.IsConnected)
+                    a.IsConnected = true;
+                return a.IsConnected;
             }).ToList();
-            _vertices.Remove(basic);
-            _vertices.Add(basic);
+            CalculateSteadyState.vertices.Remove(basic);
+            CalculateSteadyState.vertices.Add(basic);
             _count = count;
             _eps = eps;
-            n = _vertices.Count;
+            n = CalculateSteadyState.vertices.Count;
             P = new double[n];
             Q = new double[n];
             (g, b) = CreateVertexConductivityMatrix();
             X = new double[2 * (n - 1),1]; //матрица-стобец X - матрица-столбец искомых узловых напряжений
             reU = new double[n]; //активная часть узловых напряжений
-            reU[n - 1] = (double)_vertices[n - 1].VoltNom; //активная часть напряжения базисного узла = const
+            reU[n - 1] = (double)CalculateSteadyState.vertices[n - 1].VoltNom; //активная часть напряжения базисного узла = const
             imU = new double[n]; //реактиная часть узловых напряжений 
             imU[n - 1] = 0; //реактивная часть напряжения базисного узла = const
-            refIndices = new int[_vertices.Count(a => a.VoltSus != null)];
+            refIndices = new int[CalculateSteadyState.vertices.Count(a => a.VoltSus != null)];
             int _i = 0;
             for (int i = 0; i < 2 * (n - 1); i++) //для первой итерации присваются приближенные значения
             {
                 if (i < n - 1)
                 {
-                    var vertex = _vertices[i];
+                    var vertex = CalculateSteadyState.vertices[i];
                     P[i] = vertex.PowerRe ?? 0;
                     Q[i] = vertex.PowerIm ?? 0;
                     if (vertex.VoltSus != null)
@@ -108,7 +128,7 @@ namespace SteadyState
                         X[i,0] = (double)vertex.VoltSus;
                         vertex.MinQ ??= double.NegativeInfinity;
                         vertex.MaxQ ??= double.PositiveInfinity;
-                        refIndices[_i] = _vertices.IndexOf(vertex);
+                        refIndices[_i] = CalculateSteadyState.vertices.IndexOf(vertex);
                         _i++;
                     }
                     else
@@ -121,9 +141,26 @@ namespace SteadyState
             Newton.FindRoots();
             for (int i = 0; i < n; i++)
             {
-                _vertices[i].VoltRe = reU[i];
-                _vertices[i].VoltIm = imU[i];
+                CalculateSteadyState.vertices[i].VoltRe = reU[i];
+                CalculateSteadyState.vertices[i].VoltIm = imU[i];
             }
+            //возвращаем обратно узлы
+            CalculateSteadyState.edges = CalculateSteadyState.edges.Select(edge =>
+            {
+                if (edge.V1 is VertexBase b)
+                {
+                    var linkedVertex = _linkedVertices.FirstOrDefault(a => a.Item2 == b);
+                    edge.V1 = linkedVertex.Item1;
+                    _linkedVertices.Remove(linkedVertex);
+                }
+                if (edge.V2 is VertexBase c)
+                {
+                    var linkedVertex = _linkedVertices.FirstOrDefault(a => a.Item2 == c);
+                    edge.V2 = linkedVertex.Item1;
+                    _linkedVertices.Remove(linkedVertex);
+                }
+                return edge;
+            }).ToList();
         }
         private static double CalculatePowerImGen(int i)
         {
@@ -179,17 +216,17 @@ namespace SteadyState
         /// </summary>
         private static (double[,], double[,]) CreateVertexConductivityMatrix()
         {
-            Complex[,] matrix = new Complex[_vertices.Count, _edges.Count];
-            Complex[,] matrixT = new Complex[_edges.Count, _vertices.Count];
-            Complex[,] Z = new Complex[_edges.Count, _edges.Count];
-            Complex[,] B = new Complex[_edges.Count, _edges.Count];
-            foreach (var edge in _edges)
+            Complex[,] matrix = new Complex[vertices.Count, edges.Count];
+            Complex[,] matrixT = new Complex[edges.Count, vertices.Count];
+            Complex[,] Z = new Complex[edges.Count, edges.Count];
+            Complex[,] B = new Complex[edges.Count, edges.Count];
+            foreach (var edge in edges)
             {
-                int j = _edges.IndexOf(edge);
-                int i = _vertices.IndexOf(edge.V1);
+                int j = edges.IndexOf(edge);
+                int i = vertices.IndexOf(edge.V1);
                 matrix[i, j] = 1;
                 matrixT[j, i] = 1;
-                i = _vertices.IndexOf(edge.V2);
+                i = vertices.IndexOf(edge.V2);
                 (double? reCoef, double? imCoef) = CalcCoeff(edge);
                 if (reCoef != null || imCoef != null)
                 {
@@ -239,7 +276,7 @@ namespace SteadyState
         {
             for (int i = 0; i < n; i++)
             {
-                var vertex = _vertices[i];
+                var vertex = vertices[i];
                 if (vertex.Shn != null)
                 {
                     IShn shn = vertex.Shn;
@@ -256,7 +293,7 @@ namespace SteadyState
         {
             for (int i = 0; i < refIndices.Length; i++)
             {
-                var vertex = _vertices[refIndices[i]];
+                var vertex = vertices[refIndices[i]];
                 double genQ = CalculatePowerImGen(i);
                 if (genQ < vertex.MinQ)
                 {
@@ -299,7 +336,7 @@ namespace SteadyState
             {
                 if (refIndices.Contains(i))
                 {
-                    var ver = _vertices[i];
+                    var ver = vertices[i];
                     double volt = (double) ver.VoltSus;
                     Wq[i] = reU[i] * reU[i] + imU[i] * imU[i] - volt * volt;
                 }
@@ -324,5 +361,13 @@ namespace SteadyState
                 W[i, 0] = Wq[i - (n - 1)];
             return W;
         }
+
+        //private static readonly string[] VertexPropertyNames = new string[] { "VoltNom", "IsBasic" };
+
+        //private static IVertex CopyProperties()
+        //{
+        //    IVertex vertex = new VertexBase();
+        //    var properties = vertex.GetType().GetProperties().Where(a => )
+        //}
     }
 }

@@ -8,9 +8,9 @@ namespace SteadyState.Interfaces
 {
     public interface IVertex
     {
-        public bool IsAdjacent { get; set; }
+        public bool IsConnected { get; set; }
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string VertexName { get; set; }
         public double? VoltNom { get; set; }
         public bool IsBasic { get; set; }
         public IShn Shn { get; set; }

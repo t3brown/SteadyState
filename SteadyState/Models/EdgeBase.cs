@@ -5,17 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using SteadyState.Interfaces;
 
-namespace SteadyState.Test.Models
+namespace SteadyState.Models
 {
-    internal class Edge: IEdge
+    internal class EdgeBase: IEdge
     {
         public bool IsConnected { get; set; }
         public int Id { get; set; }
-        public bool On1 { get; set; } = true;
-        public bool On2 { get; set; } = true;
+        public bool On1 { get; set; }
+        public bool On2 { get; set; }
         public string Name { get; set; }
         public IVertex V1 { get; set; }
         public IVertex V2 { get; set; }
+        public IVertex OldV1 { get; set; }
+        public IVertex OldV2 { get; set; }
         public double? R { get; set; }
         public double? X { get; set; }
         public double? B { get; set; }

@@ -1,0 +1,231 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using SteadyState.Grapher.Annotations;
+using SteadyState.Grapher.Controls;
+using SteadyState.Interfaces;
+
+namespace SteadyState.Grapher.Elements
+{
+    public class Vertex : CircuitElement, IVertex
+    {
+        public event Action<IVertex> OnBasicVertexChanged;
+
+        public static readonly DependencyProperty AngleProperty = DependencyProperty.Register(
+            "Angle", typeof(double), typeof(Vertex), new PropertyMetadata(default(double)));
+
+        private int _id;
+        private string _name;
+        private double? _voltNom;
+        private bool _isBasic;
+        private IShn _shn;
+        private double? _powerRe;
+        private double? _powerIm;
+        private double? _voltSus;
+        private double? _minQ;
+        private double? _maxQ;
+        private double? _voltRe;
+        private double? _voltIm;
+        private double? _voltMagn;
+        private double? _voltAngle;
+
+        public double Angle
+        {
+            get { return (double) GetValue(AngleProperty); }
+            set { SetValue(AngleProperty, value); }
+        }
+
+        static Vertex()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(Vertex), new FrameworkPropertyMetadata(typeof(Vertex)));
+        }
+
+        public Vertex()
+        {
+            OnBasicVertexChanged += Vertex_OnBasicVertexChanged;
+        }
+
+        #region properties
+
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                if (value == _id) return;
+                _id = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string VertexName
+        {
+            get => _name;
+            set
+            {
+                if (Nullable.Equals(value, _name)) return;
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? VoltNom
+        {
+            get => _voltNom;
+            set
+            {
+                if (Nullable.Equals(value, _voltNom)) return;
+                _voltNom = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsBasic
+        {
+            get => _isBasic;
+            set
+            {
+                if (value == _isBasic) return;
+                if (value == true)
+                    if (SchematicEditor.BasicVertex != null)
+                        SchematicEditor.BasicVertex.IsBasic = false;
+                SchematicEditor.BasicVertex = this;
+                _isBasic = value;
+                OnBasicVertexChanged?.Invoke(this);
+                OnPropertyChanged();
+            }
+        }
+
+        public IShn Shn
+        {
+            get => _shn;
+            set
+            {
+                if (Equals(value, _shn)) return;
+                _shn = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? PowerRe
+        {
+            get => _powerRe;
+            set
+            {
+                if (Nullable.Equals(value, _powerRe)) return;
+                _powerRe = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? PowerIm
+        {
+            get => _powerIm;
+            set
+            {
+                if (Nullable.Equals(value, _powerIm)) return;
+                _powerIm = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? VoltSus
+        {
+            get => _voltSus;
+            set
+            {
+                if (Nullable.Equals(value, _voltSus)) return;
+                _voltSus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? MinQ
+        {
+            get => _minQ;
+            set
+            {
+                if (Nullable.Equals(value, _minQ)) return;
+                _minQ = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? MaxQ
+        {
+            get => _maxQ;
+            set
+            {
+                if (Nullable.Equals(value, _maxQ)) return;
+                _maxQ = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? VoltRe
+        {
+            get => _voltRe;
+            set
+            {
+                if (Nullable.Equals(value, _voltRe)) return;
+                _voltRe = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? VoltIm
+        {
+            get => _voltIm;
+            set
+            {
+                if (Nullable.Equals(value, _voltIm)) return;
+                _voltIm = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? VoltMagn
+        {
+            get => _voltMagn;
+            set
+            {
+                if (Nullable.Equals(value, _voltMagn)) return;
+                _voltMagn = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? VoltAngle
+        {
+            get => _voltAngle;
+            set
+            {
+                if (Nullable.Equals(value, _voltAngle)) return;
+                _voltAngle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        private void Vertex_OnBasicVertexChanged(IVertex obj)
+        {
+            //запускается посик в глубину при смене базисного узла.
+            DepthFirstSearch.DFS(obj);
+        }
+
+    }
+}
