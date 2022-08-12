@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SteadyState.Interfaces
 {
-	public interface IRpn: IEntity
+	public interface IEntity
 	{
-		public byte StepMax { get; set; }
-		public double StepRpn { get; set; }
-		public byte Step { get; set; }
+		public Guid Id { get; set; }
+		public int Index { get; set; }
+		public string Name { get; set; }
 	}
 }

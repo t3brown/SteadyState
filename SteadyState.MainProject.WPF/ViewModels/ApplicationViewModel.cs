@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Newtonsoft;
+using Newtonsoft.Json;
+using SteadyState.Grapher.Elements;
+using SteadyState.Grapher.Interfaces;
 using SteadyState.Interfaces;
 using SteadyState.MainProject.WPF.Commands;
 
@@ -27,6 +34,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		public ICommand RegimeCommand { get; private set; }
 		public ICommand OpenInNewWindowCommand { get; private set; }
+		public ICommand SaveCommand { get; private set; }
 
 		#endregion
 
@@ -38,6 +46,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 			RegimeCommand = new RelayCommand(OnRegimeCommandExecute);
 			OpenInNewWindowCommand = new RelayCommand(OpenInNewWindowCommandExecute);
+			SaveCommand = new RelayCommand(OnSaveCommandExecute);
 		}
 
 		private void OnRegimeCommandExecute(object obj)
@@ -59,6 +68,22 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				newTabWindow.Tag = tab;
 				newTabWindow.Closed += NewTabWindow_Closed;
 				newTabWindow.Show();
+			}
+		}
+
+		private void OnSaveCommandExecute(object obj)
+		{
+			try
+			{
+				
+				var json = JsonConvert.SerializeObject(Vertices.Cast<IVertex>().ToList(), Formatting.Indented);
+				Trace.WriteLine(json);
+
+				//var vers = Newtonsoft.Json.JsonSerializer.Create().Deserialize<ObservableCollection<Vertex>>(json);
+			}
+			catch
+			{
+
 			}
 		}
 
