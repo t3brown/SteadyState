@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Numerics;
 using SteadyState.Interfaces;
-using SteadyState.Models;
 using static SteadyState.MatrixOperation;
 
 namespace SteadyState
@@ -25,13 +18,27 @@ namespace SteadyState
 		internal static double[,] X;
 		internal static int[] refIndices;
 
+		/// <summary>
+		/// Узлы.
+		/// </summary>
 		internal static IEnumerable<IVertex> _vertices;
+
+		/// <summary>
+		/// Ветви.
+		/// </summary>
 		internal static IEnumerable<IEdge> _edges;
 		internal static IEnumerable<IShn> _shns;
 		internal static IEnumerable<IRpn> _rpns;
 
-		internal static IList<IVertex> vertices;
-		internal static IList<IEdge> edges;
+		/// <summary>
+		/// Подключенные к базису узлы.
+		/// </summary>
+		internal static List<IVertex> vertices;
+
+		// <summary>
+		/// Подключенные к ветви узлы.
+		/// </summary>
+		internal static List<IEdge> edges;
 
 
 
@@ -41,15 +48,9 @@ namespace SteadyState
 			_edges = edges;
 		}
 
-		private static int GetNumber() => 25;
-
-		private static int Get()
-		{
-			return 25;
-		}
-
 		public static void Calculate(float eps, int count = 100)
 		{
+			//Выделяются узлы и ветви, подключеннык базису.
 			vertices = _vertices.Where(a => a.IsConnected).ToList();
 			edges = _edges.Where(a => a.IsConnected).ToList();
 
@@ -58,10 +59,13 @@ namespace SteadyState
 			{
 				return; //если отсутсвует базисный узел
 			}
+			//Базисный узел переносится в конец.
 			vertices.Remove(basic);
 			vertices.Add(basic);
+
 			_count = count;
 			_eps = eps;
+
 			n = vertices.Count;
 			P = new double[n];
 			Q = new double[n];
@@ -128,8 +132,8 @@ namespace SteadyState
 				}
 				else
 				{
-					var rpn1 = _rpns.FirstOrDefault(o => o.Id == edge.Rpn1Id); 
-					var rpn2 = _rpns.FirstOrDefault(o => o.Id == edge.Rpn2Id); 
+					var rpn1 = _rpns.FirstOrDefault(o => o.Id == edge.Rpn1Id);
+					var rpn2 = _rpns.FirstOrDefault(o => o.Id == edge.Rpn2Id);
 					if (edge.Rpn1Id != Guid.Empty && edge.Rpn2Id == Guid.Empty)
 					{
 						Magn = (double)((edge.U1 + rpn1.Step * (rpn1.StepRpn / 100) * edge.U1) / edge.U2);
@@ -158,19 +162,17 @@ namespace SteadyState
 		/// </summary>
 		private static (double[,], double[,]) CreateVertexConductivityMatrix()
 		{
-			Complex[,] matrix = new Complex[vertices.Count, edges.Count];
-			Complex[,] matrixT = new Complex[edges.Count, vertices.Count];
-			Complex[,] Z = new Complex[edges.Count, edges.Count];
-			Complex[,] B = new Complex[edges.Count, edges.Count];
+			var matrix = new Complex[vertices.Count, edges.Count];
+			var matrixT = new Complex[edges.Count, vertices.Count];
+			var Z = new Complex[edges.Count, edges.Count];
+			var GB = new Complex[edges.Count, edges.Count];
 			foreach (var edge in edges)
 			{
-				var V1 = vertices.FirstOrDefault(o => o.Id == edge.V1Id);
-				var V2 = vertices.FirstOrDefault(o => o.Id == edge.V2Id);
 				int j = edges.IndexOf(edge);
-				int i = vertices.IndexOf(V1);
+				int i = vertices.IndexOf(edge.V1);
 				matrix[i, j] = 1;
 				matrixT[j, i] = 1;
-				i = vertices.IndexOf(V2);
+				i = vertices.IndexOf(edge.V2);
 				(double? reCoef, double? imCoef) = CalcCoeff(edge);
 				if (reCoef != null || imCoef != null)
 				{
@@ -185,11 +187,12 @@ namespace SteadyState
 
 				Z[j, j] = new Complex(edge.R != null ? (double)edge.R : 0.0000001,
 					edge.X != null ? (double)edge.X : 0.0000001);
-				B[j, j] = new Complex(0, edge.B != null ? (double)(edge.B / 1000000) : 0);
+				GB[j, j] = new Complex(edge.G != null ? (double)(edge.R / 1000000) : 0,
+					edge.B != null ? (double)(edge.B / 1000000) : 0);
 			}
 
-			Complex[,] Y = GaussJordan(Z);
-			Complex[,] By = Multiplication(Multiplication(matrix, B), matrixT);
+			var Y = GaussJordan(Z);
+			var GBy = Multiplication(Multiplication(matrix, GB), matrixT);
 			var Yy = Multiplication(Multiplication(matrix, Y), matrixT);
 
 			int row = Yy.GetLength(0), col = Yy.GetLength(1);
@@ -201,8 +204,8 @@ namespace SteadyState
 				{
 					if (i == j)
 					{
-						g[i, j] = Yy[i, j].Real + By[i, i].Real / 2;
-						b[i, j] = Yy[i, j].Imaginary + By[i, i].Imaginary / 2;
+						g[i, j] = Yy[i, j].Real + GBy[i, i].Real / 2;
+						b[i, j] = Yy[i, j].Imaginary + GBy[i, i].Imaginary / 2;
 					}
 					else
 					{
@@ -305,13 +308,5 @@ namespace SteadyState
 				W[i, 0] = Wq[i - (n - 1)];
 			return W;
 		}
-
-		//private static readonly string[] VertexPropertyNames = new string[] { "VoltNom", "IsBasic" };
-
-		//private static IVertex CopyProperties()
-		//{
-		//    IVertex vertex = new VertexBase();
-		//    var properties = vertex.GetType().GetProperties().Where(a => )
-		//}
 	}
 }

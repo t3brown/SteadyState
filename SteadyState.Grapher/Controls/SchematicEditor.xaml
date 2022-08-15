@@ -11,139 +11,142 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="400"
              FontSize="14">
-    <UserControl.Resources>
-        <DataTemplate x:Key="VertexDataTemplate" DataType="{x:Type interfaces:IVertex}">
-            <Grid MinWidth="250">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+	<UserControl.Resources>
+		<DataTemplate x:Key="VertexDataTemplate" DataType="{x:Type interfaces:IVertex}">
+			<Grid MinWidth="250">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 				<TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="Номер узла:"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Margin="2" Text="Название:"/>
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="2" Text="U номинальное:"/>
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="2" Text="Базисный:"/>
-                <TextBlock Grid.Row="4" Grid.Column="0" Margin="2" Text="P нагрузка:"/>
-                <TextBlock Grid.Row="5" Grid.Column="0" Margin="2" Text="Q нагрузка:"/>
-                <TextBlock Grid.Row="6" Grid.Column="0" Margin="2" Text="U действ.:"/>
-                <TextBlock Grid.Row="7" Grid.Column="0" Margin="2" Text="U мним.:"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding Id}" IsReadOnly="True"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Margin="2" Text="{Binding VertexName}"/>
-				<TextBox Grid.Row="2" Grid.Column="1" Margin="2" Text="{Binding VoltNom}"/>
+				<TextBlock Grid.Row="1" Grid.Column="0" Margin="2" Text="Название:"/>
+				<TextBlock Grid.Row="2" Grid.Column="0" Margin="2" Text="U номинальное:"/>
+				<TextBlock Grid.Row="3" Grid.Column="0" Margin="2" Text="Базисный:"/>
+				<TextBlock Grid.Row="4" Grid.Column="0" Margin="2" Text="Земля:"/>
+				<TextBlock Grid.Row="5" Grid.Column="0" Margin="2" Text="P нагрузка:"/>
+				<TextBlock Grid.Row="6" Grid.Column="0" Margin="2" Text="Q нагрузка:"/>
+				<TextBlock Grid.Row="7" Grid.Column="0" Margin="2" Text="U действ.:"/>
+				<TextBlock Grid.Row="8" Grid.Column="0" Margin="2" Text="U мним.:"/>
+				<TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding Id}" IsReadOnly="True"/>
+				<TextBox Grid.Row="1" Grid.Column="1" Margin="2" Text="{Binding VertexName}"/>
+				<TextBox Grid.Row="2" Grid.Column="1" Margin="2" Text="{Binding VoltNom, TargetNullValue=''}"/>
 				<RadioButton Grid.Row="3" Grid.Column="1" Margin="2" IsChecked="{Binding IsBasic}"/>
-                <TextBox Grid.Row="4" Grid.Column="1" Margin="2" Text="{Binding PowerRe}"/>
-                <TextBox Grid.Row="5" Grid.Column="1" Margin="2" Text="{Binding PowerIm}"/>
-                <TextBox Grid.Row="6" Grid.Column="1" Margin="2" Text="{Binding VoltRe}"/>
-                <TextBox Grid.Row="7" Grid.Column="1" Margin="2" Text="{Binding VoltIm}"/>
-            </Grid>
-        </DataTemplate>
+				<CheckBox Grid.Row="4" Grid.Column="1" Margin="2" IsChecked="{Binding IsGround}"/>
+				<TextBox Grid.Row="5" Grid.Column="1" Margin="2" Text="{Binding PowerRe}"/>
+				<TextBox Grid.Row="6" Grid.Column="1" Margin="2" Text="{Binding PowerIm}"/>
+				<TextBox Grid.Row="7" Grid.Column="1" Margin="2" Text="{Binding VoltRe}"/>
+				<TextBox Grid.Row="8" Grid.Column="1" Margin="2" Text="{Binding VoltIm}"/>
+			</Grid>
+		</DataTemplate>
 
-        <DataTemplate x:Key="EdgeDataTemplate" DataType="{x:Type interfaces:IEdge}">
-            <Grid MinWidth="250">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+		<DataTemplate x:Key="EdgeDataTemplate" DataType="{x:Type interfaces:IEdge}">
+			<Grid MinWidth="250">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 				<TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="Номер ветви:"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Margin="2" Text="Q1:"/>
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="2" Text="Q2:"/>
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="2" Text="V1:"/>
-                <TextBlock Grid.Row="4" Grid.Column="0" Margin="2" Text="V2:"/>
-                <TextBlock Grid.Row="5" Grid.Column="0" Margin="2" Text="R:"/>
-                <TextBlock Grid.Row="6" Grid.Column="0" Margin="2" Text="X:"/>
-                <TextBlock Grid.Row="7" Grid.Column="0" Margin="2" Text="B:"/>
-                <TextBlock Grid.Row="8" Grid.Column="0" Margin="2" Text="U1:"/>
-                <TextBlock Grid.Row="9" Grid.Column="0" Margin="2" Text="U2:"/>
+				<TextBlock Grid.Row="1" Grid.Column="0" Margin="2" Text="Q1:"/>
+				<TextBlock Grid.Row="2" Grid.Column="0" Margin="2" Text="Q2:"/>
+				<TextBlock Grid.Row="3" Grid.Column="0" Margin="2" Text="V1:"/>
+				<TextBlock Grid.Row="4" Grid.Column="0" Margin="2" Text="V2:"/>
+				<TextBlock Grid.Row="5" Grid.Column="0" Margin="2" Text="R:"/>
+				<TextBlock Grid.Row="6" Grid.Column="0" Margin="2" Text="X:"/>
+				<TextBlock Grid.Row="7" Grid.Column="0" Margin="2" Text="B:"/>
+				<TextBlock Grid.Row="8" Grid.Column="0" Margin="2" Text="U1:"/>
+				<TextBlock Grid.Row="9" Grid.Column="0" Margin="2" Text="U2:"/>
 				<TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding Id}" IsReadOnly="True"/>
-                <CheckBox Grid.Row="1" Grid.Column="1" Margin="2" IsChecked="{Binding On1}"/>
-                <CheckBox Grid.Row="2" Grid.Column="1" Margin="2" IsChecked="{Binding On2}"/>
-                <TextBox Grid.Row="3" Grid.Column="1" Margin="2" Text="{Binding V1.Id}" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="1" Margin="2" Text="{Binding V2.Id}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="1" Margin="2" Text="{Binding R}"/>
-                <TextBox Grid.Row="6" Grid.Column="1" Margin="2" Text="{Binding X}"/>
-                <TextBox Grid.Row="7" Grid.Column="1" Margin="2" Text="{Binding B}"/>
-                <TextBox Grid.Row="8" Grid.Column="1" Margin="2" Text="{Binding U1}"/>
-                <TextBox Grid.Row="9" Grid.Column="1" Margin="2" Text="{Binding U2}"/>
-            </Grid>
-        </DataTemplate>
+				<CheckBox Grid.Row="1" Grid.Column="1" Margin="2" IsChecked="{Binding On1}"/>
+				<CheckBox Grid.Row="2" Grid.Column="1" Margin="2" IsChecked="{Binding On2}"/>
+				<TextBox Grid.Row="3" Grid.Column="1" Margin="2" Text="{Binding V1.Id}" IsReadOnly="True"/>
+				<TextBox Grid.Row="4" Grid.Column="1" Margin="2" Text="{Binding V2.Id}" IsReadOnly="True"/>
+				<TextBox Grid.Row="5" Grid.Column="1" Margin="2" Text="{Binding R}"/>
+				<TextBox Grid.Row="6" Grid.Column="1" Margin="2" Text="{Binding X}"/>
+				<TextBox Grid.Row="7" Grid.Column="1" Margin="2" Text="{Binding B}"/>
+				<TextBox Grid.Row="8" Grid.Column="1" Margin="2" Text="{Binding U1}"/>
+				<TextBox Grid.Row="9" Grid.Column="1" Margin="2" Text="{Binding U2}"/>
+			</Grid>
+		</DataTemplate>
 
-        <helpers:CircuitElementDataTemplateSelector x:Key="CircuitElementDataTemplateSelector"
+		<helpers:CircuitElementDataTemplateSelector x:Key="CircuitElementDataTemplateSelector"
                                                     EdgeTemplate="{StaticResource EdgeDataTemplate}"
                                                     VertexTemplate="{StaticResource VertexDataTemplate}"/>
-    </UserControl.Resources>
+	</UserControl.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Slider Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left"
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Slider Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left"
                 Minimum="0.1" Maximum="8" x:Name="slider"
                 TickPlacement="TopLeft" TickFrequency="0.3" Margin="5"/>
-        <ScrollViewer Grid.Column="1" Name="ScrollViewer"
+		<ScrollViewer Grid.Column="1" Name="ScrollViewer"
                       HorizontalScrollBarVisibility="Visible"
                       VerticalScrollBarVisibility="Visible">
-            <Grid Name="Grid" Width="4205" Height="2970" RenderTransformOrigin="0.5,0.5">
-                <Grid.LayoutTransform>
-                    <TransformGroup>
-                        <ScaleTransform x:Name="ScaleTransform"/>
-                    </TransformGroup>
-                </Grid.LayoutTransform>
-                <Border BorderBrush="Black" BorderThickness="1">
-                    <Canvas x:Name="Canvas"
+			<Grid Name="Grid" Width="4205" Height="2970" RenderTransformOrigin="0.5,0.5">
+				<Grid.LayoutTransform>
+					<TransformGroup>
+						<ScaleTransform x:Name="ScaleTransform"/>
+					</TransformGroup>
+				</Grid.LayoutTransform>
+				<Border BorderBrush="Black" BorderThickness="1">
+					<Canvas x:Name="Canvas"
                             Background="{x:Static Brushes.Transparent}"
                             MouseLeftButtonDown="Canvas_OnMouseLeftButtonDown"
                             MouseMove="Canvas_OnMouseMove">
-                        <Canvas.ContextMenu>
-                            <ContextMenu Opened="ContextMenu_OnOpened">
-                                <MenuItem Header="Добавить узел"
+						<Canvas.ContextMenu>
+							<ContextMenu Opened="ContextMenu_OnOpened">
+								<MenuItem Header="Добавить узел"
                                           Click="AddVertex_OnClick"/>
-                                <MenuItem x:Name="AddEdgeItem"
+								<MenuItem x:Name="AddEdgeItem"
                                           Header="Добавить ветвь"
                                           Click="AddEdge_OnClick"/>
 								<MenuItem x:Name="DeleteElement"
                                           Header="Удалить"
                                           Click="DeleteElement_Click"/>
-                            </ContextMenu>
-                        </Canvas.ContextMenu>
-                    </Canvas>
-                </Border>
-            </Grid>
-        </ScrollViewer>
-        <TextBlock Grid.Row="1" 
+							</ContextMenu>
+						</Canvas.ContextMenu>
+					</Canvas>
+				</Border>
+			</Grid>
+		</ScrollViewer>
+		<TextBlock Grid.Row="1" 
                    MaxWidth="{Binding ActualWidth, ElementName=slider, Mode=OneWay}"
                    Text="{Binding Value, ElementName=slider, Mode=OneWay}"/>
-        <!--/ContentSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SelectedElement}-->
+		<!--/ContentSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SelectedElement}-->
 
-        <ContentControl Grid.Row="0" Grid.Column="2"
+		<ContentControl Grid.Row="0" Grid.Column="2"
                         Content="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SelectedElement}"
                         ContentTemplateSelector="{StaticResource CircuitElementDataTemplateSelector}"/>
-    </Grid>
+	</Grid>
 </UserControl>

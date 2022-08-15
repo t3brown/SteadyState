@@ -5,8 +5,6 @@ namespace SteadyState
 {
 	public static class DepthFirstSearch
 	{
-
-
 		public static void DFS(IVertex startVertex)
 		{
 			foreach (IVertex vertex in _vertices)
@@ -30,10 +28,13 @@ namespace SteadyState
 				var neighbor = _vertices.FirstOrDefault(o => !o.IsConnected && (o.Id == edge.V1Id || o.Id == edge.V2Id));
 				if (neighbor != null)
 				{
-					//if (neighbor.VoltNom is null && neighbor == edge.V2)
-					//	neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U2 / edge.U1;
-					//if (neighbor.VoltNom is null && neighbor == edge.V1)
-					//	neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;
+					if (!neighbor.IsGround)
+					{
+						if (neighbor.VoltNom is null && neighbor == edge.V2)
+							neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U2 / edge.U1;
+						if (neighbor.VoltNom is null && neighbor == edge.V1)
+							neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;
+					}
 
 					DFSUtil(neighbor);
 				}

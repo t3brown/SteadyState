@@ -18,21 +18,44 @@ using Vector = System.Windows.Vector;
 
 namespace SteadyState.Grapher.Elements
 {
+	/// <summary>
+	/// Выключатель.
+	/// </summary>
 	public enum Switch
 	{
 		Q1, Q2
 	}
+
+	/// <summary>
+	/// Положение выключателя.
+	/// </summary>
 	public enum SwitchPosition
 	{
 		Off, On
 	}
+
+	/// <summary>
+	/// Ветвь - элемент схемы.
+	/// </summary>
 	public class Edge : CircuitElement, IEdge
 	{
+		/// <summary>
+		/// Событие изменения положения выключателя.
+		/// </summary>
 		public event Action<IEdge, Switch, SwitchPosition> SwitchPositionChanged;
+
+		#region Точки ветви
 
 		public static readonly DependencyProperty PointCollectionProperty = DependencyProperty.Register(
 			"PointCollection", typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
 
+		public PointCollection PointCollection
+		{
+			get { return (PointCollection)GetValue(PointCollectionProperty); }
+			set { SetValue(PointCollectionProperty, value); }
+		}
+
+		#endregion
 
 		private bool _on1 = true;
 		private bool _on2 = true;
@@ -40,6 +63,7 @@ namespace SteadyState.Grapher.Elements
 		private Guid _v2Id;
 		private double? _r;
 		private double? _x;
+		private double? _g;
 		private double? _b;
 		private double? _u1;
 		private double? _u2;
@@ -50,11 +74,7 @@ namespace SteadyState.Grapher.Elements
 		private Ellipse DotV1;
 		private Ellipse DotV2;
 
-		public PointCollection PointCollection
-		{
-			get { return (PointCollection)GetValue(PointCollectionProperty); }
-			set { SetValue(PointCollectionProperty, value); }
-		}
+		#region Есть ли у ветви коэффициент трансформации.
 
 		public static readonly DependencyProperty IsTrasnformerProperty = DependencyProperty.Register(
 			"IsTrasnformer", typeof(bool), typeof(Edge), new PropertyMetadata(default(bool)));
@@ -64,6 +84,8 @@ namespace SteadyState.Grapher.Elements
 			get { return (bool)GetValue(IsTrasnformerProperty); }
 			set { SetValue(IsTrasnformerProperty, value); }
 		}
+
+		#endregion
 
 		static Edge()
 		{
@@ -84,6 +106,9 @@ namespace SteadyState.Grapher.Elements
 			PointCollection = new PointCollection();
 		}
 
+		/// <summary>
+		/// Выключатель со стороны начала.
+		/// </summary>
 		public bool On1
 		{
 			get => _on1;
@@ -99,6 +124,9 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		/// <summary>
+		/// Выключатель со стороны конца
+		/// </summary>
 		public bool On2
 		{
 			get => _on2;
@@ -114,6 +142,8 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		#region Узел начала.
+
 		public Guid V1Id
 		{
 			get => _v1Id;
@@ -124,6 +154,19 @@ namespace SteadyState.Grapher.Elements
 				OnPropertyChanged();
 			}
 		}
+
+		public static readonly DependencyProperty V1Property = DependencyProperty.Register(
+			"V1", typeof(Vertex), typeof(Edge), new PropertyMetadata(default(Vertex)));
+
+		public IVertex V1
+		{
+			get { return (Vertex)GetValue(V1Property); }
+			set { SetValue(V1Property, value); }
+		}
+
+		#endregion
+
+		#region Узел конца.
 
 		public Guid V2Id
 		{
@@ -218,6 +261,18 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		public static readonly DependencyProperty V2Property = DependencyProperty.Register(
+			"V2", typeof(Vertex), typeof(Edge), new PropertyMetadata(default(Vertex)));
+
+		public IVertex V2
+		{
+			get { return (Vertex)GetValue(V2Property); }
+			set { SetValue(V2Property, value); }
+		}
+		#endregion
+
+		#region Предыдущий узел начала.
+
 		public static readonly DependencyProperty OldV1IdProperty = DependencyProperty.Register(
 			"OldV1Id", typeof(Guid), typeof(Edge), new PropertyMetadata(default(Guid)));
 
@@ -227,14 +282,18 @@ namespace SteadyState.Grapher.Elements
 			set { SetValue(OldV1IdProperty, value); }
 		}
 
-		public static readonly DependencyProperty OldV1StrokeProperty = DependencyProperty.Register(
-			"OldV1Stroke", typeof(Brush), typeof(Edge), new PropertyMetadata(Brushes.Gray));
+		public static readonly DependencyProperty OldV1Property = DependencyProperty.Register(
+			"OldV1", typeof(Vertex), typeof(Edge), new PropertyMetadata(default(Vertex)));
 
-		public Brush OldV1Stroke
+		public IVertex OldV1
 		{
-			get { return (Brush)GetValue(OldV1StrokeProperty); }
-			set { SetValue(OldV1StrokeProperty, value); }
+			get { return (Vertex)GetValue(OldV1Property); }
+			set { SetValue(OldV1Property, value); }
 		}
+
+		#endregion
+
+		#region Предыдущий узел конца.
 
 		public static readonly DependencyProperty OldV2IdProperty = DependencyProperty.Register(
 			"OldV2Id", typeof(Guid), typeof(Edge), new PropertyMetadata(default(Guid)));
@@ -245,14 +304,16 @@ namespace SteadyState.Grapher.Elements
 			set { SetValue(OldV2IdProperty, value); }
 		}
 
-		public static readonly DependencyProperty OldV2StrokeProperty = DependencyProperty.Register(
-			"OldV2Stroke", typeof(Brush), typeof(Edge), new PropertyMetadata(Brushes.Gray));
+		public static readonly DependencyProperty OldV2Property = DependencyProperty.Register(
+			"OldV2", typeof(Vertex), typeof(Edge), new PropertyMetadata(default(Vertex)));
 
-		public Brush OldV2Stroke
+		public IVertex OldV2
 		{
-			get { return (Brush)GetValue(OldV2StrokeProperty); }
-			set { SetValue(OldV2StrokeProperty, value); }
+			get { return (Vertex)GetValue(OldV2Property); }
+			set { SetValue(OldV2Property, value); }
 		}
+
+		#endregion
 
 		public double? R
 		{
@@ -275,6 +336,18 @@ namespace SteadyState.Grapher.Elements
 				OnPropertyChanged();
 			}
 		}
+
+		public double? G
+		{
+			get => _g;
+			set
+			{
+				if (Nullable.Equals(value, _g)) return;
+				_g = value;
+				OnPropertyChanged();
+			}
+		}
+
 
 		public double? B
 		{

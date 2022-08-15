@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace SteadyState.Interfaces
 {
-	public interface IVertex: IEntity
+	public interface IVertex : IEntity
 	{
 		public bool IsConnected { get; set; }
 		public double? VoltNom { get; set; }
 		public bool IsBasic { get; set; }
+		public bool IsGround { get; set; }
 		public Guid ShnId { get; set; }
 		public double? PowerRe { get; set; }
 		public double? PowerIm { get; set; }

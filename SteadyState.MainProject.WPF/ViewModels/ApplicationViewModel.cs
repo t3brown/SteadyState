@@ -19,7 +19,7 @@ using SteadyState.MainProject.WPF.Commands;
 
 namespace SteadyState.MainProject.WPF.ViewModels
 {
-	public class ApplicationViewModel: ViewModelBase
+	public class ApplicationViewModel : ViewModelBase
 	{
 		#region свойства
 
@@ -75,7 +75,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		{
 			try
 			{
-				
+
 				var json = JsonConvert.SerializeObject(Vertices.Cast<IVertex>().ToList(), Formatting.Indented);
 				Trace.WriteLine(json);
 

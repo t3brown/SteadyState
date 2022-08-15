@@ -121,7 +121,7 @@
                                       BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV1.Stroke}"/>
 							<CheckBox x:Name="Q2"
                                       IsChecked="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=On2}"
-                                      BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV2.
+                                      BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV2.Stroke
 								
 								}"/>
 

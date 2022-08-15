@@ -21,45 +21,45 @@ using SteadyState.Interfaces;
 
 namespace SteadyState.Grapher
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        //private readonly List<(IVertex, IVertex)> _replacedVertices;
-        public IEnumerable<IVertex> Vertices { get; set; }
-        public IEnumerable<IEdge> Edges { get; set; }
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
+	{
+		//private readonly List<(IVertex, IVertex)> _replacedVertices;
+		public IEnumerable<IVertex> Vertices { get; set; }
+		public IEnumerable<IEdge> Edges { get; set; }
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            Vertices = new ObservableCollection<IVertex>();
-            Edges = new ObservableCollection<IEdge>();
-            CalculateSteadyState.SetCollections(Vertices, Edges);
+		public MainWindow()
+		{
+			InitializeComponent();
+			Vertices = new ObservableCollection<IVertex>();
+			Edges = new ObservableCollection<IEdge>();
+			CalculateSteadyState.SetCollections(Vertices, Edges);
 
 
-        }
+		}
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            Window newTabWindow = new Window();
-            newTabWindow.Owner = this;
-            newTabWindow.Content = TabControl.SelectedContent;
-            ((TabItem) TabControl.SelectedItem).Visibility = Visibility.Collapsed;
-            ((TabItem) TabControl.SelectedItem).Content = null;
-            newTabWindow.Tag = ((TabItem) TabControl.SelectedItem);
-            newTabWindow.Closed += NewTabWindow_Closed;
-            newTabWindow.Show();
-        }
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			Window newTabWindow = new Window();
+			newTabWindow.Owner = this;
+			newTabWindow.Content = TabControl.SelectedContent;
+			((TabItem)TabControl.SelectedItem).Visibility = Visibility.Collapsed;
+			((TabItem)TabControl.SelectedItem).Content = null;
+			newTabWindow.Tag = ((TabItem)TabControl.SelectedItem);
+			newTabWindow.Closed += NewTabWindow_Closed;
+			newTabWindow.Show();
+		}
 
-        private void NewTabWindow_Closed(object? sender, EventArgs e)
-        {
-            if (sender is Window window)
-            {
-                ((TabItem)window.Tag).Visibility = Visibility.Visible;
-                ((TabItem)window.Tag).Content = window.Content;
-                ((TabItem) window.Tag).IsSelected = true;
-            }
-        }
-    }
+		private void NewTabWindow_Closed(object? sender, EventArgs e)
+		{
+			if (sender is Window window)
+			{
+				((TabItem)window.Tag).Visibility = Visibility.Visible;
+				((TabItem)window.Tag).Content = window.Content;
+				((TabItem)window.Tag).IsSelected = true;
+			}
+		}
+	}
 }

@@ -32,6 +32,7 @@ namespace SteadyState.Grapher.Elements
 
 		private double? _voltNom;
 		private bool _isBasic;
+		private bool _isGround;
 		private Guid _shnId;
 		private double? _powerRe;
 		private double? _powerIm;
@@ -97,6 +98,27 @@ namespace SteadyState.Grapher.Elements
 				SchematicEditor.BasicVertex = this;
 				_isBasic = value;
 				BasicVertexChanged?.Invoke(this);
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _oldVoltNom;
+
+		public bool IsGround
+		{
+			get => _isGround;
+			set
+			{
+				if (value == true)
+				{
+					_oldVoltNom = VoltNom;
+					VoltNom = 0f;
+				}
+				else
+				{
+					VoltNom = _oldVoltNom;
+				}
+				_isGround = value;
 				OnPropertyChanged();
 			}
 		}
