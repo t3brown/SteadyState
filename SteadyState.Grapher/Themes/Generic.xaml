@@ -52,6 +52,9 @@
 						<Trigger Property="elements:Vertex.IsConnected" Value="True">
 							<Setter Property="Stroke" Value="{x:Static Brushes.Blue}"/>
 						</Trigger>
+						<Trigger Property="elements:Vertex.IsGround" Value="True">
+						<Setter Property="Stroke" Value="{x:Static Brushes.YellowGreen}"/>
+						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>

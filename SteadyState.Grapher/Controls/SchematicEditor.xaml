@@ -82,8 +82,8 @@
 				<TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding Id}" IsReadOnly="True"/>
 				<CheckBox Grid.Row="1" Grid.Column="1" Margin="2" IsChecked="{Binding On1}"/>
 				<CheckBox Grid.Row="2" Grid.Column="1" Margin="2" IsChecked="{Binding On2}"/>
-				<TextBox Grid.Row="3" Grid.Column="1" Margin="2" Text="{Binding V1.Id}" IsReadOnly="True"/>
-				<TextBox Grid.Row="4" Grid.Column="1" Margin="2" Text="{Binding V2.Id}" IsReadOnly="True"/>
+				<TextBox Grid.Row="3" Grid.Column="1" Margin="2" Text="{Binding V1Id}" IsReadOnly="True"/>
+				<TextBox Grid.Row="4" Grid.Column="1" Margin="2" Text="{Binding V2Id}" IsReadOnly="True"/>
 				<TextBox Grid.Row="5" Grid.Column="1" Margin="2" Text="{Binding R}"/>
 				<TextBox Grid.Row="6" Grid.Column="1" Margin="2" Text="{Binding X}"/>
 				<TextBox Grid.Row="7" Grid.Column="1" Margin="2" Text="{Binding B}"/>

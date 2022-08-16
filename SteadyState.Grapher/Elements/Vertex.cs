@@ -16,12 +16,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SteadyState.Grapher.Annotations;
 using SteadyState.Grapher.Controls;
-using SteadyState.Grapher.Interfaces;
 using SteadyState.Interfaces;
 
 namespace SteadyState.Grapher.Elements
 {
-	public class Vertex : CircuitElement, IVertexGrapher
+	public class Vertex : CircuitElement, IVertex
 	{
 		public event Action<IVertex> BasicVertexChanged;
 
@@ -32,7 +31,6 @@ namespace SteadyState.Grapher.Elements
 
 		private double? _voltNom;
 		private bool _isBasic;
-		private bool _isGround;
 		private Guid _shnId;
 		private double? _powerRe;
 		private double? _powerIm;
@@ -104,7 +102,34 @@ namespace SteadyState.Grapher.Elements
 
 		private double? _oldVoltNom;
 
+		public static readonly DependencyProperty IsGroundProperty = DependencyProperty.Register(
+			"IsGround", typeof(bool), typeof(Vertex), new FrameworkPropertyMetadata(default(bool),
+				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+				new PropertyChangedCallback(IsGroundProperty_Changed)));
+
+		private static void IsGroundProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is Vertex vertex)
+			{
+				if ((bool)e.NewValue == true)
+				{
+					vertex._oldVoltNom = vertex.VoltNom;
+					vertex.VoltNom = 0f;
+				}
+				else
+				{
+					vertex.VoltNom = vertex._oldVoltNom;
+				}
+			}
+		}
+
 		public bool IsGround
+		{
+			get { return (bool)GetValue(IsGroundProperty); }
+			set { SetValue(IsGroundProperty, value); }
+		}
+
+		/*public bool IsGround
 		{
 			get => _isGround;
 			set
@@ -121,7 +146,7 @@ namespace SteadyState.Grapher.Elements
 				_isGround = value;
 				OnPropertyChanged();
 			}
-		}
+		}*/
 
 		public Guid ShnId
 		{

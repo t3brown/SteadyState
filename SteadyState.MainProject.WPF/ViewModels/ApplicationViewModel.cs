@@ -13,7 +13,6 @@ using System.Windows.Input;
 using Newtonsoft;
 using Newtonsoft.Json;
 using SteadyState.Grapher.Elements;
-using SteadyState.Grapher.Interfaces;
 using SteadyState.Interfaces;
 using SteadyState.MainProject.WPF.Commands;
 
@@ -23,8 +22,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 	{
 		#region свойства
 
-		public IEnumerable<IVertex> Vertices { get; set; }
-		public IEnumerable<IEdge> Edges { get; set; }
+		public ICollection<IVertex> Vertices { get; set; }
+		public ICollection<IEdge> Edges { get; set; }
 
 		public object SelectedTab { get; set; }
 
@@ -76,10 +75,39 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			try
 			{
 
-				var json = JsonConvert.SerializeObject(Vertices.Cast<IVertex>().ToList(), Formatting.Indented);
-				Trace.WriteLine(json);
+				var savedVer = new Vertex();
+				var ver = Vertices.ElementAt(0) as Vertex;
 
-				//var vers = Newtonsoft.Json.JsonSerializer.Create().Deserialize<ObservableCollection<Vertex>>(json);
+				if (ver != null)
+				{
+					savedVer.StartPoint = ver.StartPoint;
+					savedVer.Width = ver.Width;
+					savedVer.Height = ver.Height;
+					savedVer.Angle = ver.Angle;
+
+					savedVer.Id = ver.Id;
+				}
+
+				Vertices.Add(savedVer);
+
+
+
+				var savedEdge = new Edge();
+				var edge = Edges.ElementAt(0) as Edge;
+				if (edge != null)
+				{
+					savedEdge.PointCollection = edge.PointCollection;
+					savedEdge.Id = edge.Id;
+					savedEdge.V1Id = edge.V1Id;
+					savedEdge.V1 = edge.V1;
+					savedEdge.V2Id = edge.V2Id;
+					savedEdge.V2 = edge.V2;
+					savedEdge.OldV1Id = edge.V1Id;
+					savedEdge.OldV1 = edge.V1;
+					savedEdge.OldV2Id = edge.V2Id;
+					savedEdge.OldV2 = edge.V2;
+				}
+				Edges.Add(savedEdge);
 			}
 			catch
 			{

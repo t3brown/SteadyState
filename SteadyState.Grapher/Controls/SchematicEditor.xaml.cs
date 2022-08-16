@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -115,7 +117,23 @@ namespace SteadyState.Grapher.Controls
 		public static readonly DependencyProperty VerticesSourceProperty = DependencyProperty.Register(
 			"VerticesSource", typeof(ICollection<IVertex>),
 			typeof(SchematicEditor),
-			new PropertyMetadata(null));
+			new FrameworkPropertyMetadata(null,
+				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+				new PropertyChangedCallback(VerticesSourceProperty_Changed)));
+
+		private static void VerticesSourceProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (e.NewValue != null)
+			{
+				if (d is SchematicEditor editor)
+				{
+					if (editor.VerticesSource is ObservableCollection<IVertex> vertices)
+					{
+						vertices.CollectionChanged += editor.VerticesSource_CollectionChanged;
+					}
+				}
+			}
+		}
 
 		public ICollection<IVertex>? VerticesSource
 		{
@@ -130,7 +148,23 @@ namespace SteadyState.Grapher.Controls
 		public static readonly DependencyProperty EdgesSourceProperty = DependencyProperty.Register(
 			"EdgesSource", typeof(ICollection<IEdge>),
 			typeof(SchematicEditor),
-			new PropertyMetadata(null));
+			new FrameworkPropertyMetadata(null,
+				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+				new PropertyChangedCallback(EdgesSourceProperty_Changed)));
+
+		private static void EdgesSourceProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (e.NewValue != null)
+			{
+				if (d is SchematicEditor editor)
+				{
+					if (editor.EdgesSource is ObservableCollection<IEdge> edges)
+					{
+						edges.CollectionChanged += editor.EdgesSource_CollectionChanged;
+					}
+				}
+			}
+		}
 
 		public ICollection<IEdge>? EdgesSource
 		{
@@ -175,9 +209,64 @@ namespace SteadyState.Grapher.Controls
 			ScrollViewer.PreviewMouseDown += ScrollViewer_OnMouseDown;
 			ScrollViewer.MouseMove += ScrollViewer_OnMouseMove;
 			slider.ValueChanged += Slider_OnSliderValueChanged;
-			slider.Value = 1;
+			slider.Value = 4;
 
 			OnElementAdd += SchematicEditor_OnElementAdd;
+		}
+
+		private void VerticesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				if (e.NewItems != null)
+				{
+					if (e.NewItems[0] is Vertex vertex)
+					{
+						if (vertex.Name.Contains("temp"))
+						{
+							return;
+						}
+
+						try
+						{
+							Canvas.Children.Add(vertex);
+							Canvas.SetLeft(vertex, vertex.StartPoint.X);
+							Canvas.SetTop(vertex, vertex.StartPoint.Y);
+							vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
+							vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
+							vertex.OnSelectionChanged += OnSelectionChanged;
+						}
+						catch
+						{
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		private void EdgesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				if (e.NewItems != null)
+				{
+					if (e.NewItems[0] is Edge edge)
+					{
+						try
+						{
+							Canvas.Children.Add(edge);
+							edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown; ;
+							edge.OnSelectionChanged += OnSelectionChanged;
+							edge.SwitchPositionChanged += Edge_OnSwitchPositionChanged;
+						}
+						catch
+						{
+							return;
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -245,7 +334,16 @@ namespace SteadyState.Grapher.Controls
 						case Switch.Q1:
 							edge.OldV1Id = edge.V1Id;
 							edge.OldV1 = edge.V1;
-							vertex.VoltNom = edge.OldV1.VoltNom;
+
+							if (edge.OldV2.IsGround)
+							{
+								vertex.VoltNom = edge.OldV1.VoltNom;
+							}
+							else
+							{
+								vertex.VoltNom = edge.U1 is null && edge.U2 is null ? edge.OldV2.VoltNom : edge.OldV2.VoltNom * edge.U1 / edge.U2;
+							}
+
 							edge.V1Id = vertex.Id;
 							edge.V1 = vertex;
 							break;
@@ -253,18 +351,28 @@ namespace SteadyState.Grapher.Controls
 						case Switch.Q2:
 							edge.OldV2Id = edge.V2Id;
 							edge.OldV2 = edge.V2;
-							vertex.VoltNom = edge.OldV2.VoltNom;
+
+							if (edge.OldV1.IsGround)
+							{
+								vertex.VoltNom = edge.OldV2.VoltNom;
+							}
+							else
+							{
+								vertex.VoltNom = edge.U1 is null && edge.U2 is null ? edge.OldV1.VoltNom : edge.OldV1.VoltNom * edge.U2 / edge.U1;
+							}
+
 							edge.V2Id = vertex.Id;
 							edge.V2 = vertex;
 							break;
 					}
+
 					VerticesSource?.Add(vertex);
 					break;
 			}
 			//запускается поиск в глубину при переключениях 
 			if (BasicVertex != null)
 			{
-				DepthFirstSearch.DFS(Controls.SchematicEditor.BasicVertex);
+				DepthFirstSearch.DFS(BasicVertex);
 			}
 		}
 
@@ -406,7 +514,7 @@ namespace SteadyState.Grapher.Controls
 				ResetSelectedElement();
 			_canResetSelection = true;
 
-			//выполняется в том сулчае, если есть текущий элемент для редактирования и для задана начальная точка
+			//выполняется в том сулчае, если есть текущий элемент для редактирования и для него задана начальная точка
 			if (_currentElement != null && _setCurrentElementPoint.HasValue)
 			{
 				//если это вершина, то редактирование прекращается
@@ -429,6 +537,7 @@ namespace SteadyState.Grapher.Controls
 				if (_currentElement is Vertex vertex)
 				{
 					_setCurrentElementPoint = new Point(_verticalLine.X1 - 5, _horizontaLine.Y1 - 5);
+					vertex.StartPoint = (Point)_setCurrentElementPoint;
 				}
 			}
 		}
@@ -488,7 +597,7 @@ namespace SteadyState.Grapher.Controls
 			_verticalLine.X2 = Round(mousePosition.X) + 5;
 
 			/* если имеется элемент для редактирования и для него задана начальная точка, то расчитывается
-             изменение положения курсора относительно начальной точки */
+			 изменение положения курсора относительно начальной точки */
 			if (_currentElement != null && _setCurrentElementPoint.HasValue)
 			{
 				double dX = _verticalLine.X1 - _setCurrentElementPoint.Value.X - 5;

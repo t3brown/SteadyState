@@ -30,10 +30,10 @@ namespace SteadyState
 				{
 					if (!neighbor.IsGround)
 					{
-						if (neighbor.VoltNom is null && neighbor == edge.V2)
+						/*if (neighbor.VoltNom is null && neighbor == edge.V2)
 							neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U2 / edge.U1;
 						if (neighbor.VoltNom is null && neighbor == edge.V1)
-							neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;
+							neighbor.VoltNom = edge.U1 is null && edge.U2 is null ? vertex.VoltNom : vertex.VoltNom * edge.U1 / edge.U2;*/
 					}
 
 					DFSUtil(neighbor);
