@@ -40,7 +40,7 @@
                                    Text="&#xe7c3;"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Header="Открыть" Command="{Binding CreateTabCommand}" CommandParameter="True"
+				<MenuItem Header="Открыть" Command="{Binding OpenCommand}" CommandParameter="True"
                           InputGestureText="Ctrl+O">
 					<MenuItem.Icon>
 						<TextBlock FontFamily="{StaticResource SegoeFluentIcons}"
@@ -78,7 +78,7 @@
 			</MenuItem>
 
 			<MenuItem Header="Вид">
-				
+
 			</MenuItem>
 		</Menu>
 

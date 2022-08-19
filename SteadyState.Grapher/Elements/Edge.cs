@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 using SteadyState.Interfaces;
 using Vector = System.Windows.Vector;
 
@@ -37,6 +39,7 @@ namespace SteadyState.Grapher.Elements
 	/// <summary>
 	/// Ветвь - элемент схемы.
 	/// </summary>
+	[JsonObject(MemberSerialization.OptIn)]
 	public class Edge : CircuitElement, IEdge
 	{
 		/// <summary>
@@ -49,11 +52,18 @@ namespace SteadyState.Grapher.Elements
 		public static readonly DependencyProperty PointCollectionProperty = DependencyProperty.Register(
 			"PointCollection", typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
 
+		[JsonProperty]
 		public PointCollection PointCollection
 		{
 			get { return (PointCollection)GetValue(PointCollectionProperty); }
 			set { SetValue(PointCollectionProperty, value); }
 		}
+
+		[JsonProperty]
+		public double WidthValue { get => Width; set => Width = value; }
+
+		[JsonProperty]
+		public double HeightValue { get => Height; set => Height = value; }
 
 		#endregion
 
@@ -79,6 +89,7 @@ namespace SteadyState.Grapher.Elements
 		public static readonly DependencyProperty IsTrasnformerProperty = DependencyProperty.Register(
 			"IsTrasnformer", typeof(bool), typeof(Edge), new PropertyMetadata(default(bool)));
 
+		[JsonProperty]
 		public bool IsTrasnformer
 		{
 			get { return (bool)GetValue(IsTrasnformerProperty); }
@@ -101,6 +112,8 @@ namespace SteadyState.Grapher.Elements
 			Transformer = GetTemplateChild("Transformer") as Path;
 			DotV1 = GetTemplateChild("DotV1") as Ellipse;
 			DotV2 = GetTemplateChild("DotV2") as Ellipse;
+
+
 		}
 
 		public Edge()
@@ -108,6 +121,12 @@ namespace SteadyState.Grapher.Elements
 			PointCollection = new PointCollection();
 
 			this.Loaded += Edge_Loaded;
+			Initialized += Edge_Initialized;
+		}
+
+		private void Edge_Initialized(object? sender, EventArgs e)
+		{
+			ApplyTemplate();
 		}
 
 		private void Edge_Loaded(object sender, RoutedEventArgs e)
@@ -118,9 +137,11 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+
 		/// <summary>
 		/// Выключатель со стороны начала.
 		/// </summary>
+		[JsonProperty]
 		public bool On1
 		{
 			get => _on1;
@@ -139,6 +160,7 @@ namespace SteadyState.Grapher.Elements
 		/// <summary>
 		/// Выключатель со стороны конца
 		/// </summary>
+		[JsonProperty]
 		public bool On2
 		{
 			get => _on2;
@@ -156,6 +178,7 @@ namespace SteadyState.Grapher.Elements
 
 		#region Узел начала.
 
+		[JsonProperty]
 		public Guid V1Id
 		{
 			get => _v1Id;
@@ -180,6 +203,7 @@ namespace SteadyState.Grapher.Elements
 
 		#region Узел конца.
 
+		[JsonProperty]
 		public Guid V2Id
 		{
 			get => _v2Id;
@@ -212,6 +236,7 @@ namespace SteadyState.Grapher.Elements
 		public static readonly DependencyProperty OldV1IdProperty = DependencyProperty.Register(
 			"OldV1Id", typeof(Guid), typeof(Edge), new PropertyMetadata(default(Guid)));
 
+		[JsonProperty]
 		public Guid OldV1Id
 		{
 			get { return (Guid)GetValue(OldV1IdProperty); }
@@ -234,6 +259,7 @@ namespace SteadyState.Grapher.Elements
 		public static readonly DependencyProperty OldV2IdProperty = DependencyProperty.Register(
 			"OldV2Id", typeof(Guid), typeof(Edge), new PropertyMetadata(default(Guid)));
 
+		[JsonProperty]
 		public Guid OldV2Id
 		{
 			get { return (Guid)GetValue(OldV2IdProperty); }
@@ -251,6 +277,7 @@ namespace SteadyState.Grapher.Elements
 
 		#endregion
 
+		[JsonProperty]
 		public double? R
 		{
 			get => _r;
@@ -262,6 +289,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? X
 		{
 			get => _x;
@@ -273,6 +301,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? G
 		{
 			get => _g;
@@ -285,6 +314,7 @@ namespace SteadyState.Grapher.Elements
 		}
 
 
+		[JsonProperty]
 		public double? B
 		{
 			get => _b;
@@ -296,6 +326,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? U1
 		{
 			get => _u1;
@@ -311,6 +342,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? U2
 		{
 			get => _u2;
@@ -326,33 +358,50 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? Angle { get; set; }
+		[JsonProperty]
 		public Guid Rpn1Id { get; set; }
+		[JsonProperty]
 		public Guid Rpn2Id { get; set; }
+		[JsonProperty]
 		public double? ReCoeff { get; set; }
+		[JsonProperty]
 		public double? ImCoeff { get; set; }
+		[JsonProperty]
 		public double? AmpRe { get; set; }
+		[JsonProperty]
 		public double? AmpIm { get; set; }
+		[JsonProperty]
 		public double? AmpMagnitude { get; set; }
+		[JsonProperty]
 		public double? AmpAngle { get; set; }
+		[JsonProperty]
 		public double? PwrStRe { get; set; }
+		[JsonProperty]
 		public double? PwrStIm { get; set; }
+		[JsonProperty]
 		public double? PwrStCh { get; set; }
+		[JsonProperty]
 		public double? PwrEndCh { get; set; }
+		[JsonProperty]
 		public double? PwrEndRe { get; set; }
+		[JsonProperty]
 		public double? PwrEndIm { get; set; }
+		[JsonProperty]
 		public double? PwrDltRe { get; set; }
+		[JsonProperty]
 		public double? PwrDltIm { get; set; }
 
 		private void DrawDotsAndSwitchs()
 		{
 			DotV1.RenderTransformOrigin = new Point(0.5, 0.5);
-			DotV1.RenderTransform = new TranslateTransform(-DotV1.ActualWidth / 2, -DotV1.ActualHeight / 2);
+			DotV1.RenderTransform = new TranslateTransform(-1.5d, -1.5d);
 			Canvas.SetLeft(DotV1, PointCollection[0].X);
 			Canvas.SetTop(DotV1, PointCollection[0].Y);
 
 			DotV2.RenderTransformOrigin = new Point(0.5, 0.5);
-			DotV2.RenderTransform = new TranslateTransform(-DotV2.ActualWidth / 2, -DotV2.ActualHeight / 2);
+			DotV2.RenderTransform = new TranslateTransform(-1.5d, -1.5d);
 			Canvas.SetLeft(DotV2, PointCollection[^1].X);
 			Canvas.SetTop(DotV2, PointCollection[^1].Y);
 
@@ -367,13 +416,15 @@ namespace SteadyState.Grapher.Elements
 
 
 			var pointQ1 = point1;
-			var h = Q1.ActualHeight / 2;
-			var w = Q1.ActualWidth / 2;
+			var h = 2.5d;
+			//var w = Q1.ActualWidth / 2;
 			Q1.RenderTransformOrigin = new Point(0, 0.5);
 			TransformGroup transform = new TransformGroup();
 			// transform.Children.Add(new ScaleTransform(0.5,0.5));
 			transform.Children.Add(new RotateTransform(angle));
 			transform.Children.Add(new TranslateTransform(0, -h));
+
+
 			Q1.RenderTransform = transform;
 			Canvas.SetLeft(Q1, pointQ1.X);
 			Canvas.SetTop(Q1, pointQ1.Y);
@@ -415,14 +466,15 @@ namespace SteadyState.Grapher.Elements
 					point6 = points[i + 1];
 				}
 			}
-			h = Transformer.ActualHeight / 2;
-			w = Transformer.ActualWidth / 2;
+			h = 5.125d;
+			var w = 8.25d;
 			double angle3 = c1.Phase * 180 / Math.PI;
 			Transformer.RenderTransformOrigin = new Point(0.5, 0.5);
 			TransformGroup transform2 = new TransformGroup();
 			//transform1.Children.Add(new ScaleTransform(0.5, 0.5));
 			transform2.Children.Add(new RotateTransform(angle3));
 			transform2.Children.Add(new TranslateTransform(-w, -h));
+
 			Transformer.RenderTransform = transform2;
 			Canvas.SetLeft(Transformer, (point5.X + point6.X) / 2);
 			Canvas.SetTop(Transformer, (point5.Y + point6.Y) / 2);

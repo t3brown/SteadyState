@@ -10,6 +10,7 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
 using Newtonsoft;
 using Newtonsoft.Json;
 using SteadyState.Grapher.Elements;
@@ -34,6 +35,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		public ICommand RegimeCommand { get; private set; }
 		public ICommand OpenInNewWindowCommand { get; private set; }
 		public ICommand SaveCommand { get; private set; }
+		public ICommand OpenCommand { get; private set; }
 
 		#endregion
 
@@ -45,7 +47,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 			RegimeCommand = new RelayCommand(OnRegimeCommandExecute);
 			OpenInNewWindowCommand = new RelayCommand(OpenInNewWindowCommandExecute);
+
 			SaveCommand = new RelayCommand(OnSaveCommandExecute);
+			OpenCommand = new RelayCommand(OnOpenCommandExecute);
 		}
 
 		private void OnRegimeCommandExecute(object obj)
@@ -70,10 +74,38 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			}
 		}
 
-		private void OnSaveCommandExecute(object obj)
+		private void OnSaveCommandExecute(object filePath)
 		{
-			try
+			var file_name = filePath as string;
+
+			if (file_name == null)
 			{
+				var dialog = new SaveFileDialog()
+				{
+					//Title = $"Сохранение проекта - {Tab.Name}",
+					Filter = "Json files (*.json)|*.json",
+					//InitialDirectory = Environment.CurrentDirectory,
+					RestoreDirectory = true
+				};
+				if (dialog.ShowDialog() != true) return;
+
+				file_name = dialog.FileName;
+
+				//SafeFileName = dialog.SafeFileName;
+			}
+			using (var writer = new StreamWriter(new FileStream(file_name, FileMode.Create, FileAccess.Write)))
+			{
+				writer.WriteLine(JsonConvert.SerializeObject(Vertices));
+				writer.WriteLine(JsonConvert.SerializeObject(Edges));
+				//writer.WriteLine(JsonConvert.SerializeObject(RPNs));
+				//writer.WriteLine(JsonConvert.SerializeObject(SHNs));
+			}
+			/*try
+			{
+				var json = JsonConvert.SerializeObject(Vertices);
+
+
+
 
 				var savedVer = new Vertex();
 				var ver = Vertices.ElementAt(0) as Vertex;
@@ -112,6 +144,79 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			catch
 			{
 
+			}*/
+		}
+
+		private void OnOpenCommandExecute(object obj)
+		{
+			try
+			{
+				var dialog = new OpenFileDialog()
+				{
+					Title = "Открытие проекта",
+					Filter = "Json files (*.json)|*.json",
+					RestoreDirectory = true
+				};
+
+				if (dialog.ShowDialog() != true)
+				{
+					return;
+				}
+
+				string file_name = dialog.FileName;
+
+				//SafeFileName = dialog.SafeFileName;
+
+				if (!File.Exists(file_name))
+				{
+					return;
+				}
+
+				using (StreamReader reader = File.OpenText(file_name))
+				{
+					var vertices = JsonConvert.DeserializeObject<ObservableCollection<Vertex>>(reader.ReadLine());
+					var edges = JsonConvert.DeserializeObject<ObservableCollection<Edge>>(reader.ReadLine());
+
+					while (Vertices.Count > 0)
+					{
+						Vertices.Remove(Vertices.ElementAt(Vertices.Count - 1));
+					}
+
+					while (Edges.Count > 0)
+					{
+						Edges.Remove(Edges.ElementAt(Edges.Count - 1));
+					}
+
+					foreach (var vertex in vertices)
+					{
+						Vertices.Add(vertex);
+					}
+
+					foreach (var edge in edges)
+					{
+						edge.V1 = Vertices.FirstOrDefault(o => o.Id == edge.V1Id);
+						edge.V2 = Vertices.FirstOrDefault(o => o.Id == edge.V2Id);
+						edge.OldV1 = Vertices.FirstOrDefault(o => o.Id == edge.OldV1Id);
+						edge.OldV2 = Vertices.FirstOrDefault(o => o.Id == edge.OldV2Id);
+
+						var temp = edge.V2Id;
+						edge.V2Id = Guid.Empty;
+						edge.V2Id = temp;
+
+						Edges.Add(edge);
+					}
+
+					var basicVertex = Vertices.FirstOrDefault(o => o.IsBasic);
+
+					if (basicVertex != null)
+					{
+						DepthFirstSearch.DFS(basicVertex);
+					}
+				}
+			}
+			catch
+			{
+				return;
 			}
 		}
 

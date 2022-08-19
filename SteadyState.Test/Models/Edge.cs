@@ -38,5 +38,16 @@ namespace SteadyState.Test.Models
         public double? PwrEndIm { get; set; }
         public double? PwrDltRe { get; set; }
         public double? PwrDltIm { get; set; }
-    }
+		public Guid V1Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public Guid V2Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public Guid OldV1Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public IVertex OldV1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public Guid OldV2Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public IVertex OldV2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public double? G { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public Guid Rpn1Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public Guid Rpn2Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Index { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		Guid IEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+	}
 }

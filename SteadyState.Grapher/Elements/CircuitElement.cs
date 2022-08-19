@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -8,16 +9,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Newtonsoft.Json;
 using SteadyState.Grapher.Annotations;
 using SteadyState.Interfaces;
 
 namespace SteadyState.Grapher.Elements
 {
+	[JsonObject(MemberSerialization.OptIn)]
+	[Serializable]
 	public abstract class CircuitElement : Control, IEntity, INotifyPropertyChanged
 	{
 		public static readonly DependencyProperty IsConnectedProperty = DependencyProperty.Register(
 			"IsConnected", typeof(bool), typeof(CircuitElement), new PropertyMetadata(default(bool)));
 
+		//[JsonProperty]
 		public bool IsConnected
 		{
 			get { return (bool)GetValue(IsConnectedProperty); }
@@ -71,8 +76,14 @@ namespace SteadyState.Grapher.Elements
 			set { SetValue(IsSelectedProperty, value); }
 		}
 
+		[JsonProperty]
 		public Guid Id { get; set; }
+
+		[JsonProperty]
 		public int Index { get; set; }
+
+		[JsonProperty]
+		public string NameValue { get => Name; set => Name = value; }
 
 		public CircuitElement()
 		{

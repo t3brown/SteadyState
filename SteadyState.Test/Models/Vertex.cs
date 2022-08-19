@@ -24,5 +24,10 @@ namespace SteadyState.Test.Models
         public double? VoltIm { get; set; }
         public double? VoltMagn { get; set; }
         public double? VoltAngle { get; set; }
-    }
+		public bool IsGround { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public Guid ShnId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Index { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		Guid IEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+	}
 }

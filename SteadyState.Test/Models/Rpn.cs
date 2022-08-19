@@ -13,5 +13,7 @@ namespace SteadyState.Test.Models
         public byte StepMax { get; set; }
         public double StepRpn { get; set; }
         public byte Step { get; set; }
-    }
+		public Guid Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Index { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+	}
 }

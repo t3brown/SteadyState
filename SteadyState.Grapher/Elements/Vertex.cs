@@ -1,25 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using SteadyState.Grapher.Annotations;
+using Newtonsoft.Json;
 using SteadyState.Grapher.Controls;
 using SteadyState.Interfaces;
 
 namespace SteadyState.Grapher.Elements
 {
+	[JsonObject(MemberSerialization.OptIn)]
 	public class Vertex : CircuitElement, IVertex
 	{
 		public event Action<IVertex> BasicVertexChanged;
@@ -42,8 +30,16 @@ namespace SteadyState.Grapher.Elements
 		private double? _voltMagn;
 		private double? _voltAngle;
 
+		[JsonProperty]
 		public Point StartPoint { get; set; }
 
+		[JsonProperty]
+		public double WidthValue { get => Width; set => Width = value; }
+
+		[JsonProperty]
+		public double HeightValue { get => Height; set => Height = value; }
+
+		[JsonProperty]
 		public double Angle
 		{
 			get { return (double)GetValue(AngleProperty); }
@@ -72,6 +68,7 @@ namespace SteadyState.Grapher.Elements
 
 		#region properties
 
+		[JsonProperty]
 		public double? VoltNom
 		{
 			get => _voltNom;
@@ -84,6 +81,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public bool IsBasic
 		{
 			get => _isBasic;
@@ -123,31 +121,14 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public bool IsGround
 		{
 			get { return (bool)GetValue(IsGroundProperty); }
 			set { SetValue(IsGroundProperty, value); }
 		}
 
-		/*public bool IsGround
-		{
-			get => _isGround;
-			set
-			{
-				if (value == true)
-				{
-					_oldVoltNom = VoltNom;
-					VoltNom = 0f;
-				}
-				else
-				{
-					VoltNom = _oldVoltNom;
-				}
-				_isGround = value;
-				OnPropertyChanged();
-			}
-		}*/
-
+		[JsonProperty]
 		public Guid ShnId
 		{
 			get => _shnId;
@@ -159,6 +140,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? PowerRe
 		{
 			get => _powerRe;
@@ -170,6 +152,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? PowerIm
 		{
 			get => _powerIm;
@@ -181,6 +164,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? VoltSus
 		{
 			get => _voltSus;
@@ -192,6 +176,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? MinQ
 		{
 			get => _minQ;
@@ -203,6 +188,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? MaxQ
 		{
 			get => _maxQ;
@@ -214,6 +200,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? VoltRe
 		{
 			get => _voltRe;
@@ -225,6 +212,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? VoltIm
 		{
 			get => _voltIm;
@@ -236,6 +224,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? VoltMagn
 		{
 			get => _voltMagn;
@@ -247,6 +236,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
+		[JsonProperty]
 		public double? VoltAngle
 		{
 			get => _voltAngle;
@@ -265,6 +255,5 @@ namespace SteadyState.Grapher.Elements
 			//запускается посик в глубину при смене базисного узла.
 			DepthFirstSearch.DFS(obj);
 		}
-
 	}
 }

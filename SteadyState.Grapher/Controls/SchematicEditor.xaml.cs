@@ -243,7 +243,26 @@ namespace SteadyState.Grapher.Controls
 					}
 				}
 			}
+
+			if (e.Action == NotifyCollectionChangedAction.Remove)
+			{
+				if (e.OldItems == null)
+				{
+					return;
+				}
+
+				if (e.OldItems[0] is Vertex vertex)
+				{
+					if (vertex.Name.Contains("temp"))
+					{
+						return;
+					}
+
+					Canvas.Children.Remove(vertex);
+				}
+			}
 		}
+
 
 		private void EdgesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -256,7 +275,7 @@ namespace SteadyState.Grapher.Controls
 						try
 						{
 							Canvas.Children.Add(edge);
-							edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown; ;
+							edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
 							edge.OnSelectionChanged += OnSelectionChanged;
 							edge.SwitchPositionChanged += Edge_OnSwitchPositionChanged;
 						}
@@ -265,6 +284,19 @@ namespace SteadyState.Grapher.Controls
 							return;
 						}
 					}
+				}
+			}
+
+			if (e.Action == NotifyCollectionChangedAction.Remove)
+			{
+				if (e.OldItems == null)
+				{
+					return;
+				}
+
+				if (e.OldItems[0] is Edge edge)
+				{
+					Canvas.Children.Remove(edge);
 				}
 			}
 		}
