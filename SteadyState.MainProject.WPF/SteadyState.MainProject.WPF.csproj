@@ -7,7 +7,13 @@
 		<UseWPF>true</UseWPF>
 		<PackageIcon>12-02.png</PackageIcon>
 		<AssemblyVersion>1.0.1.0</AssemblyVersion>
+		<ApplicationIcon>1-02.ico</ApplicationIcon>
+		<AssemblyName>Steady-State ES</AssemblyName>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="1-02.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="..\..\..\Users\t3brown\OneDrive - vyatsu\сохр\док\12-02.png">
