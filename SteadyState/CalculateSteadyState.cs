@@ -248,20 +248,24 @@ namespace SteadyState
 		{
 			for (var i = 0; i < refIndices.Length; i++)
 			{
-				var vertex = vertices[refIndices[i]];
-				var genQ = CalculatePowerImGen(refIndices[i]);
+				if (refIndices[i] == -1)
+				{
+					continue;
+				}
 
-				if (genQ < vertex.MinQ)
+				var vertex = vertices[refIndices[i]];
+				Q[refIndices[i]] = CalculatePowerImGen(refIndices[i]);
+
+				if (Q[refIndices[i]] < vertex.MinQ)
 				{
-					genQ = (double)vertex.MinQ;
+					Q[refIndices[i]] = (double)vertex.MinQ;
 					refIndices[i] = -1;
 				}
-				else if (genQ > vertex.MaxQ)
+				else if (Q[refIndices[i]] > vertex.MaxQ)
 				{
-					genQ = (double)vertex.MaxQ;
+					Q[refIndices[i]] = (double)vertex.MaxQ;
 					refIndices[i] = -1;
 				}
-				Q[refIndices[i]] = genQ;
 			}
 		}
 		/// <summary>

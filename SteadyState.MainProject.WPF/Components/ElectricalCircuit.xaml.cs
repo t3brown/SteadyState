@@ -222,8 +222,8 @@ namespace SteadyState.MainProject.WPF.Components
                 eCircuit.end_node_ch_pwr.Visibility = Visibility.Visible;
                 eCircuit.text_сh_pwr_st.Visibility = Visibility.Visible;
                 eCircuit.text_сh_pwr_end.Visibility = Visibility.Visible;
-                eCircuit.text_сh_pwr_st.Text = $"-j{newValue / 2}";
-                eCircuit.text_сh_pwr_end.Text = $"-j{newValue / 2}";
+                eCircuit.text_сh_pwr_st.Text = $"j{newValue / 2}";
+                eCircuit.text_сh_pwr_end.Text = $"j{newValue / 2}";
             }
             else
             {
