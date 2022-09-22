@@ -5,7 +5,16 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
+		<PackageIcon>12-02.png</PackageIcon>
+		<AssemblyVersion>1.0.1.0</AssemblyVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\..\Users\t3brown\OneDrive - vyatsu\сохр\док\12-02.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="HandyControls" Version="3.4.2" />
