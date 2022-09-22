@@ -62,6 +62,8 @@ namespace SteadyState.Grapher.Elements
 		public static readonly DependencyProperty StrokeThicknessProperty = DependencyProperty.Register(
 			"StrokeThickness", typeof(double), typeof(CircuitElement), new PropertyMetadata(0.5));
 
+		private int _index;
+
 		public double StrokeThickness
 		{
 			get { return (double)GetValue(StrokeThicknessProperty); }
@@ -80,10 +82,34 @@ namespace SteadyState.Grapher.Elements
 		public Guid Id { get; set; }
 
 		[JsonProperty]
-		public int Index { get; set; }
+		public int Index
+		{
+			get => _index;
+			set
+			{
+				if (value == _index) return;
+				_index = value;
+				OnPropertyChanged();
+				OnPropertyChanged(VisualTitle);
+			}
+		}
+
+		private string _title;
 
 		[JsonProperty]
-		public string NameValue { get => Name; set => Name = value; }
+		public string Title
+		{
+			get => _title;
+			set
+			{
+				if (_title == value) return;
+				_title = value;
+				OnPropertyChanged();
+				OnPropertyChanged(VisualTitle);
+			}
+		}
+
+		public string VisualTitle => $"{Index}. {Title}";
 
 		public CircuitElement()
 		{
@@ -99,7 +125,7 @@ namespace SteadyState.Grapher.Elements
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+		public virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}

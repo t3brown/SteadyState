@@ -10,7 +10,8 @@
              xmlns:interfaces="clr-namespace:SteadyState.Interfaces;assembly=SteadyState"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="400"
-             FontSize="14">
+             FontSize="14"
+			 >
 	<UserControl.Resources>
 		<DataTemplate x:Key="VertexDataTemplate" DataType="{x:Type interfaces:IVertex}">
 			<Grid MinWidth="250">
@@ -40,7 +41,7 @@
 				<TextBlock Grid.Row="7" Grid.Column="0" Margin="2" Text="U действ.:"/>
 				<TextBlock Grid.Row="8" Grid.Column="0" Margin="2" Text="U мним.:"/>
 				<TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding Id}" IsReadOnly="True"/>
-				<TextBox Grid.Row="1" Grid.Column="1" Margin="2" Text="{Binding VertexName}"/>
+				<TextBox Grid.Row="1" Grid.Column="1" Margin="2" Text="{Binding Title}"/>
 				<TextBox Grid.Row="2" Grid.Column="1" Margin="2" Text="{Binding VoltNom, TargetNullValue=''}"/>
 				<RadioButton Grid.Row="3" Grid.Column="1" Margin="2" IsChecked="{Binding IsBasic}"/>
 				<CheckBox Grid.Row="4" Grid.Column="1" Margin="2" IsChecked="{Binding IsGround}"/>
@@ -97,9 +98,8 @@
                                                     VertexTemplate="{StaticResource VertexDataTemplate}"/>
 	</UserControl.Resources>
 
-	<Grid>
+	<Grid >
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
@@ -107,46 +107,71 @@
 			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<Slider Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left"
-                Minimum="0.1" Maximum="8" x:Name="slider"
-                TickPlacement="TopLeft" TickFrequency="0.3" Margin="5"/>
-		<ScrollViewer Grid.Column="1" Name="ScrollViewer"
-                      HorizontalScrollBarVisibility="Visible"
-                      VerticalScrollBarVisibility="Visible">
-			<Grid Name="Grid" Width="4205" Height="2970" RenderTransformOrigin="0.5,0.5">
+
+		<ScrollViewer Grid.Row="0" Grid.Column="0"
+		              Name="ScrollViewer"
+		              HorizontalScrollBarVisibility="Visible"
+		              VerticalScrollBarVisibility="Visible">
+
+			<Grid Name="Grid" Width="4205" Height="2970" RenderTransformOrigin="0.5,0.5" >
+
 				<Grid.LayoutTransform>
 					<TransformGroup>
 						<ScaleTransform x:Name="ScaleTransform"/>
 					</TransformGroup>
 				</Grid.LayoutTransform>
-				<Border BorderBrush="Black" BorderThickness="1">
-					<Canvas x:Name="Canvas"
+
+				<Border BorderBrush="Black" BorderThickness="1" >
+					<Canvas x:Name="Canvas"	
                             Background="{x:Static Brushes.Transparent}"
                             MouseLeftButtonDown="Canvas_OnMouseLeftButtonDown"
                             MouseMove="Canvas_OnMouseMove">
+
 						<Canvas.ContextMenu>
+
 							<ContextMenu Opened="ContextMenu_OnOpened">
 								<MenuItem Header="Добавить узел"
                                           Click="AddVertex_OnClick"/>
+
 								<MenuItem x:Name="AddEdgeItem"
                                           Header="Добавить ветвь"
                                           Click="AddEdge_OnClick"/>
+
 								<MenuItem x:Name="DeleteElement"
                                           Header="Удалить"
                                           Click="DeleteElement_Click"/>
 							</ContextMenu>
+
 						</Canvas.ContextMenu>
+
 					</Canvas>
 				</Border>
 			</Grid>
 		</ScrollViewer>
-		<TextBlock Grid.Row="1" 
-                   MaxWidth="{Binding ActualWidth, ElementName=slider, Mode=OneWay}"
-                   Text="{Binding Value, ElementName=slider, Mode=OneWay}"/>
-		<!--/ContentSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SelectedElement}-->
 
-		<ContentControl Grid.Row="0" Grid.Column="2"
+		<StackPanel Grid.Row="1" Grid.Column="0"
+		            Orientation="Horizontal">
+
+			<Slider Orientation="Horizontal"
+			        HorizontalAlignment="Left"
+			        Width="150"
+			        Minimum="0.1" Maximum="8"
+			        x:Name="Slider"
+			        Margin="5"/>
+
+			<!--<TextBlock Grid.Row="1" 
+                   MaxWidth="{Binding ActualWidth, ElementName=Slider, Mode=OneWay}"
+                   Text="{Binding Value, ElementName=Slider, Mode=OneWay}"/>-->
+
+		</StackPanel>
+
+		
+
+
+		
+
+		<!--<ContentControl Grid.Row="0" Grid.Column="2"
                         Content="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SelectedElement}"
-                        ContentTemplateSelector="{StaticResource CircuitElementDataTemplateSelector}"/>
+                        ContentTemplateSelector="{StaticResource CircuitElementDataTemplateSelector}"/>-->
 	</Grid>
 </UserControl>

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,41 +12,42 @@ namespace SteadyState.MainProject.WPF.Models
 {
 	public class DisplayPrecision : ICloneable
 	{
-		public byte VoltNom { get; set; } = 3;
-		public byte PowerRe { get; set; } = 3;
-		public byte PowerIm { get; set; } = 3;
-		public byte VoltSus { get; set; } = 3;
-		public byte MinQ { get; set; } = 3;
-		public byte MaxQ { get; set; } = 3;
-		public byte VoltRe { get; set; } = 3;
-		public byte VoltIm { get; set; } = 3;
-		public byte VoltMagn { get; set; } = 3;
-		public byte VoltAngle { get; set; } = 3;
-		public byte R { get; set; } = 3;
-		public byte X { get; set; } = 3;
-		public byte B { get; set; } = 3;
-		public byte U1 { get; set; } = 3;
-		public byte U2 { get; set; } = 3;
-		public byte Angle { get; set; } = 3;
-		public byte ReCoef { get; set; } = 3;
-		public byte ImCoef { get; set; } = 3;
-		public byte AmpRe { get; set; } = 3;
-		public byte AmpIm { get; set; } = 3;
-		public byte AmpMagn { get; set; } = 3;
-		public byte AmpAngle { get; set; } = 3;
-		public byte PwrStRe { get; set; } = 3;
-		public byte PwrStIm { get; set; } = 3;
-		public byte PwrStCh { get; set; } = 3;
-		public byte PwrEndRe { get; set; } = 3;
-		public byte PwrEndIm { get; set; } = 3;
-		public byte PwrEndCh { get; set; } = 3;
-		public byte PwrDltRe { get; set; } = 3;
-		public byte PwrDltIm { get; set; } = 3;
-		public byte LongitudinalPowerReLosses { get; set; } = 3;
-		public byte LongitudinalPowerImLosses { get; set; } = 3;
-		public byte TransversePowerReLosses { get; set; } = 3;
-		public byte TransversePowerImLosses { get; set; } = 3;
-		public byte СhargingPower { get; set; } = 3;
+		public DisplayPrecisionType VoltNom { get; set; } = DisplayPrecisionType.three;
+
+		public DisplayPrecisionType PowerRe { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PowerIm { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType VoltSus { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType MinQ { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType MaxQ { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType VoltRe { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType VoltIm { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType VoltMagn { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType VoltAngle { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType R { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType X { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType B { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType U1 { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType U2 { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType Angle { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType ReCoef { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType ImCoef { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType AmpRe { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType AmpIm { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType AmpMagn { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType AmpAngle { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrStRe { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrStIm { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrStCh { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrEndRe { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrEndIm { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrEndCh { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrDltRe { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType PwrDltIm { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType LongitudinalPowerReLosses { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType LongitudinalPowerImLosses { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType TransversePowerReLosses { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType TransversePowerImLosses { get; set; } = DisplayPrecisionType.three;
+		public DisplayPrecisionType СhargingPower { get; set; } = DisplayPrecisionType.three;
 
 		public object Clone() => MemberwiseClone();
 
@@ -84,5 +87,39 @@ namespace SteadyState.MainProject.WPF.Models
 			foreach (var prop in props)
 				this.GetType().GetProperty(prop.Name).SetValue(this, prop.GetValue(source));
 		}
+	}
+
+	public enum DisplayPrecisionType : byte
+	{
+		[Description("1 (0)")]
+		zero = 0,
+
+		[Description("0.1 (1)")]
+		one = 1,
+
+		[Description("0.01 (2)")]
+		two = 2,
+
+		[Description("0.001 (3)")]
+		three = 3,
+
+		[Description("0.0001 (4)")]
+		four = 4,
+
+		[Description("0.00001 (5)")]
+		five = 5,
+
+		[Description("0.000001 (6)")]
+		six = 6,
+
+		[Description("0.0000001 (7)")]
+		seven = 7,
+
+		[Description("0.00000001 (8)")]
+		eight = 8,
+
+		[Description("0.000000001 (9)")]
+		nine = 9,
+
 	}
 }

@@ -483,7 +483,9 @@ namespace SteadyState.MainProject.WPF.Components
             this.inductance.Visibility = Visibility.Collapsed;
             this.transformer.Visibility = Visibility.Collapsed;
             this.arrow_st.Visibility = Visibility.Collapsed;
+            this.arrow_end.Visibility = Visibility.Collapsed;
             this.callout_left.Visibility = Visibility.Collapsed;
+            this.callout_right.Visibility = Visibility.Collapsed;
             this.ground_noud.Visibility = Visibility.Collapsed;
 
             this.text_r.Visibility = Visibility.Collapsed;
@@ -492,6 +494,7 @@ namespace SteadyState.MainProject.WPF.Components
             this.text_сh_pwr_st.Visibility = Visibility.Collapsed;
             this.text_сh_pwr_end.Visibility = Visibility.Collapsed;
             this.text_pwr_st.Visibility = Visibility.Collapsed;
+            this.text_pwr_end.Visibility = Visibility.Collapsed;
 
             this.text_r.Text = "";
             this.text_x.Text = "";
@@ -499,6 +502,7 @@ namespace SteadyState.MainProject.WPF.Components
             this.text_сh_pwr_st.Text = "";
             this.text_сh_pwr_end.Text = "";
             this.text_pwr_st.Text = "";
-        }
+            this.text_pwr_end.Text = "";
+		}
     }
 }

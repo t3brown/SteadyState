@@ -48,7 +48,7 @@ namespace SteadyState
 			_edges = edges;
 		}
 
-		public static void Calculate(float eps, int count = 100)
+		public static bool Calculate(float eps, int count = 100)
 		{
 			//Выделяются узлы и ветви, подключеннык базису.
 			vertices = _vertices.Where(a => a.IsConnected).ToList();
@@ -57,7 +57,7 @@ namespace SteadyState
 			var basic = vertices.FirstOrDefault(o => o.IsBasic);
 			if (basic is null)
 			{
-				return; //если отсутсвует базисный узел
+				return false; //если отсутсвует базисный узел
 			}
 			//Базисный узел переносится в конец.
 			vertices.Remove(basic);
@@ -99,12 +99,23 @@ namespace SteadyState
 				if (i >= n - 1)
 					imU[i - (n - 1)] = X[i, 0];
 			}
-			Newton.FindRoots();
+
+			var isSuccess = Newton.FindRoots();
+
 			for (int i = 0; i < n; i++)
 			{
 				vertices[i].VoltRe = reU[i];
 				vertices[i].VoltIm = imU[i];
+				vertices[i].VoltMagn = Math.Sqrt(reU[i] * reU[i] + imU[i] * imU[i]);
+				vertices[i].VoltAngle = Math.Atan(imU[i] / reU[i]) * 180 / Math.PI;
+
+				if (vertices[i].VoltSus != null && vertices[i].Shn == null)
+				{
+					vertices[i].PowerIm = Q[i];
+				}
 			}
+
+			return isSuccess;
 		}
 		private static double CalculatePowerImGen(int i)
 		{
@@ -132,19 +143,17 @@ namespace SteadyState
 				}
 				else
 				{
-					var rpn1 = _rpns.FirstOrDefault(o => o.Id == edge.Rpn1Id);
-					var rpn2 = _rpns.FirstOrDefault(o => o.Id == edge.Rpn2Id);
 					if (edge.Rpn1Id != Guid.Empty && edge.Rpn2Id == Guid.Empty)
 					{
-						Magn = (double)((edge.U1 + rpn1.Step * (rpn1.StepRpn / 100) * edge.U1) / edge.U2);
+						Magn = (double)((edge.U1 + edge.Rpn1.Step * (edge.Rpn1.StepRpn / 100) * edge.U1) / edge.U2);
 					}
 					else if (edge.Rpn1Id == Guid.Empty && edge.Rpn2Id != Guid.Empty)
 					{
-						Magn = (double)(edge.U1 / (edge.U2 + rpn2.Step * (rpn2.StepRpn / 100) * edge.U2));
+						Magn = (double)(edge.U1 / (edge.U2 + edge.Rpn2.Step * (edge.Rpn2.StepRpn / 100) * edge.U2));
 					}
 					else if (edge.Rpn1Id != Guid.Empty && edge.Rpn2Id != Guid.Empty)
 					{
-						Magn = (double)((edge.U1 + (rpn1.Step * (rpn1.StepRpn / 100) * edge.U1)) / (edge.U2 + (rpn2.Step * (rpn2.StepRpn / 100) * edge.U2)));
+						Magn = (double)((edge.U1 + (edge.Rpn1.Step * (edge.Rpn1.StepRpn / 100) * edge.U1)) / (edge.U2 + (edge.Rpn2.Step * (edge.Rpn2.StepRpn / 100) * edge.U2)));
 					}
 				}
 
@@ -173,11 +182,11 @@ namespace SteadyState
 				matrix[i, j] = 1;
 				matrixT[j, i] = 1;
 				i = vertices.IndexOf(edge.V2);
-				(double? reCoef, double? imCoef) = CalcCoeff(edge);
-				if (reCoef != null || imCoef != null)
+				(edge.ReCoeff, edge.ImCoeff) = CalcCoeff(edge);
+				if (edge.ReCoeff != null || edge.ImCoeff != null)
 				{
-					matrix[i, j] = new Complex((double)-reCoef, (double)-imCoef);
-					matrixT[j, i] = new Complex((double)-reCoef, (double)imCoef);
+					matrix[i, j] = new Complex((double)-edge.ReCoeff, (double)-edge.ImCoeff);
+					matrixT[j, i] = new Complex((double)-edge.ReCoeff, (double)edge.ImCoeff);
 				}
 				else
 				{
@@ -226,22 +235,22 @@ namespace SteadyState
 				var vertex = vertices[i];
 				if (vertex.ShnId != Guid.Empty)
 				{
-					var shn = _shns.FirstOrDefault(o => o.Id == vertex.ShnId);
 					double voltage = Math.Sqrt(reU[i] * reU[i] + imU[i] * imU[i]);
-					vertex.PowerRe = (double)(vertex.PowerRe * (shn.A0 + shn.A1 * (voltage / vertex.VoltNom) + shn.A2 * (voltage / vertex.VoltNom) * (voltage / vertex.VoltNom)));
-					vertex.PowerIm = (double)(vertex.PowerIm * (shn.B0 + shn.B1 * (voltage / vertex.VoltNom) + shn.B2 * (voltage / vertex.VoltNom) * (voltage / vertex.VoltNom)));
+					P[i] = (double)(vertex.PowerRe * (vertex.Shn.A0 + vertex.Shn.A1 * (voltage / vertex.VoltNom) + vertex.Shn.A2 * (voltage / vertex.VoltNom) * (voltage / vertex.VoltNom)));
+					Q[i] = (double)(vertex.PowerIm * (vertex.Shn.B0 + vertex.Shn.B1 * (voltage / vertex.VoltNom) + vertex.Shn.B2 * (voltage / vertex.VoltNom) * (voltage / vertex.VoltNom)));
 				}
 			}
 		}
 		/// <summary>
-		/// Вычеляет мощность генерации опорных узлов
+		/// Вычисляет мощность генерации опорных узлов
 		/// </summary>
 		internal static void CalculatePowerGen()
 		{
-			for (int i = 0; i < refIndices.Length; i++)
+			for (var i = 0; i < refIndices.Length; i++)
 			{
 				var vertex = vertices[refIndices[i]];
-				double genQ = CalculatePowerImGen(i);
+				var genQ = CalculatePowerImGen(refIndices[i]);
+
 				if (genQ < vertex.MinQ)
 				{
 					genQ = (double)vertex.MinQ;
@@ -252,7 +261,7 @@ namespace SteadyState
 					genQ = (double)vertex.MaxQ;
 					refIndices[i] = -1;
 				}
-				Q[i] = genQ;
+				Q[refIndices[i]] = genQ;
 			}
 		}
 		/// <summary>
@@ -284,7 +293,7 @@ namespace SteadyState
 				if (refIndices.Contains(i))
 				{
 					var ver = vertices[i];
-					double volt = (double)ver.VoltSus;
+					var volt = (double)ver.VoltSus;
 					Wq[i] = reU[i] * reU[i] + imU[i] * imU[i] - volt * volt;
 				}
 				else

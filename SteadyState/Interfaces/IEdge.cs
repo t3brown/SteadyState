@@ -27,7 +27,9 @@ namespace SteadyState.Interfaces
 		public double? U2 { get; set; }
 		public double? Angle { get; set; }
 		public Guid Rpn1Id { get; set; }
+		public IRpn Rpn1 { get; set; }
 		public Guid Rpn2Id { get; set; }
+		public IRpn Rpn2 { get; set; }
 		public double? ReCoeff { get; set; }
 		public double? ImCoeff { get; set; }
 		public double? AmpRe { get; set; }

@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
 using SteadyState.Interfaces;
@@ -191,7 +182,7 @@ namespace SteadyState.Grapher.Elements
 		}
 
 		public static readonly DependencyProperty V1Property = DependencyProperty.Register(
-			"V1", typeof(Vertex), typeof(Edge), new PropertyMetadata(default(Vertex)));
+			"V1", typeof(Vertex), typeof(Edge), new FrameworkPropertyMetadata(default(Vertex)));
 
 		public IVertex V1
 		{
@@ -222,7 +213,7 @@ namespace SteadyState.Grapher.Elements
 		}
 
 		public static readonly DependencyProperty V2Property = DependencyProperty.Register(
-			"V2", typeof(Vertex), typeof(Edge), new PropertyMetadata(default(Vertex)));
+			"V2", typeof(Vertex), typeof(Edge), new FrameworkPropertyMetadata(default(Vertex)));
 
 		public IVertex V2
 		{
@@ -360,38 +351,252 @@ namespace SteadyState.Grapher.Elements
 
 		[JsonProperty]
 		public double? Angle { get; set; }
+
 		[JsonProperty]
-		public Guid Rpn1Id { get; set; }
+		public Guid Rpn1Id
+		{
+			get => _rpn1Id;
+			set
+			{
+				if (value.Equals(_rpn1Id)) return;
+				_rpn1Id = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public IRpn Rpn1
+		{
+			get => _rpn1;
+			set
+			{
+				if (Equals(value, _rpn1)) return;
+				_rpn1 = value;
+				OnPropertyChanged();
+			}
+		}
+
 		[JsonProperty]
-		public Guid Rpn2Id { get; set; }
+		public Guid Rpn2Id
+		{
+			get => _rpn2Id;
+			set
+			{
+				if (value.Equals(_rpn2Id)) return;
+				_rpn2Id = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public IRpn Rpn2
+		{
+			get => _rpn2;
+			set
+			{
+				if (Equals(value, _rpn2)) return;
+				_rpn2 = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _reCoeff;
+
 		[JsonProperty]
-		public double? ReCoeff { get; set; }
+		public double? ReCoeff
+		{
+			get => _reCoeff;
+			set
+			{
+				if (value == _reCoeff) return;
+				_reCoeff = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _imCoeff;
+
 		[JsonProperty]
-		public double? ImCoeff { get; set; }
+		public double? ImCoeff
+		{
+			get => _imCoeff;
+			set
+			{
+				if (value == _imCoeff) return;
+				_imCoeff = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _ampRe;
+
 		[JsonProperty]
-		public double? AmpRe { get; set; }
+		public double? AmpRe
+		{
+			get => _ampRe;
+			set
+			{
+				if (value == _ampRe) return;
+				_ampRe = value;
+				OnPropertyChanged();
+			}
+		}
+
 		[JsonProperty]
-		public double? AmpIm { get; set; }
+		private double? _ampIm;
+
+		public double? AmpIm
+		{
+			get => _ampIm;
+			set
+			{
+				if (value == _ampIm) return;
+				_ampIm = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _ampMagnitude;
+
 		[JsonProperty]
-		public double? AmpMagnitude { get; set; }
+		public double? AmpMagnitude
+		{
+			get => _ampMagnitude;
+			set
+			{
+				if (value == _ampMagnitude) return;
+				_ampMagnitude = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _ampAngle;
+
 		[JsonProperty]
-		public double? AmpAngle { get; set; }
+		public double? AmpAngle
+		{
+			get => _ampAngle;
+			set
+			{
+				if (value == _ampAngle) return;
+				_ampAngle = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrStRe;
+
 		[JsonProperty]
-		public double? PwrStRe { get; set; }
+		public double? PwrStRe
+		{
+			get => _pwrStRe;
+			set
+			{
+				if (value == _pwrStRe) return;
+				_pwrStRe = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrStIm;
+
 		[JsonProperty]
-		public double? PwrStIm { get; set; }
+		public double? PwrStIm
+		{
+			get => _pwrStIm;
+			set
+			{
+				if (value == _pwrStIm) return;
+				_pwrStIm = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrStCh;
+
 		[JsonProperty]
-		public double? PwrStCh { get; set; }
+		public double? PwrStCh
+		{
+			get => _pwrStCh;
+			set
+			{
+				if (value == _pwrStCh) return;
+				_pwrStCh = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrEndCh;
+
 		[JsonProperty]
-		public double? PwrEndCh { get; set; }
+		public double? PwrEndCh
+		{
+			get => _pwrEndCh;
+			set
+			{
+				if (value == _pwrEndCh) return;
+				_pwrEndCh = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrEndRe;
+
 		[JsonProperty]
-		public double? PwrEndRe { get; set; }
+		public double? PwrEndRe
+		{
+			get => _pwrEndRe;
+			set
+			{
+				if (value == _pwrEndRe) return;
+				_pwrEndRe = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrEndIm;
+
 		[JsonProperty]
-		public double? PwrEndIm { get; set; }
+		public double? PwrEndIm
+		{
+			get => _pwrEndIm;
+			set
+			{
+				if (value == _pwrEndIm) return;
+				_pwrEndIm = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrDtlRe;
+
 		[JsonProperty]
-		public double? PwrDltRe { get; set; }
+		public double? PwrDltRe
+		{
+			get => _pwrDtlRe;
+			set
+			{
+				if (value == _pwrDtlRe) return;
+				_pwrDtlRe = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private double? _pwrDltIm;
+		private Guid _rpn1Id;
+		private IRpn _rpn1;
+		private Guid _rpn2Id;
+		private IRpn _rpn2;
+
 		[JsonProperty]
-		public double? PwrDltIm { get; set; }
+		public double? PwrDltIm
+		{
+			get => _pwrDltIm;
+			set
+			{
+				if (value == _pwrDltIm) return;
+				_pwrDltIm = value;
+				OnPropertyChanged();
+			}
+		}
 
 		private void DrawDotsAndSwitchs()
 		{
@@ -416,7 +621,7 @@ namespace SteadyState.Grapher.Elements
 
 
 			var pointQ1 = point1;
-			var h = 2.5d;
+			var h = 1.5d;
 			//var w = Q1.ActualWidth / 2;
 			Q1.RenderTransformOrigin = new Point(0, 0.5);
 			TransformGroup transform = new TransformGroup();

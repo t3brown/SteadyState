@@ -15,6 +15,7 @@ using SteadyState.Grapher.Elements;
 using SteadyState.Interfaces;
 using Point = System.Windows.Point;
 using Switch = SteadyState.Grapher.Elements.Switch;
+using System.Diagnostics;
 
 namespace SteadyState.Grapher.Controls
 {
@@ -81,19 +82,28 @@ namespace SteadyState.Grapher.Controls
 
 		private CircuitElement _selectedElement;
 
+		public static readonly DependencyProperty SelectedElementProperty = DependencyProperty.Register(
+			nameof(SelectedElement), typeof(CircuitElement), typeof(SchematicEditor), new PropertyMetadata(default(CircuitElement)));
+
+		public CircuitElement SelectedElement
+		{
+			get { return (CircuitElement)GetValue(SelectedElementProperty); }
+			set { SetValue(SelectedElementProperty, value); }
+		}
+
 		/// <summary>
 		/// Выбранный элемент.
 		/// </summary>
-		public CircuitElement SelectedElement
-		{
-			get => _selectedElement;
-			set
-			{
-				if (_selectedElement == value) return;
-				_selectedElement = value;
-				OnPropertyChanged();
-			}
-		}
+		//public CircuitElement SelectedElement
+		//{
+		//	get => _selectedElement;
+		//	set
+		//	{
+		//		if (_selectedElement == value) return;
+		//		_selectedElement = value;
+		//		OnPropertyChanged();
+		//	}
+		//}
 
 		#endregion
 
@@ -208,10 +218,27 @@ namespace SteadyState.Grapher.Controls
 			ScrollViewer.PreviewMouseWheel += ScrollViewer_OnPreviewMouseWheel;
 			ScrollViewer.PreviewMouseDown += ScrollViewer_OnMouseDown;
 			ScrollViewer.MouseMove += ScrollViewer_OnMouseMove;
-			slider.ValueChanged += Slider_OnSliderValueChanged;
-			slider.Value = 4;
+			Slider.ValueChanged += Slider_OnSliderValueChanged;
+			Slider.Value = 4;
+
+			ScrollViewer.ScrollToRightEnd();
 
 			OnElementAdd += SchematicEditor_OnElementAdd;
+
+			Loaded += SchematicEditor_Loaded;
+		}
+
+		private bool _isFirstLoaded = true;
+
+		private void SchematicEditor_Loaded(object sender, RoutedEventArgs e)
+		{ 
+			if (_isFirstLoaded)
+			{
+				ScrollViewer.ScrollToVerticalOffset(ScrollViewer.ScrollableHeight / 2);
+				ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.ScrollableWidth / 2);
+
+				_isFirstLoaded = false;
+			}
 		}
 
 		private void VerticesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -360,7 +387,7 @@ namespace SteadyState.Grapher.Controls
 					break;
 
 				case SwitchPosition.Off:
-					var vertex = new Vertex() { Name = "temp", Id = Guid.NewGuid() };
+					var vertex = new Vertex() { Id = Guid.NewGuid() };
 					switch (sw)
 					{
 						case Switch.Q1:
@@ -378,6 +405,8 @@ namespace SteadyState.Grapher.Controls
 
 							edge.V1Id = vertex.Id;
 							edge.V1 = vertex;
+
+							vertex.Title = $"{edge.OldV1.Index}.{edge.OldV1.Title}_temp";
 							break;
 
 						case Switch.Q2:
@@ -395,6 +424,8 @@ namespace SteadyState.Grapher.Controls
 
 							edge.V2Id = vertex.Id;
 							edge.V2 = vertex;
+
+							vertex.Title = $"{edge.OldV2.Index}.{edge.OldV2.Title}_temp";
 							break;
 					}
 
@@ -452,12 +483,12 @@ namespace SteadyState.Grapher.Controls
 
 				if (e.Delta > 0)
 				{
-					slider.Value += slider.Value < 1 ? slider.Value < 0.5 ? 0.01 : 0.02 : 0.1;
+					Slider.Value += Slider.Value < 1 ? Slider.Value < 0.5 ? 0.01 : 0.02 : 0.1;
 				}
 
 				if (e.Delta < 0)
 				{
-					slider.Value -= slider.Value < 1 ? slider.Value < 0.5 ? 0.01 : 0.02 : 0.1;
+					Slider.Value -= Slider.Value < 1 ? Slider.Value < 0.5 ? 0.01 : 0.02 : 0.1;
 				}
 
 				e.Handled = true;

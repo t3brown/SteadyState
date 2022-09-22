@@ -10,9 +10,9 @@ namespace SteadyState
 		private static double[,] B;
 		private static double[,] C;
 
-		internal static void FindRoots()
+		internal static bool FindRoots()
 		{
-			for (int k = 0; k < _count; k++) //реализация итерационного метода Ньютона
+			for (var k = 0; k < _count; k++) //реализация итерационного метода Ньютона
 			{
 				CalculatePowerGen();
 				CalculatePowerShn();
@@ -28,7 +28,18 @@ namespace SteadyState
 					if (i >= n - 1)
 						imU[i - (n - 1)] = X[i, 0];
 				}
+
+				var j = 0; //индекс большего по модулю числа
+				for (var i = 1; i < 2 * (n - 1); i++)
+					if (Math.Abs(B[i, 0]) > Math.Abs(B[j, 0]))
+						j = i;
+				if (Math.Abs(B[j, 0]) < _eps) //проверка сходимости небаланса
+				{
+					return true;
+				}
 			}
+
+			return false;
 		}
 	}
 }

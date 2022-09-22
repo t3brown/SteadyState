@@ -27,7 +27,7 @@ namespace SteadyState.Test.Models
 		public bool IsGround { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public Guid ShnId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public int Index { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		Guid IEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 	}
 }

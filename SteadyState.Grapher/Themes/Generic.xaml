@@ -3,10 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:SteadyState.Grapher"
     xmlns:elements="clr-namespace:SteadyState.Grapher.Elements"
-    xmlns:controls="clr-namespace:SteadyState.Grapher.Controls">
+    xmlns:controls="clr-namespace:SteadyState.Grapher.Controls" xmlns:sw="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 
 
 	<Style TargetType="{x:Type elements:Vertex}">
+		<Setter Property="UseLayoutRounding" Value="False"/>
 		<Setter Property="RenderTransform">
 			<Setter.Value>
 				<RotateTransform Angle="{Binding Angle, RelativeSource={RelativeSource AncestorType=elements:Vertex}}"
@@ -20,12 +21,14 @@
 
 					<Grid>
 						<Rectangle x:Name="Rectangle"
+								   
                                    Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
                                    StrokeThickness="{TemplateBinding StrokeThickness}"
                                    Fill="{x:Static Brushes.Transparent}"
                                    Height="5"
                                    Margin="0,2.5"/>
 						<Ellipse x:Name="Ellipse"
+								 
                                  Visibility="Collapsed"
                                  Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
                                  StrokeThickness="{TemplateBinding StrokeThickness}"
@@ -63,6 +66,7 @@
 	</Style>
 
 	<Style TargetType="{x:Type elements:Edge}">
+		<Setter Property="UseLayoutRounding" Value="False"/>
 		<Setter Property="Panel.ZIndex" Value="1"/>
 		<Setter Property="Template">
 			<Setter.Value>
@@ -76,18 +80,18 @@
 										<ControlTemplate TargetType="CheckBox">
 											<Grid>
 												<Line X1="0" X2="3.75"
-                                                      Y1="2.5" Y2="2.5"
+                                                      Y1="1.5" Y2="1.5"
                                                       x:Name="innerLine"
                                                       Stroke="{TemplateBinding BorderBrush}"
                                                       StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StrokeThickness}"/>
 
 												<Grid Margin="3.75,0,0,0">
-													<Rectangle Width="5" Height="5" 
+													<Rectangle Width="3" Height="3" 
                                                                Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}" Fill="{x:Static Brushes.White}"
                                                                StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StrokeThickness}"/>
 													<Line x:Name="line"
-                                                          X1="1" X2="4"
-                                                          Y1="2.5" Y2="2.5"
+                                                          X1="0.75" X2="2.25"
+                                                          Y1="1.5" Y2="1.5"
                                                           RenderTransformOrigin="0.5,0.5"
                                                           Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
                                                           StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StrokeThickness}"/>

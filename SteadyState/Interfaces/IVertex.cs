@@ -15,6 +15,7 @@ namespace SteadyState.Interfaces
 		public bool IsBasic { get; set; }
 		public bool IsGround { get; set; }
 		public Guid ShnId { get; set; }
+		public IShn Shn { get; set; }
 		public double? PowerRe { get; set; }
 		public double? PowerIm { get; set; }
 		public double? VoltSus { get; set; }

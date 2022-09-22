@@ -9,7 +9,7 @@ namespace SteadyState.Test.Models
 {
     internal class Rpn: IRpn
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
         public byte StepMax { get; set; }
         public double StepRpn { get; set; }
         public byte Step { get; set; }

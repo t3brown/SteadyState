@@ -284,7 +284,7 @@ namespace SteadyState.MainProject.WPF.Annotations
   ///
   ///   string _name;
   /// 
-  ///   public string Name {
+  ///   public string Title {
   ///     get { return _name; }
   ///     set { _name = value; NotifyChanged("LastName"); /* Warning */ }
   ///   }

@@ -13,7 +13,7 @@ namespace SteadyState.Test.Models
         public int Id { get; set; }
         public bool On1 { get; set; } = true;
         public bool On2 { get; set; } = true;
-        public string Name { get; set; }
+        public string Title { get; set; }
         public IVertex V1 { get; set; }
         public IVertex V2 { get; set; }
         public double? R { get; set; }

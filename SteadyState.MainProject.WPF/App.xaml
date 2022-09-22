@@ -1,18 +1,25 @@
 ﻿<Application x:Class="SteadyState.MainProject.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SteadyState.MainProject.WPF"
-             StartupUri="Views/MainWindow.xaml">
-    <Application.Resources>
+			 xmlns:hc="https://handyorg.github.io/handycontrol"
+			 xmlns:ui="http://schemas.modernwpf.com/2019"
+			 StartupUri="Views/MainWindow.xaml">
+	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
+				<hc:ThemeResources />
+				<hc:Theme/>
+
+				<!--<ui:ThemeResources />
+				<ui:XamlControlsResources />-->
+
 				<ResourceDictionary>
 					<FontFamily x:Key="SegoeFluentIcons">pack://,,,/Resources/#Segoe Fluent Icons</FontFamily>
 				</ResourceDictionary>
 				<ResourceDictionary>
 					<FontFamily x:Key="SegoeUIVariableStaticDisplay">pack://application:,,,/Resources/#Segoe UI Variable Static Display</FontFamily>
 				</ResourceDictionary>
-				<ResourceDictionary Source="Resources\ButtonsResources.xaml"/>
+				<!--<ResourceDictionary Source="Resources\ButtonsResources.xaml"/>
 				<ResourceDictionary Source="Resources\MenuBarResources.xaml"/>
 				<ResourceDictionary Source="Resources\TabControlResources.xaml"/>
 				<ResourceDictionary Source="Resources\ScrollBarResources.xaml"/>
@@ -21,18 +28,32 @@
 				<ResourceDictionary Source="Resources\CheckBoxResources.xaml"/>
 				<ResourceDictionary Source="Resources\RadioButtonResources.xaml"/>
 				<ResourceDictionary Source="Resources\ListViewResources.xaml"/>
-				<ResourceDictionary Source="Resources\ColorsDictionary.xaml"/>
+				<ResourceDictionary Source="Resources\ColorsDictionary.xaml"/>-->
 
 			</ResourceDictionary.MergedDictionaries>
 
-			<Style TargetType="TabItem" BasedOn="{StaticResource ModernTabItemStyle}"/>
+
+			<Style x:Key="IconButton" TargetType="Button"
+			       BasedOn="{StaticResource ButtonDefault}">
+				<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="FontSize" Value="14"/>
+				<Setter Property="FontFamily" Value="{StaticResource SegoeFluentIcons}"/>
+			</Style>
+
+			<!--<Style TargetType="TabItem" BasedOn="{StaticResource ModernTabItemStyle}"/>
 			<Style TargetType="Button" BasedOn="{StaticResource ModernButton}"/>
 			<Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBarStyle}"/>
 			<Style TargetType="DataGrid" BasedOn="{StaticResource CustomDataGridStyle1}"/>
+			-->
 			<!--<Style TargetType="controls:CustomDataGrid" BasedOn="{StaticResource CustomDataGridStyle2}"/>-->
+			<!--
 			<Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle}"/>
 			<Style TargetType="CheckBox" BasedOn="{StaticResource CheckBoxStyle}"/>
-			<Style TargetType="RadioButton" BasedOn="{StaticResource RadioButtonStyle}"/>
+			<Style TargetType="RadioButton" BasedOn="{StaticResource RadioButtonStyle}"/>-->
+
+			<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>

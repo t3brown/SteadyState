@@ -10,12 +10,17 @@ using SteadyState.Interfaces;
 
 namespace SteadyState.Grapher.Helpers
 {
-    internal class CircuitElementDataTemplateSelector: DataTemplateSelector
-    {
-        public DataTemplate VertexTemplate { get; set; }
-        public DataTemplate EdgeTemplate { get; set; }
+	public class CircuitElementDataTemplateSelector : DataTemplateSelector
+	{
+		public DataTemplate? VertexTemplate { get; set; }
+		public DataTemplate? EdgeTemplate { get; set; }
 
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
-            => item is IVertex ? VertexTemplate : item is IEdge ? EdgeTemplate : null;
-    }
+		public override DataTemplate SelectTemplate(object item, DependencyObject container)
+			=> (item switch
+			{
+				IVertex => VertexTemplate,
+				IEdge => EdgeTemplate,
+				_ => null
+			})!;
+	}
 }

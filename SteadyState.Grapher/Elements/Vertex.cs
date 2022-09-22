@@ -29,6 +29,7 @@ namespace SteadyState.Grapher.Elements
 		private double? _voltIm;
 		private double? _voltMagn;
 		private double? _voltAngle;
+		private IShn _shn;
 
 		[JsonProperty]
 		public Point StartPoint { get; set; }
@@ -75,6 +76,7 @@ namespace SteadyState.Grapher.Elements
 			set
 			{
 				if (Nullable.Equals(value, _voltNom)) return;
+				IsGround = value == 0;
 				_voltNom = value;
 				VoltNomChanged?.Invoke(this);
 				OnPropertyChanged();
@@ -98,30 +100,10 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
-		private double? _oldVoltNom;
-
 		public static readonly DependencyProperty IsGroundProperty = DependencyProperty.Register(
 			"IsGround", typeof(bool), typeof(Vertex), new FrameworkPropertyMetadata(default(bool),
-				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-				new PropertyChangedCallback(IsGroundProperty_Changed)));
+				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		private static void IsGroundProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			if (d is Vertex vertex)
-			{
-				if ((bool)e.NewValue == true)
-				{
-					vertex._oldVoltNom = vertex.VoltNom;
-					vertex.VoltNom = 0f;
-				}
-				else
-				{
-					vertex.VoltNom = vertex._oldVoltNom;
-				}
-			}
-		}
-
-		[JsonProperty]
 		public bool IsGround
 		{
 			get { return (bool)GetValue(IsGroundProperty); }
@@ -136,6 +118,17 @@ namespace SteadyState.Grapher.Elements
 			{
 				if (Equals(value, _shnId)) return;
 				_shnId = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public IShn Shn
+		{
+			get => _shn;
+			set
+			{
+				if (Equals(value, _shn)) return;
+				_shn = value;
 				OnPropertyChanged();
 			}
 		}

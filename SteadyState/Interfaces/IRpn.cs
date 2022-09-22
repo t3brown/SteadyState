@@ -10,6 +10,6 @@ namespace SteadyState.Interfaces
 	{
 		public byte StepMax { get; set; }
 		public double StepRpn { get; set; }
-		public byte Step { get; set; }
+		public sbyte Step { get; set; }
 	}
 }

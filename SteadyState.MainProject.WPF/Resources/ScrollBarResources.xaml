@@ -240,14 +240,15 @@
                                         <Thumb Style="{StaticResource ScrollBarThumbHorizontal}"/>
                                     </Track.Thumb>
                                 </Track>
-                                <RepeatButton x:Name="PART_LineRightButton" Command="{x:Static ScrollBar.LineRightCommand}" Grid.Column="2" IsEnabled="{TemplateBinding IsMouseOver}" Style="{StaticResource ScrollBarButton}">
-                                    <Path x:Name="ArrowRight"
+								<RepeatButton x:Name="PART_LineRightButton" Command="{x:Static ScrollBar.LineRightCommand}" Grid.Column="2" IsEnabled="{TemplateBinding IsMouseOver}" Style="{StaticResource ScrollBarButton}">
+									<Path x:Name="ArrowRight"
                                               Data="M1.13,0.65   L7.54,4.35  A0.75,0.75,0,0,1,7.54,5.65 L1.13,9.35  A0.75,0.75,0,0,1,0,8.7 L0,1.3 A0.75,0.75,0,0,1,1.13,0.65"
                                               Fill="{StaticResource ScrollBar.Static.Glyph}" Stretch="Uniform"
                                               Height="6" Width="6" VerticalAlignment="Stretch">
-                                    </Path>
-                                </RepeatButton>
-                            </Grid>
+									</Path>
+								</RepeatButton>
+
+							</Grid>
                             <ControlTemplate.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
@@ -289,3 +290,6 @@
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
+	
+	
+	
