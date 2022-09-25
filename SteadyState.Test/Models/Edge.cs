@@ -14,6 +14,7 @@ namespace SteadyState.Test.Models
         public bool On1 { get; set; } = true;
         public bool On2 { get; set; } = true;
         public string Title { get; set; }
+        public string VisualTitle { get; }
         public IVertex V1 { get; set; }
         public IVertex V2 { get; set; }
         public double? R { get; set; }

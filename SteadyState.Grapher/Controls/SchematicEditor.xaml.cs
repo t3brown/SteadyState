@@ -91,20 +91,6 @@ namespace SteadyState.Grapher.Controls
 			set { SetValue(SelectedElementProperty, value); }
 		}
 
-		/// <summary>
-		/// Выбранный элемент.
-		/// </summary>
-		//public CircuitElement SelectedElement
-		//{
-		//	get => _selectedElement;
-		//	set
-		//	{
-		//		if (_selectedElement == value) return;
-		//		_selectedElement = value;
-		//		OnPropertyChanged();
-		//	}
-		//}
-
 		#endregion
 
 		/// <summary>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HandyControl.Tools;
 using System.Windows;
 
 namespace SteadyState.MainProject.WPF
@@ -13,5 +8,11 @@ namespace SteadyState.MainProject.WPF
 	/// </summary>
 	public partial class App : Application
 	{
+		protected override void OnStartup(StartupEventArgs e)
+		{
+			ConfigHelper.Instance.SetLang("ru");
+
+			base.OnStartup(e);
+		}
 	}
 }

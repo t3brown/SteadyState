@@ -4,22 +4,18 @@
 		   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		   xmlns:local="clr-namespace:SteadyState.MainProject.WPF"
 		   xmlns:viewModels="clr-namespace:SteadyState.MainProject.WPF.ViewModels"
-		   xmlns:properties="clr-namespace:SteadyState.MainProject.WPF.Properties"
 		   xmlns:converters="clr-namespace:SteadyState.MainProject.WPF.Converters"
 		   xmlns:infrastructure="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
-		   xmlns:controls="clr-namespace:SteadyState.MainProject.WPF.Controls"
 		   xmlns:grapher="clr-namespace:SteadyState.Grapher.Controls;assembly=SteadyState.Grapher"
 		   xmlns:c="clr-namespace:SteadyState.MainProject.WPF.Components"
 		   xmlns:helpers="clr-namespace:SteadyState.Grapher.Helpers;assembly=SteadyState.Grapher"
-		   xmlns:interfaces="clr-namespace:SteadyState.Interfaces;assembly=SteadyState"
 		   xmlns:elements="clr-namespace:SteadyState.Grapher.Elements;assembly=SteadyState.Grapher"
 		   mc:Ignorable="d"
+		   WindowStartupLocation="CenterScreen"
 		   Background="{DynamicResource RegionBrush}"
 		   Title="Steady-State ES"
 		   Height="600" Width="800">
-
 	<hc:Window.NonClientAreaContent>
 		<DockPanel VerticalAlignment="Stretch"
 		           Margin="10,0">
@@ -69,6 +65,11 @@
 						</MenuItem.Icon>
 					</MenuItem>
 				</MenuItem>
+
+				<MenuItem Header="Справка">
+					<MenuItem Header="О программе"
+					          Command="{Binding OpenAboutCommand}"/>
+				</MenuItem>
 			</Menu>
 
 			<Button Command="{Binding OpenInNewWindowCommand}"
@@ -81,6 +82,12 @@
 	<hc:Window.DataContext>
 		<viewModels:ApplicationViewModel/>
 	</hc:Window.DataContext>
+
+	<hc:Interaction.Triggers>
+		<hc:EventTrigger EventName="Loaded">
+			<hc:EventToCommand Command="{Binding WindowLoadedCommand}"/>
+		</hc:EventTrigger>
+	</hc:Interaction.Triggers>
 
 	<hc:Window.Resources>
 
@@ -102,7 +109,9 @@
 		</Grid.RowDefinitions>
 
 
-		<ToolBarTray Orientation="Horizontal" Grid.Row="0">
+		<ToolBarTray Orientation="Horizontal"
+		             Grid.Row="0"
+		             Margin="2">
 
 			<ToolBarTray.Resources>
 
@@ -321,147 +330,147 @@
 							<ScrollViewer>
 								<StackPanel Orientation="Vertical">
 
-								<c:PropertyEditor Title="Номер"
+									<c:PropertyEditor Title="Номер"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeIndexCheckedProxy}}" 
 							                  Value="{Binding Path=Index, UpdateSourceTrigger=LostFocus}"
 							                  Margin="0,2.5,0,0"/>
 
-								<c:PropertyEditor Title="Название"
+									<c:PropertyEditor Title="Название"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeTitleCheckedProxy}}" 
 							                  Value="{Binding Path=Title, UpdateSourceTrigger=LostFocus}"/>
 
-								<c:PropertyEditor Title="Начало"
+									<c:PropertyEditor Title="Начало"
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V1CheckedProxy}}" 
 								                  Value="{Binding Path=V1.VisualTitle, Mode=OneWay}"
 								                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="Конец"
+									<c:PropertyEditor Title="Конец"
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V2CheckedProxy}}" 
 								                  Value="{Binding Path=V2.VisualTitle, Mode=OneWay}"
 								                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.R, StringFormat= 'R, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.R, StringFormat= 'R, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource RCheckedProxy}}" 
 							                  Value="{Binding Path= R,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=R}"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.X, StringFormat= 'X, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.X, StringFormat= 'X, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource XCheckedProxy}}" 
 							                  Value="{Binding Path= X,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=X}"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.B, StringFormat= 'B, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.B, StringFormat= 'B, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource BCheckedProxy}}" 
 							                  Value="{Binding Path= B,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter},ConverterParameter=B}"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.U1, StringFormat= 'Uперв, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.U1, StringFormat= 'Uперв, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource U1CheckedProxy}}" 
 							                  Value="{Binding Path= U1,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=U1}"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.U2, StringFormat= 'Uвтор, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.U2, StringFormat= 'Uвтор, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource U2CheckedProxy}}" 
 							                  Value="{Binding Path= U2,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=U2}"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.Angle, StringFormat= 'δ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.Angle, StringFormat= 'δ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource AngleCheckedProxy}}" 
 							                  Value="{Binding Path= Angle,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=Angle}"/>
 
-								<c:PropertyEditor Title="РПН перв."
+									<c:PropertyEditor Title="РПН перв."
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Rpn1CheckedProxy}}" 
 								                  Value="{Binding Path= Rpn1.VisualTitle, Mode=OneWay}"
 								                  MouseDoubleClickCommand="{Binding DataContext.OpenRpnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
 								                  IsReadOnly="True">
-									<c:PropertyEditor.MouseDoubleClickCommandParameter>
-										<MultiBinding Converter="{StaticResource MultiBindingConverter}">
-											<Binding/>
-											<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn1"/>
-										</MultiBinding>
-									</c:PropertyEditor.MouseDoubleClickCommandParameter>
-								</c:PropertyEditor>
+										<c:PropertyEditor.MouseDoubleClickCommandParameter>
+											<MultiBinding Converter="{StaticResource MultiBindingConverter}">
+												<Binding/>
+												<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn1"/>
+											</MultiBinding>
+										</c:PropertyEditor.MouseDoubleClickCommandParameter>
+									</c:PropertyEditor>
 
-								<c:PropertyEditor Title="РПН втор."
+									<c:PropertyEditor Title="РПН втор."
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Rpn2CheckedProxy}}" 
 								                  Value="{Binding Path= Rpn2.VisualTitle, Mode=OneWay}"
 								                  MouseDoubleClickCommand="{Binding DataContext.OpenRpnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
 								                  IsReadOnly="True">
-									<c:PropertyEditor.MouseDoubleClickCommandParameter>
-										<MultiBinding Converter="{StaticResource MultiBindingConverter}">
-											<Binding/>
-											<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn2"/>
-										</MultiBinding>
-									</c:PropertyEditor.MouseDoubleClickCommandParameter>
-								</c:PropertyEditor>
+										<c:PropertyEditor.MouseDoubleClickCommandParameter>
+											<MultiBinding Converter="{StaticResource MultiBindingConverter}">
+												<Binding/>
+												<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn2"/>
+											</MultiBinding>
+										</c:PropertyEditor.MouseDoubleClickCommandParameter>
+									</c:PropertyEditor>
 
-								<c:PropertyEditor Title="Kʹ"
+									<c:PropertyEditor Title="Kʹ"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource ReCoeffCheckedProxy}}" 
 							                  Value="{Binding Path= ReCoeff, Converter={StaticResource DoubleConverter}}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="Kʹʹ"
+									<c:PropertyEditor Title="Kʹʹ"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource ImCoeffCheckedProxy}}" 
 							                  Value="{Binding Path= ImCoeff, Converter={StaticResource DoubleConverter}}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.AmpRe, StringFormat= 'Iʹ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.AmpRe, StringFormat= 'Iʹ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource AmpReCheckedProxy}}" 
 							                  Value="{Binding Path= AmpRe,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=AmpRe}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.AmpIm, StringFormat= 'Iʹʹ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.AmpIm, StringFormat= 'Iʹʹ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource AmpImCheckedProxy}}" 
 							                  Value="{Binding Path= AmpIm,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=AmpIm}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.AmpMagn, StringFormat= 'I, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.AmpMagn, StringFormat= 'I, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource AmpMagnCheckedProxy}}" 
 							                  Value="{Binding AmpMagnitude,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=AmpMagn}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.AmpAngle, StringFormat= 'δток, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.AmpAngle, StringFormat= 'δток, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource AmpAngleCheckedProxy}}" 
 							                  Value="{Binding Path= AmpAngle,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=AmpAngle}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrStRe, StringFormat= 'Pнач, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrStRe, StringFormat= 'Pнач, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrStReCheckedProxy}}" 
 							                  Value="{Binding Path= PwrStRe,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrStRe}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrStIm, StringFormat= 'Qнач, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrStIm, StringFormat= 'Qнач, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrStImCheckedProxy}}" 
 							                  Value="{Binding Path= PwrStIm,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrStIm}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrStCh, StringFormat= 'Qc.нач, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrStCh, StringFormat= 'Qc.нач, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrStChCheckedProxy}}" 
 							                  Value="{Binding Path= PwrStCh,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrStCh}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrEndRe, StringFormat= 'Pкон, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrEndRe, StringFormat= 'Pкон, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrEndReCheckedProxy}}" 
 							                  Value="{Binding Path= PwrEndRe,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrEndRe}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrEndIm, StringFormat= 'Qкон, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrEndIm, StringFormat= 'Qкон, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrEndImCheckedProxy}}" 
 							                  Value="{Binding Path= PwrEndIm,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrEndIm}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrEndCh, StringFormat= 'Qc.кон, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrEndCh, StringFormat= 'Qc.кон, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrEndChCheckedProxy}}" 
 							                  Value="{Binding Path= PwrEndCh,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrEndCh}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrDltRe, StringFormat= 'ΔP, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrDltRe, StringFormat= 'ΔP, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrDltReCheckedProxy}}" 
 							                  Value="{Binding Path= PwrDltRe,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter},ConverterParameter=PwrDltRe}"
 							                  IsReadOnly="True"/>
 
-								<c:PropertyEditor Title="{Binding DataContext.Units.PwrDltIm, StringFormat= 'ΔQ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
+									<c:PropertyEditor Title="{Binding DataContext.Units.PwrDltIm, StringFormat= 'ΔQ, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrDltImCheckedProxy}}" 
 							                  Value="{Binding Path= PwrDltIm,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=PwrDltIm}"
 							                  IsReadOnly="True"/>
 
 
-							</StackPanel>
+								</StackPanel>
 							</ScrollViewer>
 						</DataTemplate>
 
@@ -504,7 +513,6 @@
 				<DataGrid x:Key="VerticesGrid"
 				          Style="{StaticResource DataGrid.Small}"
 				          ItemsSource="{Binding Vertices}"
-				          SelectedItem="{Binding SelectedVertex}"
 				          AutoGenerateColumns="False"
 				          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 				          HeadersVisibility="Column"
@@ -942,16 +950,29 @@
 
 			</Grid.Resources>
 
-			<TabControl Margin="0"
-			            Grid.Column="1"
+			<TabControl Grid.Column="1"
 			            SelectedItem="{Binding SelectedTab}"
 			            SelectedIndex="{Binding SelectedIndex}">
 
-				<TabItem Header="Схема" Content="{StaticResource SchematicEditor}"/>
-				<TabItem Header="Узлы" Content="{StaticResource VerticesGrid}"/>
-				<TabItem Header="Ветви" Content="{StaticResource EdgesGrid}"/>
-				<TabItem Header="РПН (ПБВ)" Content="{StaticResource RpnsGrid}"/>
-				<TabItem Header="СХН" Content="{StaticResource ShnsGrid}"/>
+				<TabItem Header="Схема"
+						 BorderBrush="{StaticResource DarkPrimaryBrush}"
+				         Content="{StaticResource SchematicEditor}"/>
+
+				<TabItem Header="Узлы"
+				         BorderBrush="{StaticResource DarkPrimaryBrush}"
+				         Content="{StaticResource VerticesGrid}"/>
+
+				<TabItem Header="Ветви"
+				         BorderBrush="{StaticResource DarkPrimaryBrush}"
+				         Content="{StaticResource EdgesGrid}"/>
+
+				<TabItem Header="РПН (ПБВ)"
+				         BorderBrush="{StaticResource DarkPrimaryBrush}"
+				         Content="{StaticResource RpnsGrid}"/>
+
+				<TabItem Header="СХН"
+				         BorderBrush="{StaticResource DarkPrimaryBrush}"
+				         Content="{StaticResource ShnsGrid}"/>
 			</TabControl>
 
 		</Grid>

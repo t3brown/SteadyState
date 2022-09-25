@@ -10,6 +10,7 @@ namespace SteadyState.Test.Models
     internal class Shn: IShn
     {
         public string Title { get; set; }
+        public string VisualTitle { get; }
         public double A0 { get; set; }
         public double A1 { get; set; }
         public double A2 { get; set; }

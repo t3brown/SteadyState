@@ -7,11 +7,8 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<hc:ThemeResources />
+				<hc:ThemeResources RequestedTheme="Light"/> <!--AccentColor="#741D99"/>-->
 				<hc:Theme/>
-
-				<!--<ui:ThemeResources />
-				<ui:XamlControlsResources />-->
 
 				<ResourceDictionary>
 					<FontFamily x:Key="SegoeFluentIcons">pack://,,,/Resources/#Segoe Fluent Icons</FontFamily>
@@ -19,16 +16,6 @@
 				<ResourceDictionary>
 					<FontFamily x:Key="SegoeUIVariableStaticDisplay">pack://application:,,,/Resources/#Segoe UI Variable Static Display</FontFamily>
 				</ResourceDictionary>
-				<!--<ResourceDictionary Source="Resources\ButtonsResources.xaml"/>
-				<ResourceDictionary Source="Resources\MenuBarResources.xaml"/>
-				<ResourceDictionary Source="Resources\TabControlResources.xaml"/>
-				<ResourceDictionary Source="Resources\ScrollBarResources.xaml"/>
-				<ResourceDictionary Source="Resources\DataGridResources.xaml"/>
-				<ResourceDictionary Source="Resources\ComboBoxResources.xaml"/>
-				<ResourceDictionary Source="Resources\CheckBoxResources.xaml"/>
-				<ResourceDictionary Source="Resources\RadioButtonResources.xaml"/>
-				<ResourceDictionary Source="Resources\ListViewResources.xaml"/>
-				<ResourceDictionary Source="Resources\ColorsDictionary.xaml"/>-->
 
 			</ResourceDictionary.MergedDictionaries>
 
@@ -40,17 +27,6 @@
 				<Setter Property="FontSize" Value="14"/>
 				<Setter Property="FontFamily" Value="{StaticResource SegoeFluentIcons}"/>
 			</Style>
-
-			<!--<Style TargetType="TabItem" BasedOn="{StaticResource ModernTabItemStyle}"/>
-			<Style TargetType="Button" BasedOn="{StaticResource ModernButton}"/>
-			<Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBarStyle}"/>
-			<Style TargetType="DataGrid" BasedOn="{StaticResource CustomDataGridStyle1}"/>
-			-->
-			<!--<Style TargetType="controls:CustomDataGrid" BasedOn="{StaticResource CustomDataGridStyle2}"/>-->
-			<!--
-			<Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle}"/>
-			<Style TargetType="CheckBox" BasedOn="{StaticResource CheckBoxStyle}"/>
-			<Style TargetType="RadioButton" BasedOn="{StaticResource RadioButtonStyle}"/>-->
 
 			<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 

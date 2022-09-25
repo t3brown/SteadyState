@@ -1,28 +1,25 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using HandyControl.Controls;
-using HandyControl.Tools;
 using Microsoft.Win32;
-using Newtonsoft;
 using Newtonsoft.Json;
-using SteadyState.Grapher.Controls;
 using SteadyState.Grapher.Elements;
 using SteadyState.Interfaces;
-using SteadyState.MainProject.WPF.Commands;
+using SteadyState.MainProject.WPF.Components;
 using SteadyState.MainProject.WPF.Infrastructure;
 using SteadyState.MainProject.WPF.Models;
+using SteadyState.MainProject.WPF.Models.Update;
 using SteadyState.MainProject.WPF.Views;
+using RelayCommand = SteadyState.MainProject.WPF.Commands.RelayCommand;
 using TabItem = System.Windows.Controls.TabItem;
 using Window = HandyControl.Controls.Window;
 
@@ -112,6 +109,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 						prop.SetValue(Units, 0);
 					}
 				}
+
 				if (value == false)
 				{
 					Units?.CopyPropertiesValue(NamedUnits);
@@ -158,7 +156,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		}
 
 		#endregion
-
 
 		#region текущая вклкад
 
@@ -336,9 +333,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 
 			writer.WriteLine(JsonConvert.SerializeObject(IsRelative));
-			
+
 			var isRelative = IsRelative;
-			
+
 			if (IsRelative)
 			{
 				IsRelative = false;
@@ -599,6 +596,59 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			return SettingsWindow == null;
 		}
 
+
+		#endregion
+
+		#region открыть "о программе"
+
+		public ICommand OpenAboutCommand { get; } = new RelayCommand(OnOpenAboutCommandExecute);
+
+		private static void OnOpenAboutCommandExecute(object parameter)
+		{
+			var about = new AboutWindow
+			{
+				Owner = Application.Current.MainWindow,
+			};
+			about.ShowDialog();
+		}
+
+		#endregion
+
+		#region загрузилось окно
+
+		public ICommand WindowLoadedCommand { get; } = new RelayCommand(OnWindowLoadedCommandExecuteAsync);
+
+		private static async void OnWindowLoadedCommandExecuteAsync(object parameter)
+		{
+			await VersionController.DeleteTempFilesAsync();
+
+			VersionController.GetActualVersionAsync(null, NotifyAvailabilityUpdate, null);
+		}
+
+		/// <summary>
+		/// Уведомляет о наличии новой версии через 0,5 секунды после запуска программы.
+		/// </summary>
+		private static void NotifyAvailabilityUpdate()
+		{
+			Task.Factory.StartNew(() =>
+			{
+				Thread.Sleep(500);
+
+				Growl.Ask("Обнаружена новая версия программы. Вы хотите обновить?",
+					result =>
+					{
+						if (result)
+						{
+							VersionController.UpdateProgramAsync();
+
+							Dialog.Show(new LoadingPanel());
+						}
+
+						return true;
+					});
+			});
+
+		}
 
 		#endregion
 

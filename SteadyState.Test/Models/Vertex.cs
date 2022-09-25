@@ -28,6 +28,7 @@ namespace SteadyState.Test.Models
 		public Guid ShnId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public int Index { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public string VisualTitle { get; }
 		Guid IEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 	}
 }

@@ -78,4 +78,18 @@
 		</Setter>
 	</Style>
 
+
+    <Style TargetType="{x:Type c:LoadingPanel}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type c:LoadingPanel}">
+					<!--<Border VerticalAlignment="Center"
+					        Background="{DynamicResource PrimaryBrush}"
+					        CornerRadius="10">-->
+						<hc:LoadingCircle />
+					<!--</Border>-->
+				</ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

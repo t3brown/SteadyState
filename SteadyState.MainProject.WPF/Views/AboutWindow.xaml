@@ -1,0 +1,68 @@
+﻿<hc:Window x:Class="SteadyState.MainProject.WPF.Views.AboutWindow"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           xmlns:local="clr-namespace:SteadyState.MainProject.WPF.Views"
+           xmlns:hc="https://handyorg.github.io/handycontrol"
+           xmlns:vm="clr-namespace:SteadyState.MainProject.WPF.ViewModels"
+           mc:Ignorable="d"
+           Title="О программе"
+           ShowTitle="True"
+           BorderThickness="1"
+           BorderBrush="#262e2f"
+           ResizeMode="NoResize"
+           ShowInTaskbar="False"
+           WindowStartupLocation="CenterOwner"
+           Width="340"
+           Height="220">
+	<hc:Window.DataContext>
+		<vm:AboutViewModel/>
+	</hc:Window.DataContext>
+
+	<!--<hc:Interaction.Triggers>
+		<hc:EventTrigger EventName="Closing">
+			<hc:EventToCommand Command="{Binding WindowClosingCommand}"
+			                   PassEventArgsToCommand="True"/>
+		</hc:EventTrigger>
+	</hc:Interaction.Triggers>-->
+
+
+	<hc:SimplePanel>
+		<Image Source="/Resources/icon.png"
+			   Width="40" Height="40"
+			   VerticalAlignment="Top"
+			   Margin="0,16,0,0"/>
+
+		<StackPanel HorizontalAlignment="Center"
+		            VerticalAlignment="Top"
+		            Margin="0,64,0,0">
+
+			<TextBlock Text="{Binding AssemblyName}"
+			           FontSize="30"
+			           Foreground="{StaticResource PrimaryBrush}"
+			           VerticalAlignment="Top"
+			           HorizontalAlignment="Center"/>
+
+			<TextBlock Text="{Binding Version}"
+			           HorizontalAlignment="Center"
+			           Margin="0,10,0,0"
+			           Foreground="{StaticResource PrimaryBrush}"/>
+
+			<TextBlock Foreground="{StaticResource PrimaryBrush}"
+			           HorizontalAlignment="Center"
+			           Margin="0,0,0,0">
+				<Hyperlink Command="{Binding CheckUpdateCommand}"
+				           CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:AboutWindow}}}">
+					Проверить наличие обновлений
+				</Hyperlink>
+			</TextBlock>
+		</StackPanel>
+
+		<TextBlock Text="{Binding CopyRight}"
+		           HorizontalAlignment="Center"
+		           VerticalAlignment="Bottom"
+		           Margin="0,0,0,14"
+		           Foreground="{StaticResource ThirdlyTextBrush}"/>
+	</hc:SimplePanel>
+</hc:Window>

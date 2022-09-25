@@ -5,25 +5,34 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
-		<PackageIcon>12-02.png</PackageIcon>
-		<AssemblyVersion>1.0.1.0</AssemblyVersion>
+		<AssemblyVersion>1.0.1</AssemblyVersion>
 		<ApplicationIcon>1-02.ico</ApplicationIcon>
 		<AssemblyName>Steady-State ES</AssemblyName>
+		<FileVersion>$(AssemblyVersion)</FileVersion>
+		<Version>$(AssemblyVersion)</Version>
+		<SignAssembly>False</SignAssembly>
+		<Copyright>Copyright © khramtsov.k 2022</Copyright>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\icon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
+			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
+			<ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+		</Page>
+	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="1-02.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="..\..\..\Users\t3brown\OneDrive - vyatsu\сохр\док\12-02.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <PackageReference Include="HandyControls" Version="3.4.2" />
+	  <PackageReference Include="HandyControls.Lang.ru" Version="3.4.2" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 
@@ -33,6 +42,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Resources\icon.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Resources\Segoe-Fluent-Icons.ttf" />
 		<Resource Include="Resources\Segoe-UI-Variable-Static-Display.ttf" />
 	</ItemGroup>
