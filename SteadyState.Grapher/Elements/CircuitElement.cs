@@ -62,7 +62,17 @@ namespace SteadyState.Grapher.Elements
 		public static readonly DependencyProperty StrokeThicknessProperty = DependencyProperty.Register(
 			"StrokeThickness", typeof(double), typeof(CircuitElement), new PropertyMetadata(0.5));
 
-		private int _index;
+
+		public static readonly DependencyProperty FillProperty = DependencyProperty.Register(
+			nameof(Fill), typeof(Brush), typeof(CircuitElement), new PropertyMetadata(Brushes.Transparent));
+
+		public Brush Fill
+		{
+			get { return (Brush)GetValue(FillProperty); }
+			set { SetValue(FillProperty, value); }
+		}
+		
+		private protected int _index;
 
 		public double StrokeThickness
 		{
@@ -90,7 +100,6 @@ namespace SteadyState.Grapher.Elements
 				if (value == _index) return;
 				_index = value;
 				OnPropertyChanged();
-				OnPropertyChanged(VisualTitle);
 			}
 		}
 
@@ -105,15 +114,26 @@ namespace SteadyState.Grapher.Elements
 				if (_title == value) return;
 				_title = value;
 				OnPropertyChanged();
-				OnPropertyChanged(VisualTitle);
 			}
 		}
 
-		public string VisualTitle => $"{Index}. {Title}";
 
-		public CircuitElement()
+		public static readonly DependencyProperty IsCreatedByDataGridProperty = DependencyProperty.Register(nameof(IsCreatedByDataGrid), 
+			typeof(bool), 
+			typeof(CircuitElement),
+			new FrameworkPropertyMetadata(default(bool)));
+
+		[JsonProperty]
+		public bool IsCreatedByDataGrid
+		{
+			get { return (bool)GetValue(IsCreatedByDataGridProperty); }
+			set { SetValue(IsCreatedByDataGridProperty, value); }
+		}
+
+		protected CircuitElement()
 		{
 			MouseLeftButtonDown += CircuitElement_MouseLeftButtonDown;
+			Id = Guid.NewGuid();
 		}
 
 		private void CircuitElement_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

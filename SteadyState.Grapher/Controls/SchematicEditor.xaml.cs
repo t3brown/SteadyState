@@ -16,6 +16,9 @@ using SteadyState.Interfaces;
 using Point = System.Windows.Point;
 using Switch = SteadyState.Grapher.Elements.Switch;
 using System.Diagnostics;
+using SteadyState.Grapher.Helpers;
+using System.Windows.Media.Media3D;
+using Newtonsoft.Json.Linq;
 
 namespace SteadyState.Grapher.Controls
 {
@@ -50,14 +53,22 @@ namespace SteadyState.Grapher.Controls
 					_horizontaLine.Visibility = Visibility.Collapsed;
 					_verticalLine.Visibility = Visibility.Collapsed;
 
-					_currentElement.IsPreview = false;
-					_setCurrentElementPoint = null;
+					if (_currentElement != null)
+					{
+						_currentElement.IsPreview = false;
+						_setCurrentElementPoint = null;
+					}
+
 					_currentElement = null;
+
+					//Cursor = Cursors.Arrow;
 				}
 				if (value)
 				{
 					_horizontaLine.Visibility = Visibility.Visible;
 					_verticalLine.Visibility = Visibility.Visible;
+
+					//Cursor = Cursors.None;
 				}
 
 				_isDrawing = value;
@@ -111,7 +122,7 @@ namespace SteadyState.Grapher.Controls
 		#region Иcточник узлов.
 
 		public static readonly DependencyProperty VerticesSourceProperty = DependencyProperty.Register(
-			"VerticesSource", typeof(ICollection<IVertex>),
+			"VerticesSource", typeof(ICollection<Vertex>),
 			typeof(SchematicEditor),
 			new FrameworkPropertyMetadata(null,
 				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
@@ -123,7 +134,7 @@ namespace SteadyState.Grapher.Controls
 			{
 				if (d is SchematicEditor editor)
 				{
-					if (editor.VerticesSource is ObservableCollection<IVertex> vertices)
+					if (editor.VerticesSource is ObservableCollection<Vertex> vertices)
 					{
 						vertices.CollectionChanged += editor.VerticesSource_CollectionChanged;
 					}
@@ -131,9 +142,9 @@ namespace SteadyState.Grapher.Controls
 			}
 		}
 
-		public ICollection<IVertex>? VerticesSource
+		public ICollection<Vertex>? VerticesSource
 		{
-			get { return (ICollection<IVertex>)GetValue(VerticesSourceProperty); }
+			get { return (ICollection<Vertex>)GetValue(VerticesSourceProperty); }
 			set { SetValue(VerticesSourceProperty, value); }
 		}
 
@@ -142,7 +153,7 @@ namespace SteadyState.Grapher.Controls
 		#region Итсточник ветвей.
 
 		public static readonly DependencyProperty EdgesSourceProperty = DependencyProperty.Register(
-			"EdgesSource", typeof(ICollection<IEdge>),
+			"EdgesSource", typeof(ICollection<Edge>),
 			typeof(SchematicEditor),
 			new FrameworkPropertyMetadata(null,
 				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
@@ -154,7 +165,7 @@ namespace SteadyState.Grapher.Controls
 			{
 				if (d is SchematicEditor editor)
 				{
-					if (editor.EdgesSource is ObservableCollection<IEdge> edges)
+					if (editor.EdgesSource is ObservableCollection<Edge> edges)
 					{
 						edges.CollectionChanged += editor.EdgesSource_CollectionChanged;
 					}
@@ -162,9 +173,9 @@ namespace SteadyState.Grapher.Controls
 			}
 		}
 
-		public ICollection<IEdge>? EdgesSource
+		public ICollection<Edge>? EdgesSource
 		{
-			get { return (ICollection<IEdge>)GetValue(EdgesSourceProperty); }
+			get { return (ICollection<Edge>)GetValue(EdgesSourceProperty); }
 			set { SetValue(EdgesSourceProperty, value); }
 		}
 
@@ -216,8 +227,9 @@ namespace SteadyState.Grapher.Controls
 
 		private bool _isFirstLoaded = true;
 
+
 		private void SchematicEditor_Loaded(object sender, RoutedEventArgs e)
-		{ 
+		{
 			if (_isFirstLoaded)
 			{
 				ScrollViewer.ScrollToVerticalOffset(ScrollViewer.ScrollableHeight / 2);
@@ -227,90 +239,108 @@ namespace SteadyState.Grapher.Controls
 			}
 		}
 
+		//vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
 		private void VerticesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
-				if (e.NewItems != null)
+				if (e.NewItems?[0] is Vertex vertex)
 				{
-					if (e.NewItems[0] is Vertex vertex)
+					if (!string.IsNullOrEmpty(vertex.Title) && vertex.Title.Contains("temp"))
 					{
-						if (vertex.Name.Contains("temp"))
-						{
-							return;
-						}
-
-						try
-						{
-							Canvas.Children.Add(vertex);
-							Canvas.SetLeft(vertex, vertex.StartPoint.X);
-							Canvas.SetTop(vertex, vertex.StartPoint.Y);
-							vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
-							vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
-							vertex.OnSelectionChanged += OnSelectionChanged;
-						}
-						catch
-						{
-							return;
-						}
+						return;
 					}
+
+					//Нет на схеме и не создан через редактор
+					if (!Canvas.Children.Contains(vertex) && !vertex.IsCreatedByDataGrid)
+					{
+						Canvas.Children.Add(vertex);
+						Canvas.SetLeft(vertex, vertex.StartPoint.X);
+						Canvas.SetTop(vertex, vertex.StartPoint.Y);
+					}
+
+					if (!vertex.IsCreatedByDataGrid)
+					{
+						vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
+						vertex.OnSelectionChanged += OnSelectionChanged;
+					}
+
+					vertex.BasicVertexChanged += Vertex_BasicVertexChanged;
 				}
 			}
 
 			if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
-				if (e.OldItems == null)
+				if (e.OldItems?[0] is Vertex vertex)
 				{
-					return;
-				}
-
-				if (e.OldItems[0] is Vertex vertex)
-				{
-					if (vertex.Name.Contains("temp"))
+					if (Canvas.Children.Contains(vertex))
 					{
-						return;
+						Canvas.Children.Remove(vertex);
 					}
-
-					Canvas.Children.Remove(vertex);
 				}
 			}
 		}
 
+		private void Vertex_BasicVertexChanged(IVertex obj)
+		{
+			if (!obj.IsBasic)
+			{
+				BasicVertex = null;
+				//не передавая узел, сбрасывает IsConnected.
+				DepthFirstSearch.DFS();
+
+				return;
+			}
+
+			if (BasicVertex != null)
+			{
+				BasicVertex.IsBasic = false;
+			}
+
+			BasicVertex = obj;
+			DepthFirstSearch.DFS(BasicVertex);
+		}
 
 		private void EdgesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
-				if (e.NewItems != null)
+				if (e.NewItems?[0] is Edge edge)
 				{
-					if (e.NewItems[0] is Edge edge)
+					//Нет на схеме и не создан через редактор.
+					if (!Canvas.Children.Contains(edge) && !edge.IsCreatedByDataGrid)
 					{
-						try
-						{
-							Canvas.Children.Add(edge);
-							edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
-							edge.OnSelectionChanged += OnSelectionChanged;
-							edge.SwitchPositionChanged += Edge_OnSwitchPositionChanged;
-						}
-						catch
-						{
-							return;
-						}
+						Canvas.Children.Add(edge);
 					}
+
+					if (!edge.IsCreatedByDataGrid)
+					{
+						edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
+						edge.OnSelectionChanged += OnSelectionChanged;
+					}
+
+					edge.SwitchPositionChanged += Edge_OnSwitchPositionChanged;
+					edge.VertexChanged += Edge_VertexChanged;
 				}
 			}
 
 			if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
-				if (e.OldItems == null)
+				if (e.OldItems?[0] is Edge edge)
 				{
-					return;
+					if (Canvas.Children.Contains(edge))
+					{
+						Canvas.Children.Remove(edge);
+					}
 				}
+			}
+		}
 
-				if (e.OldItems[0] is Edge edge)
-				{
-					Canvas.Children.Remove(edge);
-				}
+		private static void Edge_VertexChanged()
+		{
+			if (BasicVertex != null)
+			{
+				DepthFirstSearch.DFS(BasicVertex);
 			}
 		}
 
@@ -324,7 +354,6 @@ namespace SteadyState.Grapher.Controls
 				if (VerticesSource != null)
 				{
 					VerticesSource.Add(vertex);
-					vertex.Index = VerticesSource.Max(a => a.Index) + 1;
 				}
 			}
 
@@ -334,20 +363,18 @@ namespace SteadyState.Grapher.Controls
 				if (EdgesSource != null)
 				{
 					EdgesSource.Add(edge);
-					edge.Index = EdgesSource.Max(a => a.Index) + 1;
 				}
 
 				edge.OldV1Id = edge.V1Id;
 				edge.OldV1 = edge.V1;
+
 				edge.OldV2Id = edge.V2Id;
 				edge.OldV2 = edge.V2;
 
-				edge.SwitchPositionChanged += Edge_OnSwitchPositionChanged;
-
-				//запускается поиск в глубину при добавлении новой ветви
-				if (edge.V1.IsConnected || edge.V2.IsConnected)
-					if (BasicVertex != null)
-						DepthFirstSearch.DFS(BasicVertex);
+				////запускается поиск в глубину при добавлении новой ветви
+				//if (edge.V1.IsConnected || edge.V2.IsConnected)
+				//	if (BasicVertex != null)
+				//		DepthFirstSearch.DFS(BasicVertex);
 
 			}
 		}
@@ -360,12 +387,13 @@ namespace SteadyState.Grapher.Controls
 					switch (sw)
 					{
 						case Switch.Q1:
-							VerticesSource?.Remove(edge.V1);
+							VerticesSource?.Remove((Vertex)edge.V1);
 							edge.V1Id = edge.OldV1Id;
 							edge.V1 = edge.OldV1;
 							break;
+
 						case Switch.Q2:
-							VerticesSource?.Remove(edge.V2);
+							VerticesSource?.Remove((Vertex)edge.V2);
 							edge.V2Id = edge.OldV2Id;
 							edge.V2 = edge.OldV2;
 							break;
@@ -373,20 +401,21 @@ namespace SteadyState.Grapher.Controls
 					break;
 
 				case SwitchPosition.Off:
-					var vertex = new Vertex() { Id = Guid.NewGuid() };
+					var vertex = new Vertex();
 					switch (sw)
 					{
 						case Switch.Q1:
 							edge.OldV1Id = edge.V1Id;
 							edge.OldV1 = edge.V1;
+							VerticesSource?.Add(vertex);
 
-							if (edge.OldV2.IsGround)
+							if (edge.V2.IsGround)
 							{
 								vertex.VoltNom = edge.OldV1.VoltNom;
 							}
 							else
 							{
-								vertex.VoltNom = edge.U1 is null && edge.U2 is null ? edge.OldV2.VoltNom : edge.OldV2.VoltNom * edge.U1 / edge.U2;
+								vertex.VoltNom = edge.U1 is null && edge.U2 is null ? edge.V2.VoltNom : edge.V2.VoltNom * edge.U1 / edge.U2;
 							}
 
 							edge.V1Id = vertex.Id;
@@ -398,14 +427,15 @@ namespace SteadyState.Grapher.Controls
 						case Switch.Q2:
 							edge.OldV2Id = edge.V2Id;
 							edge.OldV2 = edge.V2;
+							VerticesSource?.Add(vertex);
 
-							if (edge.OldV1.IsGround)
+							if (edge.V1.IsGround)
 							{
 								vertex.VoltNom = edge.OldV2.VoltNom;
 							}
 							else
 							{
-								vertex.VoltNom = edge.U1 is null && edge.U2 is null ? edge.OldV1.VoltNom : edge.OldV1.VoltNom * edge.U2 / edge.U1;
+								vertex.VoltNom = edge.U1 is null && edge.U2 is null ? edge.V1.VoltNom : edge.V1.VoltNom * edge.U2 / edge.U1;
 							}
 
 							edge.V2Id = vertex.Id;
@@ -415,14 +445,14 @@ namespace SteadyState.Grapher.Controls
 							break;
 					}
 
-					VerticesSource?.Add(vertex);
 					break;
 			}
-			//запускается поиск в глубину при переключениях 
-			if (BasicVertex != null)
-			{
-				DepthFirstSearch.DFS(BasicVertex);
-			}
+
+			////запускается поиск в глубину при переключениях 
+			//if (BasicVertex != null)
+			//{
+			//	DepthFirstSearch.DFS(BasicVertex);
+			//}
 		}
 
 		#region zoom and sroll
@@ -431,10 +461,10 @@ namespace SteadyState.Grapher.Controls
 		{
 			if (_lastDragPoint.HasValue)
 			{
-				Point posNow = e.GetPosition(ScrollViewer);
+				var posNow = e.GetPosition(ScrollViewer);
 
-				double dX = posNow.X - _lastDragPoint.Value.X;
-				double dY = posNow.Y - _lastDragPoint.Value.Y;
+				var dX = posNow.X - _lastDragPoint.Value.X;
+				var dY = posNow.Y - _lastDragPoint.Value.Y;
 
 				_lastDragPoint = posNow;
 
@@ -518,7 +548,7 @@ namespace SteadyState.Grapher.Controls
 					{
 						var centerOfViewport =
 							new Point(ScrollViewer.ViewportWidth / 2, ScrollViewer.ViewportHeight / 2);
-						Point centerOfTargetNow = ScrollViewer.TranslatePoint(centerOfViewport, Grid);
+						var centerOfTargetNow = ScrollViewer.TranslatePoint(centerOfViewport, Grid);
 
 						targetBefore = _lastCenterPositionOnTarget;
 						targetNow = centerOfTargetNow;
@@ -534,14 +564,14 @@ namespace SteadyState.Grapher.Controls
 
 				if (targetBefore.HasValue)
 				{
-					double dXInTargetPixels = targetNow.Value.X - targetBefore.Value.X;
-					double dYInTargetPixels = targetNow.Value.Y - targetBefore.Value.Y;
+					var dXInTargetPixels = targetNow.Value.X - targetBefore.Value.X;
+					var dYInTargetPixels = targetNow.Value.Y - targetBefore.Value.Y;
 
-					double multiplicatorX = e.ExtentWidth / Grid.Width;
-					double multiplicatorY = e.ExtentHeight / Grid.Height;
+					var multiplicatorX = e.ExtentWidth / Grid.Width;
+					var multiplicatorY = e.ExtentHeight / Grid.Height;
 
-					double newOffsetX = ScrollViewer.HorizontalOffset - dXInTargetPixels * multiplicatorX;
-					double newOffsetY = ScrollViewer.VerticalOffset - dYInTargetPixels * multiplicatorY;
+					var newOffsetX = ScrollViewer.HorizontalOffset - dXInTargetPixels * multiplicatorX;
+					var newOffsetY = ScrollViewer.VerticalOffset - dYInTargetPixels * multiplicatorY;
 
 					if (double.IsNaN(newOffsetX) || double.IsNaN(newOffsetY))
 					{
@@ -556,14 +586,39 @@ namespace SteadyState.Grapher.Controls
 
 		#endregion
 
+		/// <summary>
+		/// Объект, по которому попал луч (вершина)
+		/// </summary>
+		private DependencyObject? _hitObject;
+
 		private void Canvas_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			//отмена выделения выбраного элемента, при условии что элемент не был выбран только что
-			if (_canResetSelection)
-				ResetSelectedElement();
-			_canResetSelection = true;
+			VisualTreeHelper.HitTest(Canvas,
+				VertexHitTestFilter,
+				MyHitTestResult,
+				new PointHitTestParameters(new Point(_verticalLine.X1, _horizontaLine.Y1)));
 
-			//выполняется в том сулчае, если есть текущий элемент для редактирования и для него задана начальная точка
+
+			if (_hitObject is Vertex hetVertex)
+			{
+				_hitObject = null;
+
+				if (SetVerticesForEdge(hetVertex))
+				{
+					//выход из метода если узел установился.
+					return;
+				}
+			}
+
+			if (_currentElement == null)
+			{
+				//отмена выделения выбранного элемента, при условии что элемент не был выбран только что
+				if (_canResetSelection)
+					ResetSelectedElement();
+				_canResetSelection = true;
+			}
+
+			//выполняется в том случае, если есть текущий элемент для редактирования и для него задана начальная точка
 			if (_currentElement != null && _setCurrentElementPoint.HasValue)
 			{
 				//если это вершина, то редактирование прекращается
@@ -572,7 +627,7 @@ namespace SteadyState.Grapher.Controls
 					IsDrawing = false;
 					OnElementAdd?.Invoke(vertex);
 				}
-				//если это ветвь, то добавляется следующая точка, а предыдущая становистя начальной
+				//если это ветвь, то добавляется следующая точка, а предыдущая становится начальной
 				if (_currentElement is Edge edge)
 				{
 					edge.PointCollection.Add(new Point(_verticalLine.X1, _horizontaLine.Y1));
@@ -591,7 +646,36 @@ namespace SteadyState.Grapher.Controls
 			}
 		}
 
-		private void Vertex_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		private HitTestFilterBehavior VertexHitTestFilter(DependencyObject obj)
+		{
+			// Test for the object value you want to filter.
+			if (obj.GetType() == typeof(Vertex))
+			{
+				_hitObject = obj;
+
+				// Visual object and descendants are NOT part of hit test results enumeration.
+				return HitTestFilterBehavior.Stop;
+			}
+
+			// Visual object is part of hit test results enumeration.
+			return HitTestFilterBehavior.ContinueSkipSelf;
+		}
+
+		private HitTestResultBehavior MyHitTestResult(HitTestResult result)
+		{
+			// Add the hit test result to the list that will be processed after the enumeration.
+			//_hitResultsList.Add(result.VisualHit);
+
+			// Set the behavior to return visuals at all z-order levels.
+			return HitTestResultBehavior.Continue;
+		}
+
+		/// <summary>
+		/// Устанавливает узлы для ветви.
+		/// </summary>
+		/// <param name="vertex">Узел.</param>
+		/// <returns>true, если установился узел, иначе false</returns>
+		private bool SetVerticesForEdge(Vertex vertex)
 		{
 			//если имеется элемент для редактирования и для него задана начальная точка
 			if (_currentElement != null && _setCurrentElementPoint.HasValue)
@@ -599,24 +683,28 @@ namespace SteadyState.Grapher.Controls
 				//если этот элемент ветвь, то редактирование прекращается
 				if (_currentElement is Edge edge)
 				{
-					if (sender is Vertex vertex)
+					if (edge.V1Id != vertex.Id)
 					{
-						if (edge.V1Id != vertex.Id)
+						//если последняя точка ветви не равняется точке курса, то добавляется конечная точка в позиции курсора
+						if (edge.PointCollection[^1] != new Point(_verticalLine.X1, _horizontaLine.Y1))
 						{
-							//если последняя точка ветви не равняется точке курса, то добавляется конечная точка в поцизии курсора
-							if (edge.PointCollection[^1] != new Point(_verticalLine.X1, _horizontaLine.Y1))
-							{
-								edge.PointCollection.Add(new Point(_verticalLine.X1, _horizontaLine.Y1));
-							}
-
-							edge.V2Id = vertex.Id;
-							edge.V2 = vertex;
-
-							IsDrawing = false;
-
-							OnElementAdd?.Invoke(edge);
+							edge.PointCollection.Add(new Point(_verticalLine.X1, _horizontaLine.Y1));
 						}
+
+						edge.V2Id = vertex.Id;
+						edge.V2 = vertex;
+
+						OnElementAdd?.Invoke(edge);
+						IsDrawing = false;
+
+						if (BasicVertex != null)
+						{
+							DepthFirstSearch.DFS(BasicVertex);
+						}
+
+						return true;
 					}
+
 				}
 			}
 			//если имеется элемент для редактирования и для него не задана начальная точка
@@ -625,21 +713,23 @@ namespace SteadyState.Grapher.Controls
 				//если этот элемент ветвь, то для нее добавляется точка в позиции курсора, а предыдущая точка становится начальной
 				if (_currentElement is Edge edge)
 				{
-					if (sender is Vertex vertex)
-					{
-						edge.PointCollection.Add(new Point(_verticalLine.X1, _horizontaLine.Y1));
-						_setCurrentElementPoint = edge.PointCollection[^2];
+					edge.PointCollection.Add(new Point(_verticalLine.X1, _horizontaLine.Y1));
+					_setCurrentElementPoint = edge.PointCollection[^2];
 
-						edge.V1Id = vertex.Id;
-						edge.V1 = vertex;
-					}
+					edge.V1Id = vertex.Id;
+					edge.V1 = vertex;
+
+					return true;
+
 				}
 			}
+
+			return false;
 		}
 
 		private void Canvas_OnMouseMove(object sender, MouseEventArgs e)
 		{
-			Point mousePosition = e.GetPosition(Canvas);
+			var mousePosition = e.GetPosition(Canvas);
 			_horizontaLine.Y1 = Round(mousePosition.Y) + 5;
 			_horizontaLine.Y2 = Round(mousePosition.Y) + 5;
 			_verticalLine.X1 = Round(mousePosition.X) + 5;
@@ -649,8 +739,8 @@ namespace SteadyState.Grapher.Controls
 			 изменение положения курсора относительно начальной точки */
 			if (_currentElement != null && _setCurrentElementPoint.HasValue)
 			{
-				double dX = _verticalLine.X1 - _setCurrentElementPoint.Value.X - 5;
-				double dY = _horizontaLine.Y1 - _setCurrentElementPoint.Value.Y - 5;
+				var dX = _verticalLine.X1 - _setCurrentElementPoint.Value.X - 5;
+				var dY = _horizontaLine.Y1 - _setCurrentElementPoint.Value.Y - 5;
 				//если этот элемент вершина, то вычилсяется ее ширина
 				if (_currentElement is Vertex vertex)
 				{
@@ -732,16 +822,15 @@ namespace SteadyState.Grapher.Controls
 			IsDrawing = true;
 			var vertex = new Vertex()
 			{
-				Id = Guid.NewGuid(),
 				Width = 10,
-				IsPreview = true
+				IsPreview = true,
 			};
 			_currentElement = vertex;
 			Canvas.SetTop(vertex, _horizontaLine.Y1 - 5);
 			Canvas.SetLeft(vertex, _verticalLine.X1 - 5);
-			vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
-			vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
-			vertex.OnSelectionChanged += OnSelectionChanged;
+			//vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
+			//vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
+			//vertex.OnSelectionChanged += OnSelectionChanged;
 
 			Canvas.Children.Add(vertex);
 		}
@@ -752,13 +841,13 @@ namespace SteadyState.Grapher.Controls
 			IsDrawing = true;
 			var edge = new Edge()
 			{
-				Id = Guid.NewGuid(),
-				IsPreview = true
+				IsPreview = true,
 			};
 			_currentElement = edge;
 			edge.PointCollection.Add(new Point(_verticalLine.X1, _horizontaLine.Y1));
-			edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown; ;
-			edge.OnSelectionChanged += OnSelectionChanged;
+			//edge.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown; ;
+			//edge.OnSelectionChanged += OnSelectionChanged;
+			//edge.VertexChanged += Edge_VertexChanged;
 
 			Canvas.Children.Add(edge);
 		}

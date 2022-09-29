@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using HandyControl.Controls;
@@ -34,12 +36,12 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// <summary>
 		/// Коллекция Вершин.
 		/// </summary>
-		public ICollection<IVertex> Vertices { get; set; }
+		public ICollection<Vertex> Vertices { get; set; }
 
 		/// <summary>
 		/// Коллекция Ветвей.
 		/// </summary>
-		public ICollection<IEdge> Edges { get; set; }
+		public ICollection<Edge> Edges { get; set; }
 
 		/// <summary>
 		/// Коллекция СХН.
@@ -502,7 +504,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 				if (basicVertex != null)
 				{
-					DepthFirstSearch.DFS(basicVertex);
+					//DepthFirstSearch.DFS(basicVertex);
 				}
 			}
 			catch
@@ -652,6 +654,64 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		#endregion
 
+		#region команда выбора узла
+
+		public ICommand OpenVertexSelectionWindowCommand { get; }
+
+		private void OnOpenSelectionWindowCommandExecute(object parameters)
+		{
+			var objects = (object[])parameters;
+
+			if (objects[0] is not IEdge edge) return;
+
+			var window = new VertexSelectionWindow()
+			{
+				DataContext = this,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner,
+				Edge = edge,
+				VertexType = (string)objects[1],
+				Owner = (Window)objects[2],
+			};
+
+			window.Show();
+		}
+
+		#endregion
+
+		#region добавлена новая ветвь в таблицу
+
+		public ICommand AddingNewEdgeDataGridCommand { get; } = new RelayCommand(OnAddingNewEdgeDataGridCommandExecute);
+
+		private static void OnAddingNewEdgeDataGridCommandExecute(object obj)
+		{
+			if (obj is AddingNewItemEventArgs e)
+			{
+				e.NewItem = new Edge
+				{
+					IsCreatedByDataGrid = true,
+				};
+			}
+		}
+
+		#endregion
+
+		#region добавлен новый узел в таблицу
+
+		public ICommand AddingNewVertexDataGridCommand { get; } = new RelayCommand(OnAddingNewVertexDataGridCommandExecute);
+
+		private static void OnAddingNewVertexDataGridCommandExecute(object obj)
+		{
+			if (obj is AddingNewItemEventArgs e)
+			{
+				e.NewItem = new Vertex()
+				{
+					IsCreatedByDataGrid = true,
+				};
+			}
+		}
+
+		#endregion
+
 		#endregion
 
 		#region поля
@@ -681,8 +741,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 			LoadDefaultSettings();
 
-			Vertices = new ObservableCollection<IVertex>();
-			Edges = new ObservableCollection<IEdge>();
+			Vertices = new ObservableCollection<Vertex>();
+			Edges = new ObservableCollection<Edge>();
 			Shns = new ObservableCollection<Shn>();
 			Rpns = new ObservableCollection<Rpn>();
 			CalculateSteadyState.SetCollections(Vertices, Edges);
@@ -697,6 +757,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 			OpenShnSelectionWindowCommand = new RelayCommand(OnOpenShnSelectionWindowCommandExecute);
 			OpenRpnSelectionWindowCommand = new RelayCommand(OnOpenRpnSelectionWindowCommandExecute);
+			OpenVertexSelectionWindowCommand = new RelayCommand(OnOpenSelectionWindowCommandExecute);
 		}
 
 

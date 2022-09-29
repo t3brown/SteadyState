@@ -5,25 +5,29 @@ namespace SteadyState
 {
 	public static class DepthFirstSearch
 	{
-		public static void DFS(IVertex startVertex)
+		public static void DFS(IVertex? startVertex = null)
 		{
-			foreach (IVertex vertex in _vertices)
+			foreach (var vertex in _vertices)
 			{
 				vertex.IsConnected = false;
 			}
 
-			foreach (IEdge edge in _edges)
+			foreach (var edge in _edges)
 			{
 				edge.IsConnected = false;
 			}
-			DFSUtil(startVertex);
+
+			if (startVertex != null)
+			{
+				DFSUtil(startVertex);
+			}
 		}
 
 		private static void DFSUtil(IVertex vertex)
 		{
 			vertex.IsConnected = true;
-			IEnumerable<IEdge> edges = _edges.Where(o => o.V1Id == vertex.Id || o.V2Id == vertex.Id);
-			foreach (IEdge edge in edges)
+			var edges = _edges.Where(o => o.V1Id == vertex.Id || o.V2Id == vertex.Id);
+			foreach (var edge in edges)
 			{
 				var neighbor = _vertices.FirstOrDefault(o => !o.IsConnected && (o.Id == edge.V1Id || o.Id == edge.V2Id));
 				if (neighbor != null)
@@ -38,10 +42,17 @@ namespace SteadyState
 
 					DFSUtil(neighbor);
 				}
-				var V1 = _vertices.FirstOrDefault(o => o.Id == edge.V1Id);
-				var V2 = _vertices.FirstOrDefault(o => o.Id == edge.V2Id);
-				if (V1.IsConnected || V2.IsConnected)
+				//var V1 = _vertices.FirstOrDefault(o => o.Id == edge.V1Id);
+				//var V2 = _vertices.FirstOrDefault(o => o.Id == edge.V2Id);
+				//if (edge.V1 == null || edge.V2 == null)
+				//{
+				//	return;
+				//}
+
+				if (edge.V1 is { IsConnected: true } || edge.V2 is { IsConnected: true })
+				{
 					edge.IsConnected = true;
+				}
 			}
 		}
 	}

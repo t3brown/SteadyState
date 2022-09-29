@@ -50,11 +50,13 @@ namespace SteadyState
 
 		public static bool Calculate(float eps, int count = 100)
 		{
+			var basic = _vertices.FirstOrDefault(o => o.IsBasic);
+
+
 			//Выделяются узлы и ветви, подключеннык базису.
 			vertices = _vertices.Where(a => a.IsConnected).ToList();
 			edges = _edges.Where(a => a.IsConnected).ToList();
 
-			var basic = vertices.FirstOrDefault(o => o.IsBasic);
 			if (basic is null)
 			{
 				return false; //если отсутсвует базисный узел

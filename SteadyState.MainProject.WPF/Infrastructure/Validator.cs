@@ -14,7 +14,7 @@ namespace SteadyState.MainProject.WPF.Infrastructure
 {
 	public static class Validator
 	{
-		public static bool IsConditionsNotCompleted(ICollection<IVertex> vertices, ICollection<IEdge> edges,
+		public static bool IsConditionsNotCompleted(ICollection<Vertex> vertices, ICollection<Edge> edges,
 			bool isRelative)
 		{
 

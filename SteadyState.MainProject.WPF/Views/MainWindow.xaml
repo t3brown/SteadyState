@@ -5,12 +5,14 @@
 		   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		   xmlns:viewModels="clr-namespace:SteadyState.MainProject.WPF.ViewModels"
-		   xmlns:converters="clr-namespace:SteadyState.MainProject.WPF.Converters"
+		   xmlns:cv="clr-namespace:SteadyState.MainProject.WPF.Converters"
 		   xmlns:infrastructure="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
 		   xmlns:grapher="clr-namespace:SteadyState.Grapher.Controls;assembly=SteadyState.Grapher"
 		   xmlns:c="clr-namespace:SteadyState.MainProject.WPF.Components"
 		   xmlns:helpers="clr-namespace:SteadyState.Grapher.Helpers;assembly=SteadyState.Grapher"
 		   xmlns:elements="clr-namespace:SteadyState.Grapher.Elements;assembly=SteadyState.Grapher"
+		   xmlns:selectors="clr-namespace:SteadyState.MainProject.WPF.Components.Helpers"
+		   xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 		   mc:Ignorable="d"
 		   WindowStartupLocation="CenterScreen"
 		   Background="{DynamicResource RegionBrush}"
@@ -91,12 +93,12 @@
 
 	<hc:Window.Resources>
 
-		<converters:DoubleConverter Units="{Binding Units}"
+		<cv:DoubleConverter Units="{Binding Units}"
 									DisplayPrecision="{Binding DisplayPrecision}"
 									IsRelative="{Binding IsRelative}"
 									x:Key="DoubleConverter"/>
 
-		<converters:UnitsConverter x:Key="UnitsConverter"/>
+		<cv:UnitsConverter x:Key="UnitsConverter"/>
 
 	</hc:Window.Resources>
 
@@ -247,8 +249,9 @@
 				<infrastructure:BindingProxy x:Key="PwrDltReCheckedProxy" Data="{Binding EnableColumns.PwrDltRe}"/>
 				<infrastructure:BindingProxy x:Key="PwrDltImCheckedProxy" Data="{Binding EnableColumns.PwrDltIm}"/>
 
-				<converters:MultiBindingConverter x:Key="MultiBindingConverter"/>
-				<converters:RpnConverter x:Key="RpnConverter"/>
+				<cv:MultiBindingConverter x:Key="MultiBindingConverter"/>
+				<cv:RpnConverter x:Key="RpnConverter"/>
+				<cv:VisualTitleMultiBindingConverter x:Key="VisualTitleMultiBindingConverter"/>
 
 
 				<Grid x:Key="SchematicEditor">
@@ -277,10 +280,16 @@
 
 									<c:PropertyEditor Title="СХН"
 	                                              Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource ShnCheckedProxy}}" 
-	                                              Value="{Binding Path= Shn.VisualTitle, Mode=OneWay}"
 	                                              MouseDoubleClickCommand="{Binding DataContext.OpenShnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
 	                                              MouseDoubleClickCommandParameter="{Binding DataContext.SelectedElement, RelativeSource={RelativeSource AncestorType=Window}}"
-	                                              IsReadOnly="True"/>
+	                                              IsReadOnly="True">
+										<c:PropertyEditor.Value>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Shn.Index" Mode="OneWay"/>
+												<Binding Path="Shn.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</c:PropertyEditor.Value>
+									</c:PropertyEditor>
 
 									<c:PropertyEditor Title="{Binding DataContext.Units.PowerRe, StringFormat= 'Pнагр, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 	                                              Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PowerReCheckedProxy}}" 
@@ -341,13 +350,25 @@
 
 									<c:PropertyEditor Title="Начало"
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V1CheckedProxy}}" 
-								                  Value="{Binding Path=V1.VisualTitle, Mode=OneWay}"
-								                  IsReadOnly="True"/>
+								                  IsReadOnly="True">
+										<c:PropertyEditor.Value>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="V1.Index" Mode="OneWay"/>
+												<Binding Path="V1.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</c:PropertyEditor.Value>
+									</c:PropertyEditor>
 
 									<c:PropertyEditor Title="Конец"
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V2CheckedProxy}}" 
-								                  Value="{Binding Path=V2.VisualTitle, Mode=OneWay}"
-								                  IsReadOnly="True"/>
+								                  IsReadOnly="True">
+										<c:PropertyEditor.Value>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="V2.Index" Mode="OneWay"/>
+												<Binding Path="V2.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</c:PropertyEditor.Value>
+									</c:PropertyEditor>
 
 									<c:PropertyEditor Title="{Binding DataContext.Units.R, StringFormat= 'R, {0}', RelativeSource={RelativeSource AncestorType={x:Type Window}}, Converter={StaticResource UnitsConverter}}"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource RCheckedProxy}}" 
@@ -375,7 +396,6 @@
 
 									<c:PropertyEditor Title="РПН перв."
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Rpn1CheckedProxy}}" 
-								                  Value="{Binding Path= Rpn1.VisualTitle, Mode=OneWay}"
 								                  MouseDoubleClickCommand="{Binding DataContext.OpenRpnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
 								                  IsReadOnly="True">
 										<c:PropertyEditor.MouseDoubleClickCommandParameter>
@@ -384,11 +404,16 @@
 												<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn1"/>
 											</MultiBinding>
 										</c:PropertyEditor.MouseDoubleClickCommandParameter>
+										<c:PropertyEditor.Value>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Rpn1.Index" Mode="OneWay"/>
+												<Binding Path="Rpn1.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</c:PropertyEditor.Value>
 									</c:PropertyEditor>
 
 									<c:PropertyEditor Title="РПН втор."
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource Rpn2CheckedProxy}}" 
-								                  Value="{Binding Path= Rpn2.VisualTitle, Mode=OneWay}"
 								                  MouseDoubleClickCommand="{Binding DataContext.OpenRpnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
 								                  IsReadOnly="True">
 										<c:PropertyEditor.MouseDoubleClickCommandParameter>
@@ -397,6 +422,12 @@
 												<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn2"/>
 											</MultiBinding>
 										</c:PropertyEditor.MouseDoubleClickCommandParameter>
+										<c:PropertyEditor.Value>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Rpn2.Index" Mode="OneWay"/>
+												<Binding Path="Rpn2.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</c:PropertyEditor.Value>
 									</c:PropertyEditor>
 
 									<c:PropertyEditor Title="Kʹ"
@@ -514,15 +545,22 @@
 				          Style="{StaticResource DataGrid.Small}"
 				          ItemsSource="{Binding Vertices}"
 				          AutoGenerateColumns="False"
+						  CanUserAddRows="True"
 				          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 				          HeadersVisibility="Column"
 				          CanUserDeleteRows="True">
 
-					<DataGrid.Resources>
-						<CollectionViewSource Source="{Binding Shns}" x:Key="SHNs"/>
-					</DataGrid.Resources>
+					<hc:Interaction.Triggers>
+						<hc:EventTrigger EventName="AddingNewItem">
+							<hc:EventToCommand Command="{Binding DataContext.AddingNewVertexDataGridCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}} }"
+							                   PassEventArgsToCommand="True"/>
+						</hc:EventTrigger>
+					</hc:Interaction.Triggers>
 
 					<DataGrid.Columns>
+
+						<DataGridCheckBoxColumn Header="В сети"
+						                        Binding="{Binding IsConnected, Mode=OneWay}"/>
 
 						<DataGridTextColumn Header="Номер"
 						                    Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexIndexCheckedProxy}}" 
@@ -562,13 +600,19 @@
                                 Header="СХН" Width="100" SortMemberPath="Shn" CanUserSort="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding Path=Shn.VisualTitle, Mode=OneWay}"/>
+									<TextBlock>
+										<TextBlock.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Shn.Index" Mode="OneWay"/>
+												<Binding Path="Shn.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBlock.Text>
+									</TextBlock>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 							<DataGridTemplateColumn.CellEditingTemplate>
 								<DataTemplate>
-									<TextBox Text="{Binding Path=Shn.VisualTitle, Mode=OneWay}"
-									         Style="{StaticResource TextBox.Small}"
+									<TextBox Style="{StaticResource TextBox.Small}"
 									         IsReadOnly="True">
 										<hc:Interaction.Triggers>
 											<hc:EventTrigger EventName="MouseDoubleClick">
@@ -576,6 +620,12 @@
 												                   CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
 											</hc:EventTrigger>
 										</hc:Interaction.Triggers>
+										<TextBox.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Shn.Index" Mode="OneWay"/>
+												<Binding Path="Shn.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBox.Text>
 									</TextBox>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellEditingTemplate>
@@ -665,18 +715,59 @@
 
 				</DataGrid>
 
+				<CollectionViewSource x:Key="EdgesSource" Source="{Binding Edges}">
+					<CollectionViewSource.GroupDescriptions>
+						<PropertyGroupDescription PropertyName="IsCreatedByDataGrid"/>
+					</CollectionViewSource.GroupDescriptions>
+
+					<CollectionViewSource.SortDescriptions>
+						<scm:SortDescription PropertyName="IsCreatedByDataGrid" Direction="Ascending"/>
+					</CollectionViewSource.SortDescriptions>
+				</CollectionViewSource>
+
 				<DataGrid x:Key="EdgesGrid"
-				          ItemsSource="{Binding Edges}"
-						  Style="{StaticResource DataGrid.Small}"
-				          AutoGenerateColumns="False"
-				          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
-				          HeadersVisibility="Column"
-				          CanUserDeleteRows="True">
+					          ItemsSource="{Binding Source={StaticResource EdgesSource}}"
+					          Style="{StaticResource DataGrid.Small}"
+					          AutoGenerateColumns="False"
+					          CanUserAddRows="True"
+					          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
+					          HeadersVisibility="Column"
+					          CanUserDeleteRows="True">
 
-					<DataGrid.Resources>
+					<hc:Interaction.Triggers>
+						<hc:EventTrigger EventName="AddingNewItem">
+							<hc:EventToCommand Command="{Binding DataContext.AddingNewEdgeDataGridCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}} }"
+							                   PassEventArgsToCommand="True"/>
+						</hc:EventTrigger>
+					</hc:Interaction.Triggers>
 
+					<DataGrid.GroupStyle>
+						<GroupStyle>
+							<GroupStyle.ContainerStyle>
+								<Style TargetType="{x:Type GroupItem}">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate TargetType="{x:Type GroupItem}">
 
-					</DataGrid.Resources>
+												<GroupBox Header="Свойства"
+												          Padding="1"
+												          HorizontalContentAlignment="Left"
+												          Style="{StaticResource GroupBoxTab}">
+
+													<Border BorderBrush="{DynamicResource BorderBrush}"
+													        CornerRadius="0,0,4,4">
+
+														<ItemsPresenter/>
+
+													</Border>
+												</GroupBox>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+								</Style>
+							</GroupStyle.ContainerStyle>
+						</GroupStyle>
+					</DataGrid.GroupStyle>
 
 
 					<DataGrid.RowDetailsTemplate>
@@ -697,26 +788,182 @@
                                                                VisibilityPwrStRe="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrStReCheckedProxy}}"
                                                                VisibilityPwrStIm="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrStImCheckedProxy}}"
                                                                VisibilityPwrEndRe="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrEndReCheckedProxy}}"
-                                                               VisibilityPwrEndIm="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrEndImCheckedProxy}}"
-                                                               />
+                                                               VisibilityPwrEndIm="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource PwrEndImCheckedProxy}}"/>
 						</DataTemplate>
 					</DataGrid.RowDetailsTemplate>
 
 					<DataGrid.Columns>
 
+						<DataGridCheckBoxColumn Header="В сети"
+						                        Binding="{Binding IsConnected, Mode=OneWay}"/>
+
 						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeIndexCheckedProxy}}"
-                                Header="Номер" Width="100" Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus}"/>
+						                    Header="Номер" Width="100" Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus}"/>
 
 						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeTitleCheckedProxy}}"
                                 Header="Название" Width="100" Binding="{Binding Path=Title,UpdateSourceTrigger=LostFocus}"/>
 
-						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V1CheckedProxy}}"
-						                    Header="Начало" Width="100" Binding="{Binding Path=V1.VisualTitle, Mode=OneWay}"
-						                    IsReadOnly="True"/>
+						<DataGridCheckBoxColumn Header="Q1"
+					                        Binding="{Binding On1, UpdateSourceTrigger=PropertyChanged}"/>
 
-						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V2CheckedProxy}}"
-						                    Header="Конец" Width="100" Binding="{Binding Path=V2.VisualTitle, Mode=OneWay}"
-						                    IsReadOnly="True"/>
+						<DataGridTemplateColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V1CheckedProxy}}"
+						                        Header="Начало" Width="100" SortMemberPath="V1" CanUserSort="True">
+
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock>
+										<TextBlock.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="V1.Index" Mode="OneWay"/>
+												<Binding Path="V1.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBlock.Text>
+									</TextBlock>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+
+							<DataGridTemplateColumn.CellEditingTemplate>
+								<DataTemplate>
+									<ContentControl>
+										<ContentControl.Style>
+											<Style TargetType="{x:Type ContentControl}">
+
+												<Setter Property="Template">
+													<Setter.Value>
+														<ControlTemplate TargetType="{x:Type ContentControl}">
+															<Grid>
+																<TextBlock x:Name="TextBlock"
+																           Visibility="Collapsed">
+																	<TextBlock.Text>
+																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+																			<Binding Path="V1.Index" Mode="OneWay"/>
+																			<Binding Path="V1.Title" Mode="OneWay"/>
+																		</MultiBinding>
+																	</TextBlock.Text>
+																</TextBlock>
+
+																<TextBox Style="{StaticResource TextBox.Small}"
+																	     IsReadOnly="True"
+																	     x:Name="TextBox">
+																	<hc:Interaction.Triggers>
+																		<hc:EventTrigger EventName="MouseDoubleClick">
+																			<hc:EventToCommand Command="{Binding DataContext.OpenVertexSelectionWindowCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}} }">
+																				<hc:EventToCommand.CommandParameter>
+																					<MultiBinding Converter="{StaticResource MultiBindingConverter}">
+																						<Binding/>
+																						<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="V1"/>
+																						<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
+																					</MultiBinding>
+																				</hc:EventToCommand.CommandParameter>
+																			</hc:EventToCommand>
+																		</hc:EventTrigger>
+																	</hc:Interaction.Triggers>
+																	<TextBox.Text>
+																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+																			<Binding Path="V1.Index" Mode="OneWay"/>
+																			<Binding Path="V1.Title" Mode="OneWay"/>
+																		</MultiBinding>
+																	</TextBox.Text>
+																</TextBox>
+															</Grid>
+
+															<ControlTemplate.Triggers>
+																<DataTrigger Binding="{Binding IsCreatedByDataGrid}" Value="False">
+																	<Setter TargetName="TextBlock" Property="Visibility" Value="Visible"/>
+																	<Setter TargetName="TextBox" Property="Visibility" Value="Collapsed"/>
+																</DataTrigger>
+															</ControlTemplate.Triggers>
+														</ControlTemplate>
+													</Setter.Value>
+												</Setter>
+											</Style>
+										</ContentControl.Style>
+									</ContentControl>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellEditingTemplate>
+
+						</DataGridTemplateColumn>
+
+						<DataGridCheckBoxColumn Header="Q2"
+						                        Binding="{Binding On2, UpdateSourceTrigger=PropertyChanged}"/>
+
+						<DataGridTemplateColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V2CheckedProxy}}"
+						                        Header="Конец" Width="100" SortMemberPath="V2" CanUserSort="True">
+
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock>
+										<TextBlock.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="V2.Index" Mode="OneWay"/>
+												<Binding Path="V2.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBlock.Text>
+									</TextBlock>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+
+							<DataGridTemplateColumn.CellEditingTemplate>
+								<DataTemplate>
+									<ContentControl>
+										<ContentControl.Style>
+											<Style TargetType="{x:Type ContentControl}">
+
+												<Setter Property="Template">
+													<Setter.Value>
+														<ControlTemplate TargetType="{x:Type ContentControl}">
+															<Grid>
+																<TextBlock x:Name="TextBlock"
+																           Visibility="Collapsed">
+																	<TextBlock.Text>
+																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+																			<Binding Path="V2.Index" Mode="OneWay"/>
+																			<Binding Path="V2.Title" Mode="OneWay"/>
+																		</MultiBinding>
+																	</TextBlock.Text>
+																</TextBlock>
+
+																<TextBox Style="{StaticResource TextBox.Small}"
+																	     IsReadOnly="True"
+																	     x:Name="TextBox">
+																	<hc:Interaction.Triggers>
+																		<hc:EventTrigger EventName="MouseDoubleClick">
+																			<hc:EventToCommand Command="{Binding DataContext.OpenVertexSelectionWindowCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}} }">
+																				<hc:EventToCommand.CommandParameter>
+																					<MultiBinding Converter="{StaticResource MultiBindingConverter}">
+																						<Binding/>
+																						<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="V2"/>
+																						<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
+																					</MultiBinding>
+																				</hc:EventToCommand.CommandParameter>
+																			</hc:EventToCommand>
+																		</hc:EventTrigger>
+																	</hc:Interaction.Triggers>
+																	<TextBox.Text>
+																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+																			<Binding Path="V2.Index" Mode="OneWay"/>
+																			<Binding Path="V2.Title" Mode="OneWay"/>
+																		</MultiBinding>
+																	</TextBox.Text>
+																</TextBox>
+															</Grid>
+
+															<ControlTemplate.Triggers>
+																<DataTrigger Binding="{Binding IsCreatedByDataGrid}" Value="False">
+																	<Setter TargetName="TextBlock" Property="Visibility" Value="Visible"/>
+																	<Setter TargetName="TextBox" Property="Visibility" Value="Collapsed"/>
+																</DataTrigger>
+															</ControlTemplate.Triggers>
+														</ControlTemplate>
+													</Setter.Value>
+												</Setter>
+											</Style>
+										</ContentControl.Style>
+									</ContentControl>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellEditingTemplate>
+
+						</DataGridTemplateColumn>
 
 						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource RCheckedProxy}}"
                                 Width="100" Binding="{Binding Path= R,UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}, ConverterParameter=R}">
@@ -776,13 +1023,19 @@
 						                        Header="РПН перв." Width="100" SortMemberPath="Rpn1" CanUserSort="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding Path=Rpn1.VisualTitle, Mode=OneWay}"/>
+									<TextBlock>
+										<TextBlock.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Rpn1.Index" Mode="OneWay"/>
+												<Binding Path="Rpn1.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBlock.Text>
+									</TextBlock>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 							<DataGridTemplateColumn.CellEditingTemplate>
 								<DataTemplate>
-									<TextBox Text="{Binding Path=Rpn1.VisualTitle, Mode=OneWay}"
-									         Style="{StaticResource TextBox.Small}"
+									<TextBox Style="{StaticResource TextBox.Small}"
 									         IsReadOnly="True">
 										<hc:Interaction.Triggers>
 											<hc:EventTrigger EventName="MouseDoubleClick">
@@ -796,6 +1049,12 @@
 												</hc:EventToCommand>
 											</hc:EventTrigger>
 										</hc:Interaction.Triggers>
+										<TextBox.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Rpn1.Index" Mode="OneWay"/>
+												<Binding Path="Rpn1.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBox.Text>
 									</TextBox>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellEditingTemplate>
@@ -805,13 +1064,19 @@
 						                        Header="РПН втор." Width="100" SortMemberPath="Rpn2" CanUserSort="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding Path=Rpn2.VisualTitle, Mode=OneWay}"/>
+									<TextBlock>
+										<TextBlock.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Rpn2.Index" Mode="OneWay"/>
+												<Binding Path="Rpn2.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBlock.Text>
+									</TextBlock>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 							<DataGridTemplateColumn.CellEditingTemplate>
 								<DataTemplate>
-									<TextBox Text="{Binding Path=Rpn2.VisualTitle, Mode=OneWay}"
-									         Style="{StaticResource TextBox.Small}"
+									<TextBox Style="{StaticResource TextBox.Small}"
 									         IsReadOnly="True">
 										<hc:Interaction.Triggers>
 											<hc:EventTrigger EventName="MouseDoubleClick">
@@ -825,6 +1090,12 @@
 												</hc:EventToCommand>
 											</hc:EventTrigger>
 										</hc:Interaction.Triggers>
+										<TextBox.Text>
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+												<Binding Path="Rpn2.Index" Mode="OneWay"/>
+												<Binding Path="Rpn2.Title" Mode="OneWay"/>
+											</MultiBinding>
+										</TextBox.Text>
 									</TextBox>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellEditingTemplate>
@@ -955,7 +1226,7 @@
 			            SelectedIndex="{Binding SelectedIndex}">
 
 				<TabItem Header="Схема"
-						 BorderBrush="{StaticResource DarkPrimaryBrush}"
+				         BorderBrush="{StaticResource DarkPrimaryBrush}"
 				         Content="{StaticResource SchematicEditor}"/>
 
 				<TabItem Header="Узлы"

@@ -24,7 +24,6 @@ namespace SteadyState.MainProject.WPF.Models
 				if (value == _index) return;
 				_index = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(VisualTitle));
 			}
 		}
 
@@ -37,7 +36,6 @@ namespace SteadyState.MainProject.WPF.Models
 				if (value == _title) return;
 				_title = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(VisualTitle));
 			}
 		}
 
@@ -58,11 +56,6 @@ namespace SteadyState.MainProject.WPF.Models
 
 		[JsonProperty]
 		public double B2 { get; set; }
-
-		public string VisualTitle
-		{
-			get => $"{_index}. {_title}";
-		}
 
 		public Shn()
 		{

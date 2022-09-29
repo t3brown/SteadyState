@@ -96,6 +96,21 @@
 		<helpers:CircuitElementDataTemplateSelector x:Key="CircuitElementDataTemplateSelector"
                                                     EdgeTemplate="{StaticResource EdgeDataTemplate}"
                                                     VertexTemplate="{StaticResource VertexDataTemplate}"/>
+
+
+		<DrawingBrush x:Key="GridBackgroundBrush"
+		              Viewport="-0.25,-0.25,5,5" 
+		              ViewportUnits="Absolute"
+		              TileMode="Tile">
+			<DrawingBrush.Drawing>
+				<DrawingGroup>
+					<GeometryDrawing Geometry="M0,0 L1,0 1,0.1, 0,0.1Z" Brush="LightGray" />
+					<GeometryDrawing Geometry="M0,0 L0,1 0.1,1, 0.1,0Z" Brush="LightGray" />
+				</DrawingGroup>
+			</DrawingBrush.Drawing>
+		</DrawingBrush>
+
+
 	</UserControl.Resources>
 
 	<Grid >
@@ -123,7 +138,7 @@
 
 				<Border BorderBrush="Black" BorderThickness="1" >
 					<Canvas x:Name="Canvas"	
-                            Background="{x:Static Brushes.Transparent}"
+                            Background="{StaticResource GridBackgroundBrush}"
                             MouseLeftButtonDown="Canvas_OnMouseLeftButtonDown"
                             MouseMove="Canvas_OnMouseMove">
 
@@ -143,7 +158,6 @@
 							</ContextMenu>
 
 						</Canvas.ContextMenu>
-
 					</Canvas>
 				</Border>
 			</Grid>

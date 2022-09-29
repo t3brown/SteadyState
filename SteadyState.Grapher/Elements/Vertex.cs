@@ -15,7 +15,7 @@ namespace SteadyState.Grapher.Elements
 		public event Action<IVertex> VoltNomChanged;
 
 		public static readonly DependencyProperty AngleProperty = DependencyProperty.Register(
-			"Angle", typeof(double), typeof(Vertex), new PropertyMetadata(default(double)));
+			"Angle", typeof(double), typeof(Vertex), new PropertyMetadata(0.0d));
 
 		private double? _voltNom;
 		private bool _isBasic;
@@ -52,21 +52,6 @@ namespace SteadyState.Grapher.Elements
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(Vertex), new FrameworkPropertyMetadata(typeof(Vertex)));
 		}
 
-		public Vertex()
-		{
-			BasicVertexChanged += VertexBasicVertexChanged;
-			VoltNomChanged += Vertex_VoltNomChanged;
-		}
-
-		private void Vertex_VoltNomChanged(IVertex obj)
-		{
-			if (SchematicEditor.BasicVertex != null)
-			{
-				DepthFirstSearch.DFS(SchematicEditor.BasicVertex);
-			}
-
-		}
-
 		#region properties
 
 		[JsonProperty]
@@ -78,27 +63,31 @@ namespace SteadyState.Grapher.Elements
 				if (Nullable.Equals(value, _voltNom)) return;
 				IsGround = value == 0;
 				_voltNom = value;
-				VoltNomChanged?.Invoke(this);
+				//VoltNomChanged?.Invoke(this);
 				OnPropertyChanged();
+			}
+		}
+
+		public static readonly DependencyProperty IsBasicProperty = DependencyProperty.Register(nameof(IsBasic),
+			typeof(bool),
+			typeof(Vertex),
+			new PropertyMetadata(default(bool), BasicValueChangedCallback));
+
+		private static void BasicValueChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is Vertex vertex)
+			{
+				vertex.BasicVertexChanged?.Invoke(vertex);
 			}
 		}
 
 		[JsonProperty]
 		public bool IsBasic
 		{
-			get => _isBasic;
-			set
-			{
-				if (value == _isBasic) return;
-				if (value == true)
-					if (SchematicEditor.BasicVertex != null)
-						SchematicEditor.BasicVertex.IsBasic = false;
-				SchematicEditor.BasicVertex = this;
-				_isBasic = value;
-				BasicVertexChanged?.Invoke(this);
-				OnPropertyChanged();
-			}
+			get { return (bool)GetValue(IsBasicProperty); }
+			set { SetValue(IsBasicProperty, value); }
 		}
+
 
 		public static readonly DependencyProperty IsGroundProperty = DependencyProperty.Register(
 			"IsGround", typeof(bool), typeof(Vertex), new FrameworkPropertyMetadata(default(bool),
@@ -242,11 +231,5 @@ namespace SteadyState.Grapher.Elements
 		}
 
 		#endregion
-
-		private void VertexBasicVertexChanged(IVertex obj)
-		{
-			//запускается посик в глубину при смене базисного узла.
-			DepthFirstSearch.DFS(obj);
-		}
 	}
 }

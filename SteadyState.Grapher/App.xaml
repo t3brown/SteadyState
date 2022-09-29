@@ -5,6 +5,9 @@
 			 xmlns:hc="https://handyorg.github.io/handycontrol"
 			 StartupUri="MainWindow.xaml">
     <Application.Resources>
-		
+	    
+
+
+
 	</Application.Resources>
 </Application>

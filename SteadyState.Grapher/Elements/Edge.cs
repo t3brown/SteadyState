@@ -38,6 +38,11 @@ namespace SteadyState.Grapher.Elements
 		/// </summary>
 		public event Action<IEdge, Switch, SwitchPosition> SwitchPositionChanged;
 
+		/// <summary>
+		/// Событие изменения Узла.
+		/// </summary>
+		public event Action VertexChanged;
+
 		#region Точки ветви
 
 		public static readonly DependencyProperty PointCollectionProperty = DependencyProperty.Register(
@@ -46,8 +51,26 @@ namespace SteadyState.Grapher.Elements
 		[JsonProperty]
 		public PointCollection PointCollection
 		{
-			get { return (PointCollection)GetValue(PointCollectionProperty); }
-			set { SetValue(PointCollectionProperty, value); }
+			get => (PointCollection)GetValue(PointCollectionProperty);
+			set => SetValue(PointCollectionProperty, value);
+		}
+
+		public static readonly DependencyProperty PointCollectionStartProperty = DependencyProperty.Register(
+			nameof(PointCollectionStart), typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
+
+		public PointCollection PointCollectionStart
+		{
+			get => (PointCollection)GetValue(PointCollectionStartProperty);
+			set => SetValue(PointCollectionStartProperty, value);
+		}
+
+		public static readonly DependencyProperty PointCollectionEndProperty = DependencyProperty.Register(
+			nameof(PointCollectionEnd), typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
+
+		public PointCollection PointCollectionEnd
+		{
+			get => (PointCollection)GetValue(PointCollectionEndProperty);
+			set => SetValue(PointCollectionEndProperty, value);
 		}
 
 		[JsonProperty]
@@ -57,6 +80,8 @@ namespace SteadyState.Grapher.Elements
 		public double HeightValue { get => Height; set => Height = value; }
 
 		#endregion
+
+		private bool _isFirstLoaded = true;
 
 		private bool _on1 = true;
 		private bool _on2 = true;
@@ -83,8 +108,8 @@ namespace SteadyState.Grapher.Elements
 		[JsonProperty]
 		public bool IsTrasnformer
 		{
-			get { return (bool)GetValue(IsTrasnformerProperty); }
-			set { SetValue(IsTrasnformerProperty, value); }
+			get => (bool)GetValue(IsTrasnformerProperty);
+			set => SetValue(IsTrasnformerProperty, value);
 		}
 
 		#endregion
@@ -110,8 +135,10 @@ namespace SteadyState.Grapher.Elements
 		public Edge()
 		{
 			PointCollection = new PointCollection();
+			PointCollectionStart = new PointCollection();
+			PointCollectionEnd = new PointCollection();
 
-			this.Loaded += Edge_Loaded;
+			Loaded += Edge_Loaded;
 			Initialized += Edge_Initialized;
 		}
 
@@ -122,12 +149,12 @@ namespace SteadyState.Grapher.Elements
 
 		private void Edge_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (V2Id != Guid.Empty)
+			if (V2Id != Guid.Empty && _isFirstLoaded)
 			{
-				DrawDotsAndSwitchs();
+				DrawDotsAndSwitches();
+				_isFirstLoaded = false;
 			}
 		}
-
 
 		/// <summary>
 		/// Выключатель со стороны начала.
@@ -141,8 +168,12 @@ namespace SteadyState.Grapher.Elements
 				if (value == _on1) return;
 				_on1 = value;
 				var pos = SwitchPosition.Off;
+
 				if (value)
+				{
 					pos = SwitchPosition.On;
+				}
+
 				SwitchPositionChanged?.Invoke(this, Switch.Q1, pos);
 				OnPropertyChanged();
 			}
@@ -160,8 +191,12 @@ namespace SteadyState.Grapher.Elements
 				if (value == _on2) return;
 				_on2 = value;
 				var pos = SwitchPosition.Off;
+
 				if (value)
+				{
 					pos = SwitchPosition.On;
+				}
+
 				SwitchPositionChanged?.Invoke(this, Switch.Q2, pos);
 				OnPropertyChanged();
 			}
@@ -181,13 +216,23 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
-		public static readonly DependencyProperty V1Property = DependencyProperty.Register(
-			"V1", typeof(Vertex), typeof(Edge), new FrameworkPropertyMetadata(default(Vertex)));
+		public static readonly DependencyProperty V1Property = DependencyProperty.Register(nameof(V1),
+			typeof(Vertex),
+			typeof(Edge),
+			new PropertyMetadata(default(Vertex), VertexChangedCallback));
 
-		public IVertex V1
+		private static void VertexChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			get { return (Vertex)GetValue(V1Property); }
-			set { SetValue(V1Property, value); }
+			if (d is Edge edge)
+			{
+				edge.VertexChanged?.Invoke();
+			}
+		}
+
+		public IVertex? V1
+		{
+			get => (Vertex)GetValue(V1Property);
+			set => SetValue(V1Property, value);
 		}
 
 		#endregion
@@ -203,22 +248,25 @@ namespace SteadyState.Grapher.Elements
 				if (Equals(value, _v2Id)) return;
 				_v2Id = value;
 
-				if (IsLoaded)
+				if (IsLoaded && _isFirstLoaded)
 				{
-					DrawDotsAndSwitchs();
+					DrawDotsAndSwitches();
+					_isFirstLoaded = false;
 				}
 
 				OnPropertyChanged();
 			}
 		}
 
-		public static readonly DependencyProperty V2Property = DependencyProperty.Register(
-			"V2", typeof(Vertex), typeof(Edge), new FrameworkPropertyMetadata(default(Vertex)));
+		public static readonly DependencyProperty V2Property = DependencyProperty.Register(nameof(V2),
+			typeof(Vertex),
+			typeof(Edge), 
+			new PropertyMetadata(default(Vertex), VertexChangedCallback));
 
-		public IVertex V2
+		public IVertex? V2
 		{
-			get { return (Vertex)GetValue(V2Property); }
-			set { SetValue(V2Property, value); }
+			get => (Vertex)GetValue(V2Property);
+			set => SetValue(V2Property, value);
 		}
 		#endregion
 
@@ -230,8 +278,8 @@ namespace SteadyState.Grapher.Elements
 		[JsonProperty]
 		public Guid OldV1Id
 		{
-			get { return (Guid)GetValue(OldV1IdProperty); }
-			set { SetValue(OldV1IdProperty, value); }
+			get => (Guid)GetValue(OldV1IdProperty);
+			set => SetValue(OldV1IdProperty, value);
 		}
 
 		public static readonly DependencyProperty OldV1Property = DependencyProperty.Register(
@@ -239,8 +287,8 @@ namespace SteadyState.Grapher.Elements
 
 		public IVertex OldV1
 		{
-			get { return (Vertex)GetValue(OldV1Property); }
-			set { SetValue(OldV1Property, value); }
+			get => (Vertex)GetValue(OldV1Property);
+			set => SetValue(OldV1Property, value);
 		}
 
 		#endregion
@@ -253,8 +301,8 @@ namespace SteadyState.Grapher.Elements
 		[JsonProperty]
 		public Guid OldV2Id
 		{
-			get { return (Guid)GetValue(OldV2IdProperty); }
-			set { SetValue(OldV2IdProperty, value); }
+			get => (Guid)GetValue(OldV2IdProperty);
+			set => SetValue(OldV2IdProperty, value);
 		}
 
 		public static readonly DependencyProperty OldV2Property = DependencyProperty.Register(
@@ -262,8 +310,8 @@ namespace SteadyState.Grapher.Elements
 
 		public IVertex OldV2
 		{
-			get { return (Vertex)GetValue(OldV2Property); }
-			set { SetValue(OldV2Property, value); }
+			get => (Vertex)GetValue(OldV2Property);
+			set => SetValue(OldV2Property, value);
 		}
 
 		#endregion
@@ -598,7 +646,7 @@ namespace SteadyState.Grapher.Elements
 			}
 		}
 
-		private void DrawDotsAndSwitchs()
+		private void DrawDotsAndSwitches()
 		{
 			DotV1.RenderTransformOrigin = new Point(0.5, 0.5);
 			DotV1.RenderTransform = new TranslateTransform(-1.5d, -1.5d);
@@ -655,34 +703,58 @@ namespace SteadyState.Grapher.Elements
 			Canvas.SetLeft(Q2, pointQ2.X);
 			Canvas.SetTop(Q2, pointQ2.Y);
 
-			Vector maxVector = Point.Subtract(points[0], points[1]);
-			Complex c1 = new Complex(maxVector.X, maxVector.Y);
-			Point point5 = points[0];
-			Point point6 = points[1];
-			for (int i = 1; i < points.Count - 1; i++)
+			var maxVector = Point.Subtract(points[0], points[1]);
+			var c1 = new Complex(maxVector.X, maxVector.Y);
+			var point5 = points[0];
+			var point6 = points[1];
+
+			for (var i = 1; i < points.Count - 1; i++)
 			{
-				Vector temp = Point.Subtract(points[i], points[i + 1]);
-				Complex c2 = new Complex(temp.X, temp.Y);
+				var temp = Point.Subtract(points[i], points[i + 1]);
+				var c2 = new Complex(temp.X, temp.Y);
+
 				if (c2.Magnitude > c1.Magnitude)
 				{
-					maxVector = temp;
+					//maxVector = temp;
 					c1 = c2;
 					point5 = points[i];
 					point6 = points[i + 1];
 				}
 			}
+
+			var point6Index = PointCollection.IndexOf(point6);
+
 			h = 5.125d;
 			var w = 8.25d;
 			double angle3 = c1.Phase * 180 / Math.PI;
 			Transformer.RenderTransformOrigin = new Point(0.5, 0.5);
-			TransformGroup transform2 = new TransformGroup();
+			var transform2 = new TransformGroup();
 			//transform1.Children.Add(new ScaleTransform(0.5, 0.5));
 			transform2.Children.Add(new RotateTransform(angle3));
 			transform2.Children.Add(new TranslateTransform(-w, -h));
 
+			for (var i = 0; i < point6Index; i++)
+			{
+				PointCollectionStart.Add(PointCollection[i]);
+			}
+
+			for (var i = point6Index; i < PointCollection.Count; i++)
+			{
+				PointCollectionEnd.Add(PointCollection[i]);
+			}
+
+			var centerX = (point5.X + point6.X) / 2;
+			var centerY = (point5.Y + point6.Y) / 2;
+
+			var point5Temp = new Point(centerX + Math.Cos(c1.Phase) * w, centerY + Math.Sin(c1.Phase) * w);
+			var point6Temp = new Point(centerX - Math.Cos(c1.Phase) * w, centerY - Math.Sin(c1.Phase) * w);
+
+			PointCollectionStart.Add(point5Temp);
+			PointCollectionEnd.Insert(0, point6Temp);
+
 			Transformer.RenderTransform = transform2;
-			Canvas.SetLeft(Transformer, (point5.X + point6.X) / 2);
-			Canvas.SetTop(Transformer, (point5.Y + point6.Y) / 2);
+			Canvas.SetLeft(Transformer, centerX);
+			Canvas.SetTop(Transformer, centerY);
 		}
 	}
 }
