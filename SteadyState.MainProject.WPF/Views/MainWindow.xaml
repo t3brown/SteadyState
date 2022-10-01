@@ -180,7 +180,7 @@
 						  CanUserDeleteRows="True">
 
 					<DataGrid.Columns >
-						<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus}"/>
+						<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}" IsReadOnly="True"/>
 						<DataGridTextColumn Header="Название" Width="100" Binding="{Binding Path= Title, UpdateSourceTrigger=LostFocus}"/>
 						<DataGridTextColumn Header="Предел рег." Width="100" Binding="{Binding Path= StepMax,UpdateSourceTrigger=LostFocus}"/>
 						<DataGridTextColumn Header="Шаг рег." Width="100" Binding="{Binding Path= StepRpn, UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}}"/>
@@ -197,7 +197,7 @@
 				           HeadersVisibility="Column" CanUserDeleteRows="True">
 
 					<DataGrid.Columns >
-						<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus}"/>
+						<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}" IsReadOnly="True"/>
 						<DataGridTextColumn Header="Название" Width="100" Binding="{Binding Path= Title, UpdateSourceTrigger=LostFocus}"/>
 						<DataGridTextColumn Header="A0" Width="100" Binding="{Binding Path= A0, UpdateSourceTrigger= LostFocus, Converter={StaticResource DoubleConverter}}"/>
 						<DataGridTextColumn Header="A1" Width="100" Binding="{Binding Path= A1, UpdateSourceTrigger= LostFocus, Converter={StaticResource DoubleConverter}}"/>
@@ -265,7 +265,8 @@
 
 									<c:PropertyEditor Title="Номер"
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexIndexCheckedProxy}}" 
-								                  Value="{Binding Path=Index, UpdateSourceTrigger=LostFocus}"
+								                  Value="{Binding Path=Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}"
+												  IsReadOnly="True"
 								                  Margin="0,2.5,0,0"/>
 
 									<c:PropertyEditor Title="Название"
@@ -348,7 +349,8 @@
 
 									<c:PropertyEditor Title="Номер"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeIndexCheckedProxy}}" 
-							                  Value="{Binding Path=Index, UpdateSourceTrigger=LostFocus}"
+							                  Value="{Binding Path=Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}"
+											  IsReadOnly="True"
 							                  Margin="0,2.5,0,0"/>
 
 									<c:PropertyEditor Title="Название"
@@ -600,13 +602,14 @@
 
 					<DataGrid.Columns>
 
-						<DataGridCheckBoxColumn Header="В сети"
-						                        Binding="{Binding IsConnected, Mode=OneWay}"/>
+						<!--<DataGridCheckBoxColumn Header="В сети"
+						                        Binding="{Binding IsConnected, Mode=OneWay}"/>-->
 
 						<DataGridTextColumn Header="Номер"
 						                    Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexIndexCheckedProxy}}" 
 						                    Width="60"
-						                    Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus}"/>
+						                    Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus, Mode=OneWay}"
+						                    IsReadOnly="True"/>
 
 						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexTitleCheckedProxy}}"
 						                    Header="Название"
@@ -835,11 +838,12 @@
 
 					<DataGrid.Columns>
 
-						<DataGridCheckBoxColumn Header="В сети"
-						                        Binding="{Binding IsConnected, Mode=OneWay}"/>
+						<!--<DataGridCheckBoxColumn Header="В сети"
+						                        Binding="{Binding IsConnected, Mode=OneWay}"/>-->
 
 						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeIndexCheckedProxy}}"
-						                    Header="Номер" Width="100" Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus}"/>
+						                    Header="Номер" Width="100" Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus, Mode=OneWay}"
+						                    IsReadOnly="True"/>
 
 						<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeTitleCheckedProxy}}"
                                 Header="Название" Width="100" Binding="{Binding Path=Title,UpdateSourceTrigger=LostFocus}"/>

@@ -16,6 +16,7 @@ using SteadyState.Interfaces;
 using Point = System.Windows.Point;
 using Switch = SteadyState.Grapher.Elements.Switch;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using SteadyState.Grapher.Helpers;
 using System.Windows.Media.Media3D;
 using Newtonsoft.Json.Linq;
@@ -240,7 +241,7 @@ namespace SteadyState.Grapher.Controls
 		}
 
 		//vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
-		private void VerticesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		private async void VerticesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
@@ -248,7 +249,7 @@ namespace SteadyState.Grapher.Controls
 				{
 					if (!string.IsNullOrEmpty(vertex.Title) && vertex.Title.Contains("temp"))
 					{
-						return;
+						goto m1;
 					}
 
 					//Нет на схеме и не создан через редактор
@@ -264,8 +265,13 @@ namespace SteadyState.Grapher.Controls
 						vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
 						vertex.OnSelectionChanged += OnSelectionChanged;
 					}
-
+					m1:
 					vertex.BasicVertexChanged += Vertex_BasicVertexChanged;
+
+					if (vertex.Index == 0 && VerticesSource != null)
+					{
+						await CalculateSteadyState.SetIndex(VerticesSource, vertex);
+					}
 				}
 			}
 
@@ -301,7 +307,7 @@ namespace SteadyState.Grapher.Controls
 			DepthFirstSearch.DFS(BasicVertex);
 		}
 
-		private void EdgesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		private async void EdgesSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
@@ -321,6 +327,11 @@ namespace SteadyState.Grapher.Controls
 
 					edge.SwitchPositionChanged += Edge_OnSwitchPositionChanged;
 					edge.VertexChanged += Edge_VertexChanged;
+
+					if (edge.Index == 0 && EdgesSource != null)
+					{
+						await CalculateSteadyState.SetIndex(EdgesSource, edge);
+					}
 				}
 			}
 

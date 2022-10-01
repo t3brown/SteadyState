@@ -38,7 +38,7 @@
 		          PreviewKeyDown="DataGrid_OnPreviewKeyDown">
 
 			<DataGrid.Columns >
-				<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus}"/>
+				<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}" IsReadOnly="True"/>
 				<DataGridTextColumn Header="Название" Width="100" Binding="{Binding Path= Title, UpdateSourceTrigger=LostFocus}"/>
 				<DataGridTextColumn Header="Предел рег." Width="100" Binding="{Binding Path= StepMax,UpdateSourceTrigger=LostFocus}"/>
 				<DataGridTextColumn Header="Шаг рег." Width="100" Binding="{Binding Path= StepRpn, UpdateSourceTrigger=LostFocus, Converter={StaticResource DoubleConverter}}"/>

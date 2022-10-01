@@ -20,7 +20,7 @@ namespace SteadyState.MainProject.WPF.Infrastructure
 
 			#region вершины
 
-			if (vertices.Count < 1)
+			if (vertices.Where(o => o.IsConnected).ToList().Count < 1)
 			{
 				Growl.Error("Узлы не заданы");
 				return true;
@@ -54,7 +54,7 @@ namespace SteadyState.MainProject.WPF.Infrastructure
 
 			#region ветви
 
-			if (edges.Count < 1)
+			if (edges.Where(o => o.IsConnected).ToList().Count < 1)
 			{
 				Growl.Error("Ветви не заданы");
 				return true;

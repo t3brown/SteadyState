@@ -41,6 +41,21 @@ namespace SteadyState
 		internal static List<IEdge> edges;
 
 
+		public static Task SetIndex<T>(ICollection<T> collection, IEntity element) where T : IEntity
+		{
+			var index = 1;
+
+			while (collection.FirstOrDefault(o => o.Index == index) != null)
+			{
+				index++;
+			}
+
+			element.Index = index;
+
+			return Task.CompletedTask;
+		}
+
+
 
 		public static void SetCollections(IEnumerable<IVertex> vertices, IEnumerable<IEdge> edges)
 		{

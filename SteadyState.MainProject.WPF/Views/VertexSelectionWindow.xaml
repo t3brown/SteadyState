@@ -103,7 +103,8 @@
 				<DataGridTextColumn Header="Номер"
 						                    Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexIndexCheckedProxy}}" 
 						                    Width="60"
-						                    Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus}"/>
+						                    Binding="{Binding Path=Index,UpdateSourceTrigger=LostFocus, Mode=OneWay}"
+						                    IsReadOnly="True"/>
 
 				<DataGridTextColumn Visibility="{Binding Data, Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexTitleCheckedProxy}}"
 						                    Header="Название"

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using HandyControl.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using SteadyState.Grapher.Controls;
 using SteadyState.Grapher.Elements;
 using SteadyState.Interfaces;
 using SteadyState.MainProject.WPF.Components;
@@ -454,10 +456,25 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				{
 					foreach (var edge in edges)
 					{
-						edge.V1 = Vertices.FirstOrDefault(o => o.Id == edge.V1Id)!;
-						edge.V2 = Vertices.FirstOrDefault(o => o.Id == edge.V2Id)!;
-						edge.OldV1 = Vertices.FirstOrDefault(o => o.Id == edge.OldV1Id)!;
-						edge.OldV2 = Vertices.FirstOrDefault(o => o.Id == edge.OldV2Id)!;
+						if (edge.V1Id != Guid.Empty)
+						{
+							edge.V1 = Vertices.FirstOrDefault(o => o.Id == edge.V1Id)!;
+						}
+
+						if (edge.V2Id != Guid.Empty)
+						{
+							edge.V2 = Vertices.FirstOrDefault(o => o.Id == edge.V2Id)!;
+						}
+
+						if (edge.OldV1Id != Guid.Empty)
+						{
+							edge.OldV1 = Vertices.FirstOrDefault(o => o.Id == edge.OldV1Id)!;
+						}
+
+						if (edge.OldV2Id != Guid.Empty)
+						{
+							edge.OldV2 = Vertices.FirstOrDefault(o => o.Id == edge.OldV2Id)!;
+						}
 
 						if (edge.Rpn1Id != Guid.Empty)
 						{
@@ -468,10 +485,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 						{
 							edge.Rpn2 = Rpns.FirstOrDefault(o => o.Id == edge.Rpn2Id)!;
 						}
-
-						//var temp = edge.V2Id;
-						//edge.V2Id = Guid.Empty;
-						//edge.V2Id = temp;
 
 						Edges.Add(edge);
 					}
@@ -502,9 +515,13 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 				var basicVertex = Vertices.FirstOrDefault(o => o.IsBasic);
 
+
+
 				if (basicVertex != null)
 				{
-					DepthFirstSearch.DFS(basicVertex);
+					basicVertex.IsBasic = false;
+					basicVertex.IsBasic = true;
+					//DepthFirstSearch.DFS(basicVertex);
 				}
 			}
 			catch
@@ -752,6 +769,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			Rpns = new ObservableCollection<Rpn>();
 			CalculateSteadyState.SetCollections(Vertices, Edges);
 
+			((ObservableCollection<Rpn>)Rpns).CollectionChanged += Rpns_CollectionChanged;
+			((ObservableCollection<Shn>)Shns).CollectionChanged += Shns_CollectionChanged;
+
 			RegimeCommand = new RelayCommand(OnRegimeCommandExecute);
 			OpenInNewWindowCommand = new RelayCommand(OnOpenInNewWindowCommandExecute, OnOpenInNewWindowCanExecuted);
 			OpenSettingsWindowCommand = new RelayCommand(OnOpenSettingsWindowCommandExecute, OnOpenSettingsWindowCanExecuted);
@@ -764,7 +784,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			OpenRpnSelectionWindowCommand = new RelayCommand(OnOpenRpnSelectionWindowCommandExecute);
 			OpenVertexSelectionWindowCommand = new RelayCommand(OnOpenSelectionWindowCommandExecute);
 		}
-
 
 		#region приватные методы
 
@@ -817,6 +836,34 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			}
 
 			FilePath = string.Empty;
+		}
+
+		private async void Shns_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				if (e.NewItems?[0] is IShn entity)
+				{
+					if (entity.Index == 0 && sender != null)
+					{
+						await CalculateSteadyState.SetIndex(Shns, entity);
+					}
+				}
+			}
+		}
+
+		private async void Rpns_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				if (e.NewItems?[0] is IRpn entity)
+				{
+					if (entity.Index == 0 && sender != null)
+					{
+						await CalculateSteadyState.SetIndex(Rpns, entity);
+					}
+				}
+			}
 		}
 
 		#endregion
