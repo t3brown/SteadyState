@@ -59,7 +59,9 @@
 						</MenuItem.Icon>
 					</MenuItem>
 
-					<MenuItem Header="Параметры"  Command="{Binding OpenSettingsWindowCommand}">
+					<MenuItem Header="Параметры"
+					          Command="{Binding OpenSettingsWindowCommand}"
+					          CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
 						<MenuItem.Icon>
 							<TextBlock FontFamily="{StaticResource SegoeFluentIcons}"
                                    FontSize="14"
@@ -281,8 +283,13 @@
 									<c:PropertyEditor Title="СХН"
 	                                              Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource ShnCheckedProxy}}" 
 	                                              MouseDoubleClickCommand="{Binding DataContext.OpenShnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-	                                              MouseDoubleClickCommandParameter="{Binding DataContext.SelectedElement, RelativeSource={RelativeSource AncestorType=Window}}"
 	                                              IsReadOnly="True">
+										<c:PropertyEditor.MouseDoubleClickCommandParameter>
+											<MultiBinding Converter="{StaticResource MultiBindingConverter}">
+												<Binding/>
+												<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
+											</MultiBinding>
+										</c:PropertyEditor.MouseDoubleClickCommandParameter>
 										<c:PropertyEditor.Value>
 											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 												<Binding Path="Shn.Index" Mode="OneWay"/>
@@ -402,6 +409,7 @@
 											<MultiBinding Converter="{StaticResource MultiBindingConverter}">
 												<Binding/>
 												<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn1"/>
+												<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
 											</MultiBinding>
 										</c:PropertyEditor.MouseDoubleClickCommandParameter>
 										<c:PropertyEditor.Value>
@@ -420,6 +428,7 @@
 											<MultiBinding Converter="{StaticResource MultiBindingConverter}">
 												<Binding/>
 												<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn2"/>
+												<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
 											</MultiBinding>
 										</c:PropertyEditor.MouseDoubleClickCommandParameter>
 										<c:PropertyEditor.Value>
@@ -541,9 +550,19 @@
 					</GroupBox>
 				</Grid>
 
+				<CollectionViewSource x:Key="VerticesSource" Source="{Binding Vertices}">
+					<CollectionViewSource.GroupDescriptions>
+						<PropertyGroupDescription PropertyName="IsCreatedByDataGrid"/>
+					</CollectionViewSource.GroupDescriptions>
+
+					<CollectionViewSource.SortDescriptions>
+						<scm:SortDescription PropertyName="IsCreatedByDataGrid" Direction="Ascending"/>
+					</CollectionViewSource.SortDescriptions>
+				</CollectionViewSource>
+
 				<DataGrid x:Key="VerticesGrid"
 				          Style="{StaticResource DataGrid.Small}"
-				          ItemsSource="{Binding Vertices}"
+				          ItemsSource="{Binding Source={StaticResource VerticesSource}}"
 				          AutoGenerateColumns="False"
 						  CanUserAddRows="True"
 				          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
@@ -556,6 +575,28 @@
 							                   PassEventArgsToCommand="True"/>
 						</hc:EventTrigger>
 					</hc:Interaction.Triggers>
+
+					<DataGrid.GroupStyle>
+						<GroupStyle>
+							<GroupStyle.ContainerStyle>
+								<Style TargetType="{x:Type GroupItem}">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate TargetType="{x:Type GroupItem}">
+												<StackPanel Orientation="Vertical">
+													<TextBlock x:Name="Header"
+													           Margin="5"
+													           Text="Узлы, не нанесенные на схему:"
+													           Visibility="{Binding Name, Converter={StaticResource BoolToVisibilityConverter}}"/>
+													<ItemsPresenter/>
+												</StackPanel>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+								</Style>
+							</GroupStyle.ContainerStyle>
+						</GroupStyle>
+					</DataGrid.GroupStyle>
 
 					<DataGrid.Columns>
 
@@ -616,8 +657,14 @@
 									         IsReadOnly="True">
 										<hc:Interaction.Triggers>
 											<hc:EventTrigger EventName="MouseDoubleClick">
-												<hc:EventToCommand Command="{Binding DataContext.OpenShnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}} }"
-												                   CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+												<hc:EventToCommand Command="{Binding DataContext.OpenShnSelectionWindowCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}} }">
+													<hc:EventToCommand.CommandParameter>
+														<MultiBinding Converter="{StaticResource MultiBindingConverter}">
+															<Binding/>
+															<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
+														</MultiBinding>
+													</hc:EventToCommand.CommandParameter>
+												</hc:EventToCommand>
 											</hc:EventTrigger>
 										</hc:Interaction.Triggers>
 										<TextBox.Text>
@@ -748,19 +795,13 @@
 									<Setter Property="Template">
 										<Setter.Value>
 											<ControlTemplate TargetType="{x:Type GroupItem}">
-
-												<GroupBox Header="Свойства"
-												          Padding="1"
-												          HorizontalContentAlignment="Left"
-												          Style="{StaticResource GroupBoxTab}">
-
-													<Border BorderBrush="{DynamicResource BorderBrush}"
-													        CornerRadius="0,0,4,4">
-
-														<ItemsPresenter/>
-
-													</Border>
-												</GroupBox>
+												<StackPanel Orientation="Vertical">
+													<TextBlock x:Name="Header"
+															   Margin="5"
+													           Text="Ветви, не нанесенные на схему:"
+													           Visibility="{Binding Name, Converter={StaticResource BoolToVisibilityConverter}}"/>
+													<ItemsPresenter/>
+												</StackPanel>
 											</ControlTemplate>
 										</Setter.Value>
 									</Setter>
@@ -1044,6 +1085,7 @@
 														<MultiBinding Converter="{StaticResource MultiBindingConverter}">
 															<Binding/>
 															<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn1"/>
+															<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
 														</MultiBinding>
 													</hc:EventToCommand.CommandParameter>
 												</hc:EventToCommand>
@@ -1085,6 +1127,7 @@
 														<MultiBinding Converter="{StaticResource MultiBindingConverter}">
 															<Binding/>
 															<Binding Converter="{StaticResource RpnConverter}" ConverterParameter="Rpn2"/>
+															<Binding RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
 														</MultiBinding>
 													</hc:EventToCommand.CommandParameter>
 												</hc:EventToCommand>

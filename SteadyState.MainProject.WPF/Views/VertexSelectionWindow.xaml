@@ -7,9 +7,10 @@
 		xmlns:hc="https://handyorg.github.io/handycontrol"
 		xmlns:views="clr-namespace:SteadyState.MainProject.WPF.Views"
 		xmlns:infrastructure="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
+		xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 		mc:Ignorable="d"
         Background="{DynamicResource RegionBrush}"
-        Title="Выбор РПН"
+        Title="Выбор узла"
         Height="400" SizeToContent="Width">
 
 	<Window.Resources>
@@ -40,6 +41,18 @@
 	<Grid>
 		<Grid.Resources>
 
+
+			<CollectionViewSource x:Key="VerticesSource" Source="{Binding Vertices}">
+				<CollectionViewSource.GroupDescriptions>
+					<PropertyGroupDescription PropertyName="IsCreatedByDataGrid"/>
+				</CollectionViewSource.GroupDescriptions>
+
+				<CollectionViewSource.SortDescriptions>
+					<scm:SortDescription PropertyName="IsCreatedByDataGrid" Direction="Ascending"/>
+				</CollectionViewSource.SortDescriptions>
+			</CollectionViewSource>
+
+
 		</Grid.Resources>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -47,7 +60,7 @@
 		</Grid.RowDefinitions>
 
 		<DataGrid x:Name="DataGrid"
-		          ItemsSource="{Binding Vertices}"
+		          ItemsSource="{Binding Source={StaticResource VerticesSource}}"
 		          CanUserAddRows="True"
 		          Style="{StaticResource DataGrid.Small}"
 		          AutoGenerateColumns="False"
@@ -62,6 +75,28 @@
 					                   PassEventArgsToCommand="True"/>
 				</hc:EventTrigger>
 			</hc:Interaction.Triggers>
+
+			<DataGrid.GroupStyle>
+				<GroupStyle>
+					<GroupStyle.ContainerStyle>
+						<Style TargetType="{x:Type GroupItem}">
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="{x:Type GroupItem}">
+										<StackPanel Orientation="Vertical">
+											<TextBlock x:Name="Header"
+										           Margin="5"
+										           Text="Узлы, не нанесенные на схему:"
+										           Visibility="{Binding Name, Converter={StaticResource BoolToVisibilityConverter}}"/>
+											<ItemsPresenter/>
+										</StackPanel>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</GroupStyle.ContainerStyle>
+				</GroupStyle>
+			</DataGrid.GroupStyle>
 
 			<DataGrid.Columns>
 

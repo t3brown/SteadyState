@@ -504,7 +504,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 				if (basicVertex != null)
 				{
-					//DepthFirstSearch.DFS(basicVertex);
+					DepthFirstSearch.DFS(basicVertex);
 				}
 			}
 			catch
@@ -525,19 +525,22 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// <summary>
 		/// Метод открытия окна для выбора СХН.
 		/// </summary>
-		/// <param name="item">Узел.</param>
-		private void OnOpenShnSelectionWindowCommandExecute(object item)
+		/// <param name="parameters">Узел.</param>
+		private void OnOpenShnSelectionWindowCommandExecute(object parameters)
 		{
-			if (item is not Vertex vertex) return;
+			var objects = (object[])parameters;
+
+			if (objects[0] is not IVertex vertex) return;
 
 			var window = new ShnSelectionWindow()
 			{
 				DataContext = this,
-				WindowStartupLocation = WindowStartupLocation.CenterScreen,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner,
 				Vertex = vertex,
+				Owner = (Window)objects[1],
 			};
 
-			window.Show();
+			window.ShowDialog();
 
 		}
 
@@ -563,12 +566,13 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			var window = new RpnSelectionWindow()
 			{
 				DataContext = this,
-				WindowStartupLocation = WindowStartupLocation.CenterScreen,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner,
 				Edge = edge,
 				RpnType = (string)objects[1],
+				Owner = (Window)objects[2],
 			};
 
-			window.Show();
+			window.ShowDialog();
 		}
 
 		#endregion
@@ -585,7 +589,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			SettingsWindow = new SettingsWindow
 			{
 				WindowStartupLocation = WindowStartupLocation.CenterOwner,
-				DataContext = new SettingsViewModel(this)
+				DataContext = new SettingsViewModel(this),
+				Owner = (System.Windows.Window)obj,
 			};
 			var settingsViewModel = SettingsWindow.DataContext as SettingsViewModel;
 			SettingsWindow.Closed += settingsViewModel.OnSettingsWindowCloused;
@@ -673,7 +678,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				Owner = (Window)objects[2],
 			};
 
-			window.Show();
+			window.ShowDialog();
 		}
 
 		#endregion
