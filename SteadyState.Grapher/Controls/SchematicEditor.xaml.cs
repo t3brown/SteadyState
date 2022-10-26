@@ -432,7 +432,7 @@ namespace SteadyState.Grapher.Controls
 							edge.V1Id = vertex.Id;
 							edge.V1 = vertex;
 
-							vertex.Title = $"{edge.OldV1.Index}.{edge.OldV1.Title}_temp";
+							vertex.Title = $"{edge.OldV1.Title}_temp";
 							break;
 
 						case Switch.Q2:
@@ -452,7 +452,7 @@ namespace SteadyState.Grapher.Controls
 							edge.V2Id = vertex.Id;
 							edge.V2 = vertex;
 
-							vertex.Title = $"{edge.OldV2.Index}.{edge.OldV2.Title}_temp";
+							vertex.Title = $"{edge.OldV2.Title}_temp";
 							break;
 					}
 

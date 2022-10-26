@@ -257,8 +257,7 @@
 
 				<cv:MultiBindingConverter x:Key="MultiBindingConverter"/>
 				<cv:RpnConverter x:Key="RpnConverter"/>
-				<cv:VisualTitleMultiBindingConverter x:Key="VisualTitleMultiBindingConverter"
-				                                     EnableColumns="{Binding EnableColumns}"/>
+				<cv:VisualTitleMultiBindingConverter x:Key="VisualTitleMultiBindingConverter"/>
 
 
 				<Grid x:Key="SchematicEditor">
@@ -369,7 +368,8 @@
 											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 												<Binding Path="V1.Index" Mode="OneWay"/>
 												<Binding Path="V1.Title" Mode="OneWay"/>
-												<MultiBinding.ConverterParameter>VertexIndex;VertexTitle</MultiBinding.ConverterParameter>
+												<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+												<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 											</MultiBinding>
 										</c:PropertyEditor.Value>
 									</c:PropertyEditor>
@@ -378,10 +378,11 @@
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V2CheckedProxy}}" 
 								                  IsReadOnly="True">
 										<c:PropertyEditor.Value>
-											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}"
-											              ConverterParameter="VertexIndex;VertexTitle">
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 												<Binding Path="V2.Index" Mode="OneWay"/>
 												<Binding Path="V2.Title" Mode="OneWay"/>
+												<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+												<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 											</MultiBinding>
 										</c:PropertyEditor.Value>
 									</c:PropertyEditor>
@@ -891,6 +892,8 @@
 											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 												<Binding Path="V1.Index" Mode="OneWay"/>
 												<Binding Path="V1.Title" Mode="OneWay"/>
+												<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+												<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 											</MultiBinding>
 										</TextBlock.Text>
 									</TextBlock>
@@ -913,6 +916,8 @@
 																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 																			<Binding Path="V1.Index" Mode="OneWay"/>
 																			<Binding Path="V1.Title" Mode="OneWay"/>
+																			<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+																			<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 																		</MultiBinding>
 																	</TextBlock.Text>
 																</TextBlock>
@@ -937,6 +942,8 @@
 																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 																			<Binding Path="V1.Index" Mode="OneWay"/>
 																			<Binding Path="V1.Title" Mode="OneWay"/>
+																			<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+																			<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 																		</MultiBinding>
 																	</TextBox.Text>
 																</TextBox>
@@ -972,6 +979,8 @@
 											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 												<Binding Path="V2.Index" Mode="OneWay"/>
 												<Binding Path="V2.Title" Mode="OneWay"/>
+												<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+												<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 											</MultiBinding>
 										</TextBlock.Text>
 									</TextBlock>
@@ -994,6 +1003,8 @@
 																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 																			<Binding Path="V2.Index" Mode="OneWay"/>
 																			<Binding Path="V2.Title" Mode="OneWay"/>
+																			<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+																			<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 																		</MultiBinding>
 																	</TextBlock.Text>
 																</TextBlock>
@@ -1018,6 +1029,8 @@
 																		<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 																			<Binding Path="V2.Index" Mode="OneWay"/>
 																			<Binding Path="V2.Title" Mode="OneWay"/>
+																			<Binding Path="DataContext.EnableColumns.VertexIndex" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
+																			<Binding Path="DataContext.EnableColumns.VertexTitle" RelativeSource="{RelativeSource AncestorType=hc:Window}"/>
 																		</MultiBinding>
 																	</TextBox.Text>
 																</TextBox>

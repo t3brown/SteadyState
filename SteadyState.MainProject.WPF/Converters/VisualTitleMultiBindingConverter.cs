@@ -12,20 +12,8 @@ using SteadyState.MainProject.WPF.Models;
 
 namespace SteadyState.MainProject.WPF.Converters
 {
-	internal class VisualTitleMultiBindingConverter : Freezable, IMultiValueConverter
+	internal class VisualTitleMultiBindingConverter : IMultiValueConverter
 	{
-		#region Видимость колонок
-
-		public static readonly DependencyProperty EnableColumnsProperty = DependencyProperty.Register(
-			nameof(EnableColumns), typeof(EnableColumns), typeof(VisualTitleMultiBindingConverter), new PropertyMetadata(default(EnableColumns)));
-
-		public EnableColumns EnableColumns
-		{
-			get => (EnableColumns)GetValue(EnableColumnsProperty);
-			set => SetValue(EnableColumnsProperty, value);
-		}
-
-		#endregion
 
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
@@ -35,13 +23,11 @@ namespace SteadyState.MainProject.WPF.Converters
 			var indexVisibility = true;
 			var titleVisibility = true;
 
-			if (parameter is string props)
+			if (values.Length > 2)
 			{
-				var propertyNames = props.Split(';');
-				indexVisibility = (bool)EnableColumns.GetType().GetProperty(propertyNames[0])!.GetValue(EnableColumns)!;
-				titleVisibility = (bool)EnableColumns.GetType().GetProperty(propertyNames[1])!.GetValue(EnableColumns)!;
+				indexVisibility = values[2] is not bool iV || iV;
+				titleVisibility = values[3] is not bool tV || tV;
 			}
-
 
 			if (values[0] is int indexValue)
 			{
@@ -53,19 +39,19 @@ namespace SteadyState.MainProject.WPF.Converters
 				title = titleValue;
 			}
 
-			if (titleVisibility && string.IsNullOrEmpty(index) && !string.IsNullOrEmpty(title))
+			if (indexVisibility && titleVisibility && !string.IsNullOrEmpty(index) && !string.IsNullOrEmpty(title))
+			{
+				return $"{index}. {title}";
+			}
+
+			if ((titleVisibility || string.IsNullOrEmpty(index)) && !string.IsNullOrEmpty(title))
 			{
 				return title;
 			}
 
-			if (indexVisibility && !string.IsNullOrEmpty(index) && string.IsNullOrEmpty(title))
+			if ((indexVisibility || string.IsNullOrEmpty(title)) && !string.IsNullOrEmpty(index))
 			{
 				return index;
-			}
-
-			if (indexVisibility && titleVisibility && !string.IsNullOrEmpty(index) && !string.IsNullOrEmpty(title))
-			{
-				return $"{index}. {title}";
 			}
 
 			return string.Empty;
@@ -74,11 +60,6 @@ namespace SteadyState.MainProject.WPF.Converters
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
-		}
-
-		protected override Freezable CreateInstanceCore()
-		{
-			return new BindingProxy();
 		}
 	}
 }
