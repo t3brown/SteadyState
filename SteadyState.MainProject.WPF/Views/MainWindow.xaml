@@ -17,7 +17,8 @@
 		   WindowStartupLocation="CenterScreen"
 		   Background="{DynamicResource RegionBrush}"
 		   Title="Steady-State ES"
-		   Height="600" Width="800">
+		   Height="600" Width="800"
+		   WindowState="Maximized">
 	<hc:Window.NonClientAreaContent>
 		<DockPanel VerticalAlignment="Stretch"
 		           Margin="10,0">
