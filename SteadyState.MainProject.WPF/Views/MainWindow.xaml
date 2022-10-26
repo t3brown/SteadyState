@@ -177,7 +177,9 @@
 						  AutoGenerateColumns="False"
 						  hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 						  HeadersVisibility="Column"
-						  CanUserDeleteRows="True">
+						  CanUserDeleteRows="True"
+						  RowStyle="{StaticResource LightPrimaryDataGridRowStyle}"
+						  CellStyle="{StaticResource BorderDataGridCellStyle}">
 
 					<DataGrid.Columns >
 						<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}" IsReadOnly="True"/>
@@ -194,7 +196,9 @@
 				           ItemsSource="{Binding Shns}"
 				           CanUserAddRows="True"
 				           hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
-				           HeadersVisibility="Column" CanUserDeleteRows="True">
+				           HeadersVisibility="Column" CanUserDeleteRows="True"
+				           RowStyle="{StaticResource LightPrimaryDataGridRowStyle}"
+				           CellStyle="{StaticResource BorderDataGridCellStyle}">
 
 					<DataGrid.Columns >
 						<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}" IsReadOnly="True"/>
@@ -562,14 +566,35 @@
 					</CollectionViewSource.SortDescriptions>
 				</CollectionViewSource>
 
+
+				<!--<SolidColorBrush x:Key="LightPrimaryBrush" Color="Red"/>-->
+
+				<!--<DrawingBrush x:Key="SelectedRow"
+				              Viewport="-0.25,-0.25,5,5" 
+				              ViewportUnits="Absolute"
+				              TileMode="Tile"
+				              Opacity="0.5">
+					<DrawingBrush.Drawing>
+						<DrawingGroup>
+							<GeometryDrawing Brush="{DynamicResource PrimaryBrush}">
+								<GeometryDrawing.Geometry>
+									<RectangleGeometry Rect="1,1,2,2"/>
+								</GeometryDrawing.Geometry>
+							</GeometryDrawing>
+						</DrawingGroup>
+					</DrawingBrush.Drawing>
+				</DrawingBrush>-->
+
 				<DataGrid x:Key="VerticesGrid"
 				          Style="{StaticResource DataGrid.Small}"
 				          ItemsSource="{Binding Source={StaticResource VerticesSource}}"
 				          AutoGenerateColumns="False"
-						  CanUserAddRows="True"
+				          CanUserAddRows="True"
 				          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 				          HeadersVisibility="Column"
-				          CanUserDeleteRows="True">
+				          CanUserDeleteRows="True"
+				          RowStyle="{StaticResource LightPrimaryDataGridRowStyle}"
+				          CellStyle="{StaticResource BorderDataGridCellStyle}">
 
 					<hc:Interaction.Triggers>
 						<hc:EventTrigger EventName="AddingNewItem">
@@ -588,7 +613,7 @@
 												<StackPanel Orientation="Vertical">
 													<TextBlock x:Name="Header"
 													           Margin="5"
-													           Text="Узлы, не нанесенные на схему:"
+													           Text="Узлы, неотображаемые на схеме:"
 													           Visibility="{Binding Name, Converter={StaticResource BoolToVisibilityConverter}}"/>
 													<ItemsPresenter/>
 												</StackPanel>
@@ -782,7 +807,9 @@
 					          CanUserAddRows="True"
 					          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 					          HeadersVisibility="Column"
-					          CanUserDeleteRows="True">
+					          CanUserDeleteRows="True"
+					          RowStyle="{StaticResource LightPrimaryDataGridRowStyle}"
+					          CellStyle="{StaticResource BorderDataGridCellStyle}">
 
 					<hc:Interaction.Triggers>
 						<hc:EventTrigger EventName="AddingNewItem">
@@ -801,7 +828,7 @@
 												<StackPanel Orientation="Vertical">
 													<TextBlock x:Name="Header"
 															   Margin="5"
-													           Text="Ветви, не нанесенные на схему:"
+													           Text="Ветви, неотображаемые на схеме:"
 													           Visibility="{Binding Name, Converter={StaticResource BoolToVisibilityConverter}}"/>
 													<ItemsPresenter/>
 												</StackPanel>

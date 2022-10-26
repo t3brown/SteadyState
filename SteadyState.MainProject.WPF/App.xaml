@@ -7,7 +7,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<hc:ThemeResources RequestedTheme="Light"/> <!--AccentColor="#741D99"/>-->
+				<hc:ThemeResources RequestedTheme="Light" AccentColor="#326CF3"/> <!--AccentColor="#741D99"/>-->
 				<hc:Theme/>
 
 				<ResourceDictionary>
@@ -26,6 +26,62 @@
 				<Setter Property="BorderThickness" Value="0"/>
 				<Setter Property="FontSize" Value="14"/>
 				<Setter Property="FontFamily" Value="{StaticResource SegoeFluentIcons}"/>
+			</Style>
+
+			<Style x:Key="LightPrimaryDataGridRowStyle"
+			       TargetType="DataGridRow"
+			       BasedOn="{StaticResource DataGridRowStyle.Small}">
+				<Style.Triggers>
+					<Trigger Property="IsMouseOver" Value="true">
+						<Setter Property="Background" Value="{DynamicResource DarkDefaultBrush}"/>
+					</Trigger>
+
+					<Trigger Property="IsSelected" Value="True">
+						<Setter Property="Background" Value="{DynamicResource LightPrimaryBrush}"/>
+						<!--<Setter Property="Background" Value="#66AEE5"/>-->
+						<Setter Property="TextElement.Foreground" Value="{DynamicResource TextIconBrush}"/>
+					</Trigger>
+
+					<MultiTrigger>
+						<MultiTrigger.Conditions>
+							<Condition Property="IsSelected" Value="true"/>
+							<Condition Property="Selector.IsSelectionActive" Value="false"/>
+						</MultiTrigger.Conditions>
+						<Setter Property="Background" Value="{DynamicResource DarkDefaultBrush}"/>
+						<Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+					</MultiTrigger>
+
+					<!--<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True"/>
+								<Condition Property="IsSelected" Value="True"/>
+								<Condition Property="Selector.IsSelectionActive" Value="true"/>
+							</MultiTrigger.Conditions>
+							-->
+					<!--<Setter Property="Background" Value="#3393DC"/>-->
+					<!--
+							<Setter Property="Background" Value="{StaticResource SelectedRow}"/>
+						</MultiTrigger>-->
+				</Style.Triggers>
+			</Style>
+
+			<Style x:Key="BorderDataGridCellStyle"
+			       TargetType="DataGridCell"
+			       BasedOn="{StaticResource DataGridCellStyle.Small}">
+				<!--<Setter Property="Padding" Value="0,0"/>-->
+				<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+				<Style.Triggers>
+
+					<MultiTrigger>
+						<MultiTrigger.Conditions>
+							<Condition Property="IsSelected" Value="true"/>
+							<Condition Property="IsKeyboardFocusWithin" Value="true"/>
+							<Condition Property="IsEditing" Value="False"/>
+						</MultiTrigger.Conditions>
+						<Setter Property="BorderBrush" Value="{x:Static Brushes.Black}"/>
+						<Setter Property="BorderThickness" Value="2"/>
+					</MultiTrigger>
+				</Style.Triggers>
 			</Style>
 
 			<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>

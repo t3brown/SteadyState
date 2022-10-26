@@ -298,7 +298,7 @@ namespace SteadyState.Grapher.Controls
 				return;
 			}
 
-			if (BasicVertex != null)
+			if (BasicVertex != null && BasicVertex != obj)
 			{
 				BasicVertex.IsBasic = false;
 			}
@@ -356,7 +356,7 @@ namespace SteadyState.Grapher.Controls
 		}
 
 		/// <summary>
-		/// Элемент добавлен на схему.
+		/// Элемент добавлен на схеме.
 		/// </summary>
 		private void SchematicEditor_OnElementAdd(CircuitElement obj)
 		{

@@ -144,6 +144,7 @@
 
     <!--#region cell style-->
     <SolidColorBrush x:Key="{x:Static DataGrid.FocusBorderBrushKey}" Color="#FFFFFF"/>
+
     <Style x:Key="CustomDataGridCellStyle1" TargetType="{x:Type DataGridCell}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>

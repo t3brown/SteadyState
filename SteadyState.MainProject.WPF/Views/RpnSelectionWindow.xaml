@@ -35,7 +35,9 @@
 				  SelectionMode="Single"
 		          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 		          HeadersVisibility="Column"
-		          PreviewKeyDown="DataGrid_OnPreviewKeyDown">
+		          PreviewKeyDown="DataGrid_OnPreviewKeyDown"
+		          RowStyle="{StaticResource LightPrimaryDataGridRowStyle}"
+		          CellStyle="{StaticResource BorderDataGridCellStyle}">
 
 			<DataGrid.Columns >
 				<DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Path= Index, UpdateSourceTrigger=LostFocus, Mode=OneWay}" IsReadOnly="True"/>

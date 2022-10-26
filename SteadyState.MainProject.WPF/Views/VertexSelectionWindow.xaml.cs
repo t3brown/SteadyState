@@ -55,14 +55,14 @@ namespace SteadyState.MainProject.WPF.Views
 		{
 			if (string.Equals(VertexType, "V1"))
 			{
-				Edge.V1 = null;
 				Edge.V1Id = Guid.Empty;
+				Edge.V1 = null;
 			}
 
 			if (string.Equals(VertexType, "V2"))
 			{
-				Edge.V2 = null;
 				Edge.V2Id = Guid.Empty;
+				Edge.V2 = null;
 			}
 
 

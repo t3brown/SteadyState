@@ -97,6 +97,7 @@ namespace SteadyState.Grapher.Elements
 		private CheckBox Q1;
 		private CheckBox Q2;
 		private Path Transformer;
+		private Path InnerTransformer;
 		private Ellipse DotV1;
 		private Ellipse DotV2;
 
@@ -126,6 +127,7 @@ namespace SteadyState.Grapher.Elements
 			Q1 = GetTemplateChild("Q1") as CheckBox;
 			Q2 = GetTemplateChild("Q2") as CheckBox;
 			Transformer = GetTemplateChild("Transformer") as Path;
+			InnerTransformer = GetTemplateChild("InnerTransformer") as Path;
 			DotV1 = GetTemplateChild("DotV1") as Ellipse;
 			DotV2 = GetTemplateChild("DotV2") as Ellipse;
 
@@ -726,8 +728,9 @@ namespace SteadyState.Grapher.Elements
 
 			h = 5.125d;
 			var w = 8.25d;
-			double angle3 = c1.Phase * 180 / Math.PI;
+			var angle3 = c1.Phase * 180 / Math.PI;
 			Transformer.RenderTransformOrigin = new Point(0.5, 0.5);
+			InnerTransformer.RenderTransformOrigin = new Point(0.5, 0.5);
 			var transform2 = new TransformGroup();
 			//transform1.Children.Add(new ScaleTransform(0.5, 0.5));
 			transform2.Children.Add(new RotateTransform(angle3));
@@ -753,8 +756,11 @@ namespace SteadyState.Grapher.Elements
 			PointCollectionEnd.Insert(0, point6Temp);
 
 			Transformer.RenderTransform = transform2;
+			InnerTransformer.RenderTransform = transform2;
 			Canvas.SetLeft(Transformer, centerX);
+			Canvas.SetLeft(InnerTransformer, centerX);
 			Canvas.SetTop(Transformer, centerY);
+			Canvas.SetTop(InnerTransformer, centerY);
 		}
 	}
 }

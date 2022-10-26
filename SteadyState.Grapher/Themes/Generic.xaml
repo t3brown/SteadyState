@@ -24,19 +24,19 @@
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
 
-	<DrawingBrush x:Key="HatchBasicBrush"
-	              TileMode="Tile"
+	<DrawingBrush x:Key="GridBasicBrush"
+	              Viewport="0.25,0.85,2,2" 
 	              ViewportUnits="Absolute"
-	              Viewport="0.5,0,4,6">
+	              TileMode="Tile">
 		<DrawingBrush.Drawing>
 			<DrawingGroup>
-				<GeometryDrawing Brush="Transparent">
+				<GeometryDrawing Brush="White">
 					<GeometryDrawing.Geometry>
-						<RectangleGeometry Rect="-60,-60,120,120" />
+						<RectangleGeometry Rect="0,0,1.5,1.5" />
 					</GeometryDrawing.Geometry>
 				</GeometryDrawing>
-				<GeometryDrawing Brush="Gray"
-				                 Geometry="M60,-60 L0,60 L-20,60 L40,-60Z"/>
+				<GeometryDrawing Geometry="M0,0 L1,1 1.1,1, 0.1,0Z" Brush="Black" />
+				<GeometryDrawing Geometry="M0,1 L1,0 1.1,0, 0.1,1Z" Brush="Black" />
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
@@ -56,22 +56,46 @@
 				<ControlTemplate TargetType="{x:Type elements:Vertex}">
 
 					<Grid>
+
+
+						<Rectangle x:Name="InnerRectangle"
+						           Stroke="{x:Static Brushes.Black}"
+						           StrokeThickness="1"
+						           Fill="{x:Static Brushes.Transparent}"
+						           Height="6"
+						           Margin="-0.5,1.5"
+						           Visibility="Collapsed"/>
+
+						<Ellipse x:Name="InnerEllipse"
+						         Visibility="Collapsed"
+						         Stroke="{x:Static Brushes.Black}"
+						         StrokeThickness="1"
+						         Fill="{x:Static Brushes.Transparent}"
+						         Margin="1"
+						         Height="7"
+						         Width="7"/>
+
 						<Rectangle x:Name="Rectangle"
 								   
-                                   Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
-                                   StrokeThickness="{TemplateBinding StrokeThickness}"
-                                   Fill="{TemplateBinding Fill}"
-                                   Height="5"
-                                   Margin="0,2.5"/>
+						           Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
+						           StrokeThickness="{TemplateBinding StrokeThickness}"
+						           Fill="{TemplateBinding Fill}"
+						           Height="5"
+						           Margin="0,2.5"/>
+
 						<Ellipse x:Name="Ellipse"
-								 
-                                 Visibility="Collapsed"
+						         Visibility="Collapsed"
                                  Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
                                  StrokeThickness="{TemplateBinding StrokeThickness}"
                                  Fill="{TemplateBinding Fill}"
                                  Margin="2"
                                  Height="6"/>
+
+
+
+					
 					</Grid>
+
 					<ControlTemplate.Triggers>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
@@ -85,9 +109,28 @@
 							<Setter TargetName="Rectangle" Property="StrokeDashArray" Value="5 2"/>
 							<Setter TargetName="Ellipse" Property="StrokeDashArray" Value="5 2"/>
 						</Trigger>
-						<Trigger Property="elements:Vertex.IsSelected" Value="True">
-							<Setter Property="Fill" Value="{x:Static Brushes.Black}"/>
-						</Trigger>
+
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition SourceName="Ellipse" Property="Visibility" Value="Visible"/>
+								<Condition Property="IsSelected" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="InnerEllipse" Property="Visibility" Value="Visible"/>
+						</MultiTrigger>
+
+
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition SourceName="Rectangle" Property="Visibility" Value="Visible"/>
+								<Condition Property="IsSelected" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="InnerRectangle" Property="Visibility" Value="Visible"/>
+							<Setter Property="Panel.ZIndex" Value="1"/>
+						</MultiTrigger>
+
+						<!--<Trigger Property="elements:Vertex.IsSelected" Value="True">
+							<Setter TargetName="InnerRectangle" Property="Visibility" Value="Visible"/>
+						</Trigger>-->
 						<Trigger Property="elements:Vertex.IsConnected" Value="True">
 							<Setter Property="Stroke" Value="{x:Static Brushes.Blue}"/>
 						</Trigger>
@@ -95,7 +138,7 @@
 							<Setter Property="Fill" Value="{StaticResource HatchGroundBrush}"/>
 						</Trigger>
 						<Trigger Property="elements:Vertex.IsBasic" Value="True">
-							<Setter Property="Fill" Value="{StaticResource HatchBasicBrush}"/>
+							<Setter Property="Fill" Value="{StaticResource GridBasicBrush}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -105,7 +148,7 @@
 
 	<Style TargetType="{x:Type elements:Edge}">
 		<Setter Property="UseLayoutRounding" Value="False"/>
-		<Setter Property="Panel.ZIndex" Value="1"/>
+		<Setter Property="Panel.ZIndex" Value="2"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type elements:Edge}">
@@ -156,10 +199,28 @@
 
 						</Grid.Resources>
 
+						<Polyline x:Name="ClickPolyline"
+						          Stroke="{x:Static Brushes.Transparent}"
+						          StrokeThickness="2"
+						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}"/>
+
 						<Polyline x:Name="innerPolyline"
-                                  Stroke="{x:Static Brushes.Transparent}"
-                                  StrokeThickness="2"
+								  Visibility="Collapsed"
+                                  Stroke="{x:Static Brushes.Black}"
+                                  StrokeThickness="1.25"
                                   Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}"/>
+
+						<Polyline x:Name="innerPolylineStart"
+						          Visibility="Collapsed"
+						          Stroke="{x:Static Brushes.Black}"
+						          StrokeThickness="1.25"
+						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollectionStart}"/>
+
+						<Polyline x:Name="innerPolylineEnd"
+						          Visibility="Collapsed"
+						          Stroke="{x:Static Brushes.Black}"
+						          StrokeThickness="1.25"
+						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollectionEnd}"/>
 						
 						<Polyline x:Name="Polyline"
 						          Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
@@ -194,6 +255,20 @@
 									<TranslateTransform x:Name="Q2Transform"/>
 								</CheckBox.RenderTransform>
 							</CheckBox>
+
+							<Path x:Name="InnerTransformer" Visibility="Hidden"
+							      Stroke="{x:Static Brushes.Black}"
+								  Margin="-0.375,-0.375"
+							      StrokeThickness="0.75"
+							      Fill="{x:Static Brushes.Transparent}">
+
+								<Path.Data>
+									<GeometryGroup FillRule="Nonzero">
+										<EllipseGeometry Center="5,5" RadiusX="5.25" RadiusY="5.25"/>
+										<EllipseGeometry Center="11.25,5" RadiusX="5.25" RadiusY="5.25"/>
+									</GeometryGroup>
+								</Path.Data>
+							</Path>
 
 							<Path x:Name="Transformer" Visibility="Hidden"
                                   Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
@@ -238,9 +313,26 @@
 							<Setter TargetName="DotV2" Property="Visibility" Value="Hidden"/>
 							<Setter Property="Panel.ZIndex" Value="-1"/>
 						</Trigger>
-						<Trigger Property="elements:Edge.IsSelected" Value="True">
-							<Setter TargetName="innerPolyline" Property="Stroke" Value="{x:Static Brushes.Black}"/>
-						</Trigger>
+
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsTrasnformer" Value="False"/>
+								<Condition Property="IsSelected" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="innerPolyline" Property="Visibility" Value="Visible"/>
+						</MultiTrigger>
+
+
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsTrasnformer" Value="True"/>
+								<Condition Property="IsSelected" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="innerPolylineStart" Property="Visibility" Value="Visible"/>
+							<Setter TargetName="innerPolylineEnd" Property="Visibility" Value="Visible"/>
+							<Setter TargetName="InnerTransformer" Property="Visibility" Value="Visible"/>
+						</MultiTrigger>
+
 						<Trigger Property="elements:Edge.IsConnected" Value="True">
 							<Setter Property="Stroke" Value="{x:Static Brushes.Blue}"/>
 						</Trigger>

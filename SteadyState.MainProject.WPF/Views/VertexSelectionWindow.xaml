@@ -67,7 +67,9 @@
 				  SelectionMode="Single"
 		          hc:DataGridAttach.CanUnselectAllWithBlankArea="True"
 		          HeadersVisibility="Column"
-		          PreviewKeyDown="DataGrid_OnPreviewKeyDown">
+		          PreviewKeyDown="DataGrid_OnPreviewKeyDown"
+		          RowStyle="{StaticResource LightPrimaryDataGridRowStyle}"
+		          CellStyle="{StaticResource BorderDataGridCellStyle}">
 
 			<hc:Interaction.Triggers>
 				<hc:EventTrigger EventName="AddingNewItem">
@@ -86,7 +88,7 @@
 										<StackPanel Orientation="Vertical">
 											<TextBlock x:Name="Header"
 										           Margin="5"
-										           Text="Узлы, не нанесенные на схему:"
+										           Text="Узлы, неотображаемые на схеме:"
 										           Visibility="{Binding Name, Converter={StaticResource BoolToVisibilityConverter}}"/>
 											<ItemsPresenter/>
 										</StackPanel>
