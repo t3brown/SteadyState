@@ -257,7 +257,8 @@
 
 				<cv:MultiBindingConverter x:Key="MultiBindingConverter"/>
 				<cv:RpnConverter x:Key="RpnConverter"/>
-				<cv:VisualTitleMultiBindingConverter x:Key="VisualTitleMultiBindingConverter"/>
+				<cv:VisualTitleMultiBindingConverter x:Key="VisualTitleMultiBindingConverter"
+				                                     EnableColumns="{Binding EnableColumns}"/>
 
 
 				<Grid x:Key="SchematicEditor">
@@ -368,6 +369,7 @@
 											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
 												<Binding Path="V1.Index" Mode="OneWay"/>
 												<Binding Path="V1.Title" Mode="OneWay"/>
+												<MultiBinding.ConverterParameter>VertexIndex;VertexTitle</MultiBinding.ConverterParameter>
 											</MultiBinding>
 										</c:PropertyEditor.Value>
 									</c:PropertyEditor>
@@ -376,7 +378,8 @@
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource V2CheckedProxy}}" 
 								                  IsReadOnly="True">
 										<c:PropertyEditor.Value>
-											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}">
+											<MultiBinding Converter="{StaticResource VisualTitleMultiBindingConverter}"
+											              ConverterParameter="VertexIndex;VertexTitle">
 												<Binding Path="V2.Index" Mode="OneWay"/>
 												<Binding Path="V2.Title" Mode="OneWay"/>
 											</MultiBinding>

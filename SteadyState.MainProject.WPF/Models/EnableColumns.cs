@@ -19,13 +19,22 @@ namespace SteadyState.MainProject.WPF.Models
 
 		[Category("Узлы")]
 		[DisplayName("Индекс узла")]
-		public bool VertexIndex { get => _vertexIndex; set { if (_vertexIndex == value) return; _vertexIndex = value; OnPropertyChanged(); } }
+		public bool VertexIndex 
+		{ 
+			get => _vertexIndex; 
+			set
+			{ 
+				if (_vertexIndex == value) return;
+				if (!_vertexTitle && !value) return;
+				_vertexIndex = value; OnPropertyChanged();
+			}
+		}
 
 		private bool _vertexTitle = true;
 
 		[Category("Узлы")]
 		[DisplayName("Название узла")]
-		public bool VertexTitle { get => _vertexTitle; set { if (_vertexTitle == value) return; _vertexTitle = value; OnPropertyChanged(); } }
+		public bool VertexTitle { get => _vertexTitle; set { if (_vertexTitle == value) return; if (!_vertexIndex && !value) return; _vertexTitle = value; OnPropertyChanged(); } }
 
 		private bool _isBasic = true;
 
@@ -100,10 +109,11 @@ namespace SteadyState.MainProject.WPF.Models
 		public bool VoltAngle { get => _voltAngle; set { if (_voltAngle == value) return; _voltAngle = value; OnPropertyChanged(); } }
 
 		private bool _edgeIndex = true;
-		public bool EdgeIndex { get => _edgeIndex; set { if (_edgeIndex == value) return; _edgeIndex = value; OnPropertyChanged(); } }
+		public bool EdgeIndex { get => _edgeIndex; set { if (_edgeIndex == value) return; if (!_edgeTitle && !value) return; _edgeIndex = value; OnPropertyChanged(); } }
 
 		private bool _edgeTitle = true;
-		public bool EdgeTitle { get => _edgeTitle; set { if (_edgeTitle == value) return; _edgeTitle = value; OnPropertyChanged(); } }
+		public bool EdgeTitle { get => _edgeTitle; set { if (_edgeTitle == value) return;
+			if (!_edgeIndex && !value) return; _edgeTitle = value; OnPropertyChanged(); } }
 
 		private bool _v1 = true;
 		public bool V1 { get => _v1; set { if (_v1 == value) return; _v1 = value; OnPropertyChanged(); } }
