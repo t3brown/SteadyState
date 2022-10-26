@@ -15,7 +15,7 @@ namespace SteadyState.MainProject.WPF.Models
 {
 	public class EnableColumns : ICloneable, INotifyPropertyChanged
 	{
-		private bool _vertexIndex = true;
+		private bool _vertexIndex;
 
 		[Category("Узлы")]
 		[DisplayName("Индекс узла")]
@@ -108,7 +108,7 @@ namespace SteadyState.MainProject.WPF.Models
 		[DisplayName("δ напр.")]
 		public bool VoltAngle { get => _voltAngle; set { if (_voltAngle == value) return; _voltAngle = value; OnPropertyChanged(); } }
 
-		private bool _edgeIndex = true;
+		private bool _edgeIndex;
 		public bool EdgeIndex { get => _edgeIndex; set { if (_edgeIndex == value) return; if (!_edgeTitle && !value) return; _edgeIndex = value; OnPropertyChanged(); } }
 
 		private bool _edgeTitle = true;
@@ -172,10 +172,10 @@ namespace SteadyState.MainProject.WPF.Models
 		private bool _pwrStCh;
 		public bool PwrStCh { get => _pwrStCh; set { if (_pwrStCh == value) return; _pwrStCh = value; OnPropertyChanged(); } }
 
-		private bool _pwrEndRe;
+		private bool _pwrEndRe = true;
 		public bool PwrEndRe { get => _pwrEndRe; set { if (_pwrEndRe == value) return; _pwrEndRe = value; OnPropertyChanged(); } }
 
-		private bool _pwrEndIm;
+		private bool _pwrEndIm = true;
 		public bool PwrEndIm { get => _pwrEndIm; set { if (_pwrEndIm == value) return; _pwrEndIm = value; OnPropertyChanged(); } }
 
 		private bool _pwrEndCh;
