@@ -44,12 +44,22 @@ namespace SteadyState.MainProject.WPF.Converters
 				return $"{index}. {title}";
 			}
 
-			if ((titleVisibility || string.IsNullOrEmpty(index)) && !string.IsNullOrEmpty(title))
+			if (string.IsNullOrEmpty(index) && !string.IsNullOrEmpty(title) && titleVisibility)
 			{
 				return title;
 			}
 
-			if ((indexVisibility || string.IsNullOrEmpty(title)) && !string.IsNullOrEmpty(index))
+			if (!string.IsNullOrEmpty(index) && !string.IsNullOrEmpty(title) && titleVisibility && !indexVisibility)
+			{
+				return title;
+			}
+
+			if (string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(index) && indexVisibility)
+			{
+				return index;
+			}
+
+			if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(index) && indexVisibility && !titleVisibility)
 			{
 				return index;
 			}
