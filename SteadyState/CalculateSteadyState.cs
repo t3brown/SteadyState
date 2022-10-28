@@ -67,6 +67,24 @@ namespace SteadyState
 		{
 			var basic = _vertices.FirstOrDefault(o => o.IsBasic);
 
+			var otherEdges = _edges.Where(o => !o.IsConnected).ToList();
+			foreach (var edge in otherEdges)
+			{
+				edge.ReCoeff = null;
+				edge.ImCoeff = null;
+				edge.AmpRe = null;
+				edge.AmpIm = null;
+				edge.AmpMagnitude = null;
+				edge.AmpAngle = null;
+				edge.PwrStRe = null;
+				edge.PwrStIm = null;
+				edge.PwrStCh = null;
+				edge.PwrEndCh = null;
+				edge.PwrEndRe = null;
+				edge.PwrEndIm = null;
+				edge.PwrDltRe = null;
+				edge.PwrDltIm = null;
+			}
 
 			//Выделяются узлы и ветви, подключеннык базису.
 			vertices = _vertices.Where(a => a.IsConnected).ToList();
