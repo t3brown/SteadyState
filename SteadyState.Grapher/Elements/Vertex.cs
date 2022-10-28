@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media;
 using Newtonsoft.Json;
@@ -53,6 +54,9 @@ namespace SteadyState.Grapher.Elements
 		}
 
 		#region properties
+
+		[JsonProperty]
+		public double? VoltNomTemp { get; set; }
 
 		[JsonProperty]
 		public double? VoltNom

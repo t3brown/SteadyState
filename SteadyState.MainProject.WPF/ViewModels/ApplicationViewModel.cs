@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shell;
 using HandyControl.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -349,6 +350,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			writer.WriteLine(JsonConvert.SerializeObject(DisplayPrecision));
 			writer.WriteLine(JsonConvert.SerializeObject(Units));
 
+			writer.WriteLine(JsonConvert.SerializeObject(_isVoltNom));
+
 			IsRelative = isRelative;
 
 
@@ -420,6 +423,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 				var units = JsonConvert
 					.DeserializeObject<Units>(reader.ReadLine() ?? string.Empty);
+
+				var isVoltNom = JsonConvert
+					.DeserializeObject(reader.ReadLine() ?? string.Empty);
 
 				ClearAll();
 
@@ -510,6 +516,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				{
 					Units.CopyPropertiesValue(units);
 				}
+
+
+				_isVoltNom = (bool?)isVoltNom ?? true;
 
 				FilePath = fileName;
 
@@ -734,6 +743,55 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		#endregion
 
+		#region принимает текущий расчет в качесвте первого приближения
+
+		// При повторном нажатии возвращает номинальные напряжения.
+
+		private  bool _isVoltNom = true;
+
+		public ICommand SetFirstApproximationCommand { get; }
+
+		private void OnSetFirstApproximationCommandExecute(object parameter)
+		{
+			if (Vertices.Count(o => o.IsConnected) <= 0) return;
+
+			if (_isVoltNom)
+			{
+				foreach (var vertex in Vertices)
+				{
+					if (!vertex.IsConnected) continue;
+					if (vertex.IsBasic) continue;
+					if (vertex.IsGround) continue;
+
+					vertex.VoltNomTemp = vertex.VoltNom;
+					vertex.VoltNom = vertex.VoltMagn;
+					_isVoltNom = false;
+				}
+			}
+			else
+			{
+				foreach (var vertex in Vertices)
+				{
+					if (!vertex.IsConnected) continue;
+					if (vertex.IsBasic) continue;
+					if (vertex.IsGround) continue;
+
+					vertex.VoltNom = vertex.VoltNomTemp;
+					vertex.VoltNomTemp = null;
+					_isVoltNom = true;
+				}
+			}
+		}
+
+		private bool OnSetFirstApproximationCanExecute(object parameter)
+		{
+			var vertexNull = Vertices.FirstOrDefault(o => o.VoltMagn == null && o.IsConnected);
+			var verticesCount = Vertices.Count(o => o.IsConnected);
+			return vertexNull == null && verticesCount > 0;
+		}
+
+		#endregion
+
 		#endregion
 
 		#region поля
@@ -783,6 +841,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			OpenShnSelectionWindowCommand = new RelayCommand(OnOpenShnSelectionWindowCommandExecute);
 			OpenRpnSelectionWindowCommand = new RelayCommand(OnOpenRpnSelectionWindowCommandExecute);
 			OpenVertexSelectionWindowCommand = new RelayCommand(OnOpenSelectionWindowCommandExecute);
+
+			SetFirstApproximationCommand = new RelayCommand(OnSetFirstApproximationCommandExecute, OnSetFirstApproximationCanExecute);
 		}
 
 		#region приватные методы
@@ -834,6 +894,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			{
 				Shns.Remove(Shns.ElementAt(Shns.Count - 1));
 			}
+
+			_isVoltNom = true;
 
 			FilePath = string.Empty;
 		}

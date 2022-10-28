@@ -11,6 +11,8 @@ namespace SteadyState.Interfaces
 	public interface IVertex : IEntity
 	{
 		public bool IsConnected { get; set; }
+
+		public double? VoltNomTemp { get; set; }
 		public double? VoltNom { get; set; }
 		public bool IsBasic { get; set; }
 		public bool IsGround { get; set; }

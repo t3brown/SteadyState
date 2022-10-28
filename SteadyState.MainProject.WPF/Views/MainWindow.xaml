@@ -143,6 +143,11 @@
 				        Content="Режим"
 				        Margin="10,0"
 				        Command="{Binding RegimeCommand}"/>
+
+				<Button Content="У/В"
+						ToolTip="Установить текущие напряжения в качестве первых приближений или восстановить их"
+				        Margin="10,0"
+				        Command="{Binding SetFirstApproximationCommand}"/>
 			</ToolBar>
 			<!--<ToolBar>
 
