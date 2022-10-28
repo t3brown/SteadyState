@@ -86,6 +86,15 @@ namespace SteadyState
 				edge.PwrDltIm = null;
 			}
 
+			var otherVertices = _vertices.Where(o => !o.IsConnected).ToList();
+			foreach (var vertex in otherVertices)
+			{
+				vertex.VoltRe = null;
+				vertex.VoltIm = null;
+				vertex.VoltMagn = null;
+				vertex.VoltAngle = null;
+			}
+
 			//Выделяются узлы и ветви, подключеннык базису.
 			vertices = _vertices.Where(a => a.IsConnected).ToList();
 			edges = _edges.Where(a => a.IsConnected).ToList();
