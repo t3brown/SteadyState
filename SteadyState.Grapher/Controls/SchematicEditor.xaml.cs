@@ -922,7 +922,7 @@ namespace SteadyState.Grapher.Controls
 			}
 		}
 
-		private int Round(double a) => (int)Math.Round((a - 5) / 10) * 10;
+		private int Round(double a) => (int)Math.Round((a) / 5, MidpointRounding.ToEven) * 5;
 
 
 		public event PropertyChangedEventHandler? PropertyChanged;

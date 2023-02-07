@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="SteadyState.MainProject.WPF.Views.ViewsSettings.AnySetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SteadyState.MainProject.WPF.Views"
+             xmlns:viewmodels="clr-namespace:SteadyState.MainProject.WPF.ViewModels"
+             xmlns:converters="clr-namespace:SteadyState.MainProject.WPF.Converters"
+             xmlns:controls="clr-namespace:SteadyState.MainProject.WPF.Controls"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:c="clr-namespace:SteadyState.MainProject.WPF.Components"
+             xmlns:l="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
+             xmlns:models="clr-namespace:SteadyState.MainProject.WPF.Models" d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
+             mc:Ignorable="d" 
+             Width="300">
+    <StackPanel Orientation="Vertical"  Margin="5">
+
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+									   VerticalAlignment="Center"
+							           Text="Расчет в относительных единицах"/>
+
+            <ToggleButton Grid.Column="1"
+						  VerticalAlignment="Center"
+						  HorizontalAlignment="Center"
+						  IsChecked="{Binding ApplicationViewModel.IsRelative}"
+						  Style="{StaticResource ToggleButtonSwitch}"/>
+
+        </Grid>
+
+        <hc:Divider Height="1" Margin="0"/>
+
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+					   VerticalAlignment="Center"
+					   TextWrapping="Wrap"
+					   Text="Сохранение текущих параметров в качестве параметров по умолчанию"/>
+
+            <Button Grid.Column="1"
+					Content="Сохранить"
+					Command="{Binding SetDefaultSettingsCommand}"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"/>
+
+        </Grid>
+
+        <hc:Divider Height="1" Margin="0"/>
+        
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+					   VerticalAlignment="Center"
+					   TextWrapping="Wrap"
+					   Text="Удаление текущих параметров по умолчанию"/>
+
+            <Button Grid.Column="1"
+					Content="Удалить"
+					Command="{Binding DeleteDefaultSettingsCommand}"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"/>
+
+        </Grid>
+
+        <hc:Divider Height="1" Margin="0"/>
+        
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+					   VerticalAlignment="Center"
+					   TextWrapping="Wrap"
+					   Text="Восстановить настройки по умолчанию"/>
+
+            <Button Grid.Column="1"
+					Content="Восстановить"
+					Command="{Binding LoadDefaultSettingsCommand}"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"/>
+
+        </Grid>
+
+    </StackPanel>
+</UserControl>

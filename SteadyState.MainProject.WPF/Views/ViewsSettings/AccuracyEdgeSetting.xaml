@@ -1,0 +1,114 @@
+﻿<UserControl x:Class="SteadyState.MainProject.WPF.Views.ViewsSettings.AccuracyEdgeSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SteadyState.MainProject.WPF.Views"
+             xmlns:viewmodels="clr-namespace:SteadyState.MainProject.WPF.ViewModels"
+             xmlns:converters="clr-namespace:SteadyState.MainProject.WPF.Converters"
+             xmlns:controls="clr-namespace:SteadyState.MainProject.WPF.Controls"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:c="clr-namespace:SteadyState.MainProject.WPF.Components"
+             xmlns:l="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
+             xmlns:models="clr-namespace:SteadyState.MainProject.WPF.Models" d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
+             mc:Ignorable="d" 
+             Width="300">
+    <UserControl.Resources>
+        <hc:EnumDataProvider x:Key="EnumDisplayPrecisionProvider"
+		                     Type="models:DisplayPrecisionType"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumPowerReUnitsProvider"
+		                     Type="models:PowerReUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumPowerImUnitsProvider"
+		                     Type="models:PowerImUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumVoltageUnitsProvider"
+		                     Type="models:VoltageUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumAmperageUnitsProvider"
+		                     Type="models:AmperageUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumAngleUnitsProvider"
+		                     Type="models:AngleUnits"
+		                     UseAttributes="True"/>
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical" Margin="5">
+        <c:PropertyEditor Title="R" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.R}"/>
+
+        <c:PropertyEditor Title="X" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.X}"/>
+
+        <c:PropertyEditor Title="B" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.B}"/>
+
+        <c:PropertyEditor Title="Uперв" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.U1}"/>
+
+        <c:PropertyEditor Title="Uвтор" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.U2}"/>
+
+        <c:PropertyEditor Title="δ" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.Angle}"/>
+
+        <c:PropertyEditor Title="I'" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.AmpRe}"/>
+
+        <c:PropertyEditor Title="I''" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.AmpIm}"/>
+
+        <c:PropertyEditor Title="I" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.AmpMagn}"/>
+
+        <c:PropertyEditor Title="δток" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.AmpAngle}"/>
+
+        <c:PropertyEditor Title="Pнач" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrStRe}"/>
+
+        <c:PropertyEditor Title="Qнач" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrStIm}"/>
+
+        <c:PropertyEditor Title="Qc.нач" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrStCh}"/>
+
+        <c:PropertyEditor Title="Pкон" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrEndRe}"/>
+
+        <c:PropertyEditor Title="Qкон" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrEndIm}"/>
+
+        <c:PropertyEditor Title="Qc.кон" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrEndCh}"/>
+
+        <c:PropertyEditor Title="ΔP" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrDltRe}"/>
+
+        <c:PropertyEditor Title="ΔQ" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumDisplayPrecisionProvider}}"
+						  Value="{Binding ApplicationViewModel.DisplayPrecision.PwrDltIm}"/>
+    </StackPanel>
+</UserControl>

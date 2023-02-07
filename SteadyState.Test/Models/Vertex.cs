@@ -7,6 +7,7 @@ using SteadyState.Interfaces;
 
 namespace SteadyState.Test.Models
 {
+
     internal class Vertex: IVertex
     {
         public int Id { get; set; }

@@ -621,7 +621,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			var settingsViewModel = SettingsWindow.DataContext as SettingsViewModel;
 			SettingsWindow.Closed += settingsViewModel.OnSettingsWindowCloused;
 			settingsViewModel.ApplicationViewModel = this;
-			SettingsWindow.ShowDialog();
+			if (!SettingsWindow.IsActive)
+				SettingsWindow.Show();
 		}
 
 		private bool OnOpenSettingsWindowCanExecuted(object obj)

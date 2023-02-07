@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using HandyControl.Data;
 
@@ -18,11 +19,27 @@ namespace SteadyState.MainProject.WPF.Components
 		}
 
 
-		#region свойства зависимости
+        #region свойства зависимости
 
-		#region только для чтения
+        #region для стилизации
 
-		public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly),
+        public new static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(nameof(Background),
+            typeof(Brush),
+            typeof(PropertyEditor),
+            new FrameworkPropertyMetadata(default,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public new Brush Background
+        {
+            get => (Brush)GetValue(BackgroundProperty);
+            set => SetValue(BackgroundProperty, value);
+        }
+
+        #endregion
+
+        #region только для чтения
+
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly),
 			typeof(bool),
 			typeof(PropertyEditor),
 			new FrameworkPropertyMetadata(false,

@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="SteadyState.MainProject.WPF.Views.ViewsSettings.UnitVertexSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SteadyState.MainProject.WPF.Views"
+             xmlns:viewmodels="clr-namespace:SteadyState.MainProject.WPF.ViewModels"
+             xmlns:converters="clr-namespace:SteadyState.MainProject.WPF.Converters"
+             xmlns:controls="clr-namespace:SteadyState.MainProject.WPF.Controls"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:c="clr-namespace:SteadyState.MainProject.WPF.Components"
+             xmlns:l="clr-namespace:SteadyState.MainProject.WPF.Infrastructure"
+             xmlns:models="clr-namespace:SteadyState.MainProject.WPF.Models" d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
+             mc:Ignorable="d" 
+             Width="300">
+    <UserControl.Resources>
+        <hc:EnumDataProvider x:Key="EnumDisplayPrecisionProvider"
+		                     Type="models:DisplayPrecisionType"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumPowerReUnitsProvider"
+		                     Type="models:PowerReUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumPowerImUnitsProvider"
+		                     Type="models:PowerImUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumVoltageUnitsProvider"
+		                     Type="models:VoltageUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumAmperageUnitsProvider"
+		                     Type="models:AmperageUnits"
+		                     UseAttributes="True"/>
+
+        <hc:EnumDataProvider x:Key="EnumAngleUnitsProvider"
+		                     Type="models:AngleUnits"
+		                     UseAttributes="True"/>
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical"  Margin="5">
+        <c:PropertyEditor Title="Uном" Background="{DynamicResource DarkDefaultBrush}"
+					      Value="{Binding ApplicationViewModel.Units.VoltNom}"
+					      ItemsSource="{Binding Source={StaticResource EnumVoltageUnitsProvider}}"
+					      Margin="0 0 0 0"/>
+
+        <c:PropertyEditor Title="Pнагр" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumPowerReUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.PowerRe}"/>
+
+        <c:PropertyEditor Title="Qнагр" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumPowerImUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.PowerIm}"/>
+
+        <c:PropertyEditor Title="Uпод" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumVoltageUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.VoltSus}"/>
+
+        <c:PropertyEditor Title="Qмин" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumPowerImUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.MinQ}"/>
+
+        <c:PropertyEditor Title="Qмакс" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumPowerImUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.MaxQ}"/>
+
+        <c:PropertyEditor Title="U'" Background="{DynamicResource DarkDefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumVoltageUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.VoltRe}"/>
+
+        <c:PropertyEditor Title="U''" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumVoltageUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.VoltIm}"/>
+
+        <c:PropertyEditor Title="U" Background="{DynamicResource DarkDefaultBrush}"
+					      ItemsSource="{Binding Source={StaticResource EnumVoltageUnitsProvider}}"
+					      Value="{Binding ApplicationViewModel.Units.VoltMagn}"/>
+
+        <c:PropertyEditor Title="δ" Background="{DynamicResource DefaultBrush}"
+						  ItemsSource="{Binding Source={StaticResource EnumAngleUnitsProvider}}"
+						  Value="{Binding ApplicationViewModel.Units.VoltAngle}"/>
+    </StackPanel>
+
+</UserControl>
