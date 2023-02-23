@@ -87,6 +87,28 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// </summary>
 		public Units? NamedUnits;
 
+		public float CalcPrecision
+		{
+			get => _calcPrecision;
+			set
+			{
+				if (value.Equals(_calcPrecision)) return;
+				_calcPrecision = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public int IterationCount
+		{
+			get => _iterationCount;
+			set
+			{
+				if (value == _iterationCount) return;
+				_iterationCount = value;
+				OnPropertyChanged();
+			}
+		}
+
 		private bool _isRelative;
 
 		public bool IsRelative
@@ -810,6 +832,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		};
 
 		private string _filePath;
+		private float _calcPrecision;
+		private int _iterationCount;
 
 		#endregion
 
@@ -860,6 +884,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				EnableColumns.CopyPropertiesValue(new EnableColumns());
 				DisplayPrecision.CopyPropertiesValue(new DisplayPrecision());
 				Units?.CopyPropertiesValue(new Units());
+				CalcPrecision = 0.001f;
+				IterationCount = 100;
 				return;
 			}
 
@@ -868,6 +894,14 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			DisplayPrecision.CopyPropertiesValue(JsonConvert.DeserializeObject<DisplayPrecision>(reader.ReadLine()!)!);
 			Units?.CopyPropertiesValue(JsonConvert.DeserializeObject<Units>(reader.ReadLine()!));
 			IsRelative = Convert.ToBoolean(reader.ReadLine());
+
+			var line = reader.ReadLine();
+
+			CalcPrecision = !string.IsNullOrWhiteSpace(line) ? Convert.ToSingle(line) : 0.001f;
+
+			line = reader.ReadLine();
+
+			IterationCount = !string.IsNullOrWhiteSpace(line) ? Convert.ToInt32(line) : 100;
 		}
 
 		/// <summary>

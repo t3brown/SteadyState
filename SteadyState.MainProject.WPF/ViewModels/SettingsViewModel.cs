@@ -47,6 +47,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		private Units? units;
 		private DisplayPrecision displayPrecision;
 
+		private float calcPrecision;
+		private int iterationCount;
+
 
 
 		#region ApplyCommand: RelayCommand - команда применения настроек и последующим закрытием окна
@@ -118,6 +121,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			ApplicationViewModel.EnableColumns.CopyPropertiesValue(enableColumns);
 			ApplicationViewModel.Units.CopyPropertiesValue(units);
 			ApplicationViewModel.DisplayPrecision.CopyPropertiesValue(displayPrecision);
+
+			ApplicationViewModel.CalcPrecision = calcPrecision;
+			ApplicationViewModel.IterationCount = iterationCount;
 		}
 		#endregion
 
@@ -145,6 +151,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			units = ApplicationViewModel.Units.Clone() as Units;
 			displayPrecision = ApplicationViewModel.DisplayPrecision.Clone() as DisplayPrecision;
 			enableColumns = ApplicationViewModel.EnableColumns.Clone() as EnableColumns;
+
+			calcPrecision = ApplicationViewModel.CalcPrecision;
+			iterationCount = ApplicationViewModel.IterationCount;
 		}
 
 
@@ -171,6 +180,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				writer.WriteLine(JsonConvert.SerializeObject(ApplicationViewModel.DisplayPrecision));
 				writer.WriteLine(JsonConvert.SerializeObject(ApplicationViewModel.IsRelative ? ApplicationViewModel.NamedUnits : ApplicationViewModel.Units));
 				writer.WriteLine(ApplicationViewModel.IsRelative);
+
+				writer.WriteLine(ApplicationViewModel.CalcPrecision);
+				writer.WriteLine(ApplicationViewModel.IterationCount);
 			}
 		}
 

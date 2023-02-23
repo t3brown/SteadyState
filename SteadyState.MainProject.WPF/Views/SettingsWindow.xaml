@@ -568,6 +568,14 @@
 
 						</Grid>
 
+						<c:PropertyEditor Title="Точность расчета"
+						                  Value="{Binding ApplicationViewModel.Units.VoltNom}"
+						                  Margin="0,2.5,0,0"/>
+
+						<c:PropertyEditor Title="Кол-во итераций"
+						                  Value="{Binding ApplicationViewModel.Units.VoltNom}"
+						                  Margin="0,2.5,0,0"/>
+
 					</StackPanel>
 				</ScrollViewer>
 
