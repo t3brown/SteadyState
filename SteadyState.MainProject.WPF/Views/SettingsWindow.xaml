@@ -511,6 +511,25 @@
 
 						</Grid>
 
+						<Grid Margin="5">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="3*"/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0"
+							           VerticalAlignment="Center"
+							           Text="Точность расчета"/>
+
+
+							<TextBox Grid.Column="1"
+							         VerticalAlignment="Center"
+							         HorizontalAlignment="Stretch"
+							         Text="{Binding Path =ApplicationViewModel.CalculatePrecision}"
+							         Style="{StaticResource TextBox.Small}"/>
+
+						</Grid>
+
 						<Grid Margin="5,0,5,5">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="3*"/>
