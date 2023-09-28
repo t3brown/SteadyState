@@ -171,7 +171,7 @@ namespace SteadyState.MainProject.WPF.Models.Update
 				.Replace(".", string.Empty)
 				.Replace(",", string.Empty));
 
-			if (actual == current)
+			if (actual <= current)
 			{
 				notifyActualVersion?.Invoke();
 			}

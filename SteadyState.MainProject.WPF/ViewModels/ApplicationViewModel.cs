@@ -127,6 +127,23 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		#endregion
 
+		#region точность расчета
+
+		private float _calculatePrecision = 0.001f;
+
+		public float CalculatePrecision
+		{
+			get => _calculatePrecision;
+			set
+			{
+				if (value == _calculatePrecision) return;
+				_calculatePrecision = value;
+				OnPropertyChanged();
+			}
+		}
+
+		#endregion
+
 		#endregion
 
 		#region редактор
@@ -204,7 +221,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				return;
 			}
 
-			if (CalculateSteadyState.Calculate(0.001f))
+			if (CalculateSteadyState.Calculate(CalculatePrecision))
 			{
 				Growl.Success("Расчет выполнен успешно.");
 			}
@@ -351,6 +368,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			writer.WriteLine(JsonConvert.SerializeObject(Units));
 
 			writer.WriteLine(JsonConvert.SerializeObject(_isVoltNom));
+			writer.WriteLine(JsonConvert.SerializeObject(CalculatePrecision));
 
 			IsRelative = isRelative;
 
@@ -426,6 +444,8 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 				var isVoltNom = JsonConvert
 					.DeserializeObject(reader.ReadLine() ?? string.Empty);
+
+				CalculatePrecision = JsonConvert.DeserializeObject<float>(reader.ReadLine() ?? "0.001");
 
 				ClearAll();
 
@@ -857,6 +877,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			if (!File.Exists(fileName))
 			{
 				IsRelative = false;
+				CalculatePrecision = 0.001f;
 				EnableColumns.CopyPropertiesValue(new EnableColumns());
 				DisplayPrecision.CopyPropertiesValue(new DisplayPrecision());
 				Units?.CopyPropertiesValue(new Units());
@@ -868,6 +889,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			DisplayPrecision.CopyPropertiesValue(JsonConvert.DeserializeObject<DisplayPrecision>(reader.ReadLine()!)!);
 			Units?.CopyPropertiesValue(JsonConvert.DeserializeObject<Units>(reader.ReadLine()!));
 			IsRelative = Convert.ToBoolean(reader.ReadLine());
+			CalculatePrecision = JsonConvert.DeserializeObject<float>(reader.ReadLine() ?? "0.001");
 		}
 
 		/// <summary>

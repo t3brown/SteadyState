@@ -43,6 +43,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		private bool canCancel = true;
 
 		private bool isRelative;
+		private float calculatePrecision;
 		private EnableColumns enableColumns;
 		private Units? units;
 		private DisplayPrecision displayPrecision;
@@ -115,6 +116,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		private void CopySettingsPropirties()
 		{
 			ApplicationViewModel.IsRelative = isRelative;
+			ApplicationViewModel.CalculatePrecision = calculatePrecision;
 			ApplicationViewModel.EnableColumns.CopyPropertiesValue(enableColumns);
 			ApplicationViewModel.Units.CopyPropertiesValue(units);
 			ApplicationViewModel.DisplayPrecision.CopyPropertiesValue(displayPrecision);
@@ -142,6 +144,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			DeleteDefaultSettingsCommand = new RelayCommand(OnDeleteDefaultSettingsCommandExucited);
 
 			isRelative = ApplicationViewModel.IsRelative;
+			calculatePrecision = ApplicationViewModel.CalculatePrecision;
 			units = ApplicationViewModel.Units.Clone() as Units;
 			displayPrecision = ApplicationViewModel.DisplayPrecision.Clone() as DisplayPrecision;
 			enableColumns = ApplicationViewModel.EnableColumns.Clone() as EnableColumns;
@@ -171,6 +174,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				writer.WriteLine(JsonConvert.SerializeObject(ApplicationViewModel.DisplayPrecision));
 				writer.WriteLine(JsonConvert.SerializeObject(ApplicationViewModel.IsRelative ? ApplicationViewModel.NamedUnits : ApplicationViewModel.Units));
 				writer.WriteLine(ApplicationViewModel.IsRelative);
+				writer.WriteLine(JsonConvert.SerializeObject(ApplicationViewModel.CalculatePrecision));
 			}
 		}
 
