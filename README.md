@@ -18,22 +18,22 @@
 Добавление элементов схемы замещения осуществляется со помощью вызова контекстного меню правой кнопкой мыши. 
  - Добавление узлов
 
-    <img src="https://github.com/t3brown/SteadyState/assets/80422784/d79ea440-7d99-4280-82d4-09d0d86ce74e" style = "width: 580px">
+    <img src="images/vertex_add.gif" style = "width: 580px">
 
  - Добавление ветвей
 
-   <img src="https://github.com/t3brown/SteadyState/assets/80422784/466e9d46-4b71-4761-89ae-877ab279288a" style = "width: 580px">
+   <img src="images/edge_add.gif" style = "width: 580px">
 
 #### Параметры элементов схемы замещения
 
 Указать параметры элементов схемы замещения можно двумя способами:
 - Выделить нужный элемент схемы и заполнить поля на панели свойств
 
-   <img src="https://github.com/t3brown/SteadyState/assets/80422784/fe428f35-08bf-46ea-89db-d0b17d66e807" style = "width: 580px">
+   <img src="images/property.gif" style = "width: 580px">
 
 - Заполнить параметры в соответствующих таблицах
 
-   <img src="https://github.com/t3brown/SteadyState/assets/80422784/44c416a7-dc7d-4a8f-a9a0-103cf0baa67f" style = "width: 580px">
+   <img src="images/property_grid.gif" style = "width: 580px">
 
   > При выборе ветви отображается подробная информация об этой ветви в виде схемы замещения, с нанесенными на нее параметрами. Каждый параметр соответствует своему значению из колонки.
 
@@ -46,16 +46,16 @@
 - Моделирование фазоповоротного устройства
 - Гибкая настройка программы
 
-   <img src="https://github.com/t3brown/SteadyState/assets/80422784/efc910dd-2fc8-4e89-8b7e-3d9922b035d0" style = "width: 580px">
+   <img src="images/settings.gif" style = "width: 580px">
 
   > Параметры позволяют производить настройку программы с помощью дополнительной формы. Основная возможность параметров – это возможность для каждой расчетной величины изменять точность ее отображения и размерность, а также включение расчета в относительных единицах. Настроенные параметры отображения можно сохранить, чтобы применять их в других проектах.
 
 - Автоматическое отслеживание связи между объектами и соответствующими узлами и ветвями расчетной схемы
 
-   <img src="https://github.com/t3brown/SteadyState/assets/80422784/e5872118-7a9a-42b7-9cca-c6dd239e6919" style = "width: 580px">
+   <img src="images/connection.gif" style = "width: 580px">
 
   > Позволяет значительно упростить процесс подготовки исходной информации для расчета режимов сложной электрической сети и исключить ошибки при определении параметров схем замещения
 
 ## Общий вид программы
 
-<img src="https://github.com/t3brown/SteadyState/assets/80422784/f1d87c61-7cf5-4c6c-823d-4c07ef297828" style = "width: 1080px">
+<img src="images/main.png" style = "width: 1080px">
