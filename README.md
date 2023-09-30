@@ -59,3 +59,5 @@
 ## Общий вид программы
 
 <img src="images/main.png" style = "width: 1080px">
+
+[download link](https://xn----8sbad0brpbh5a2e.xn--p1ai/SteadyStateES/Steady-State%20ES.exe)
