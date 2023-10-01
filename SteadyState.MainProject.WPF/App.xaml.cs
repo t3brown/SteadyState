@@ -3,6 +3,7 @@ using HandyControl.Tools;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Schema;
+using log4net;
 
 namespace SteadyState.MainProject.WPF
 {
@@ -11,6 +12,8 @@ namespace SteadyState.MainProject.WPF
 	/// </summary>
 	public partial class App : Application
 	{
+		private static readonly ILog log = LogManager.GetLogger(typeof(App));
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			ConfigHelper.Instance.SetLang("ru");
@@ -28,6 +31,8 @@ namespace SteadyState.MainProject.WPF
 
 			Current.Resources.Add("LightPrimaryBrush", lightenRes);
 
+			log4net.Config.XmlConfigurator.Configure();
+			log.Info("        =============  Started Logging  =============        ");
 			base.OnStartup(e);
 		}
 

@@ -5,7 +5,7 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
-		<AssemblyVersion>1.0.5</AssemblyVersion>
+		<AssemblyVersion>1.1.0</AssemblyVersion>
 		<ApplicationIcon>1-02.ico</ApplicationIcon>
 		<AssemblyName>Steady-State ES</AssemblyName>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
@@ -15,6 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="log4net.config" />
 	  <None Remove="Resources\icon.png" />
 	</ItemGroup>
 
@@ -28,11 +29,16 @@
 
 	<ItemGroup>
 	  <Content Include="1-02.ico" />
+	  <Content Include="log4net.config">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="HandyControls" Version="3.4.2" />
 	  <PackageReference Include="HandyControls.Lang.ru" Version="3.4.2" />
+	  <PackageReference Include="log4net" Version="2.0.15" />
+	  <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 

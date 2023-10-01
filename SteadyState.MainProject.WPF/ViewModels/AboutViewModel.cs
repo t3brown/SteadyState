@@ -86,8 +86,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				_aboutWindow?.Close();
 
 				VersionController.UpdateProgramAsync();
-
-				Dialog.Show(new LoadingPanel());
 			}
 		}
 

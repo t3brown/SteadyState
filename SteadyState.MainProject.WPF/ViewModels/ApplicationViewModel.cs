@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
@@ -33,6 +35,67 @@ namespace SteadyState.MainProject.WPF.ViewModels
 	public class ApplicationViewModel : ViewModelBase
 	{
 		#region свойства
+
+		#region режим только для чтения
+
+		private bool _isReadOnly;
+
+		/// <summary>
+		/// Режим только на чтение.
+		/// </summary>
+		public bool IsReadOnly
+		{
+			get => _isReadOnly;
+			set
+			{
+				if (_isReadOnly == value) return;
+				_isReadOnly = value;
+				OnPropertyChanged();
+			}
+		}
+
+
+		#endregion
+
+		#region значение прогресс бара.
+
+		private int _progress;
+
+		/// <summary>
+		/// Значение прогресс бара
+		/// </summary>
+		public int Progress
+		{
+			get => _progress;
+			set
+			{
+				if (_progress == value) return;
+				_progress = value;
+				OnPropertyChanged();
+			}
+		}
+
+		#endregion
+
+		#region видимость панели загрузки новой версии программы.
+
+		private bool _isDownloadPanelVisible;
+
+		/// <summary>
+		/// Видимость панели загрузки новой вервсии программы.
+		/// </summary>
+		public bool IsDownloadPanelVisible
+		{
+			get => _isDownloadPanelVisible;
+			set
+			{
+				if (_isDownloadPanelVisible == value) return;
+				_isDownloadPanelVisible = value;
+				OnPropertyChanged();
+			}
+		}
+
+		#endregion
 
 		#region исходные данные
 
@@ -63,7 +126,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// <summary>
 		/// Путь для сохранения настроек по умолчанию.
 		/// </summary>
-		public static readonly string SettingsFileName = "default_settings.json";
+		public static readonly string SettingsFileName = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\Steady-State ES\default_settings.json";
 
 		/// <summary>
 		/// Настройки видимости колонок.
@@ -516,6 +579,11 @@ namespace SteadyState.MainProject.WPF.ViewModels
 					}
 				}
 
+				if (units != null)
+				{
+					Units.CopyPropertiesValue(units);
+				}
+
 				if (isRelative != null)
 				{
 					IsRelative = (bool)isRelative;
@@ -529,12 +597,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 				if (displayPrecision != null)
 				{
 					DisplayPrecision.CopyPropertiesValue(displayPrecision);
-				}
-
-
-				if (units != null)
-				{
-					Units.CopyPropertiesValue(units);
 				}
 
 
@@ -674,7 +736,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		private static async void OnWindowLoadedCommandExecuteAsync(object parameter)
 		{
 			await VersionController.DeleteTempFilesAsync();
-
 			VersionController.GetActualVersionAsync(null, NotifyAvailabilityUpdate, null);
 		}
 
@@ -693,8 +754,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 						if (result)
 						{
 							VersionController.UpdateProgramAsync();
-
-							Dialog.Show(new LoadingPanel());
 						}
 
 						return true;
@@ -863,6 +922,20 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			OpenVertexSelectionWindowCommand = new RelayCommand(OnOpenSelectionWindowCommandExecute);
 
 			SetFirstApproximationCommand = new RelayCommand(OnSetFirstApproximationCommandExecute, OnSetFirstApproximationCanExecute);
+
+			VersionController.HttpReceiveProgress += (progress) => Progress = progress;
+			VersionController.HttpReceiveProgress += OnDownloadNewVersionProgress;
+		}
+
+		/// <summary>
+		/// Обработчик изменения процентов скачиваня программы.
+		/// </summary>
+		/// <param name="progress"></param>
+		private void OnDownloadNewVersionProgress(int progress)
+		{
+			VersionController.HttpReceiveProgress -= OnDownloadNewVersionProgress;
+			IsReadOnly = true;
+			IsDownloadPanelVisible = true;
 		}
 
 		#region приватные методы
@@ -938,6 +1011,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		private async void Rpns_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
+			
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
 				if (e.NewItems?[0] is IRpn entity)

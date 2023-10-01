@@ -2,14 +2,18 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Handlers;
 using System.Reflection;
 using System.Threading.Tasks;
+using log4net;
 using Newtonsoft.Json.Linq;
 
 namespace SteadyState.MainProject.WPF.Models.Update
 {
 	public static class VersionController
 	{
+		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()?.DeclaringType);
+
 		#region приватные константы
 
 		/// <summary>
@@ -34,7 +38,7 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		/// <summary>
 		/// Название программы
 		/// </summary>
-		private static string ApplicationName => $"{AppDomain.CurrentDomain.FriendlyName}.exe";
+		private static string ApplicationName => $"{Process.GetCurrentProcess().ProcessName}.exe";
 
 		/// <summary>
 		/// Папка с программой.
@@ -42,9 +46,14 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		public static string CurrentDirectory => AppContext.BaseDirectory;
 
 		/// <summary>
+		/// Путь к папке, в которой хранится временно загруженный файл.
+		/// </summary>
+		public static readonly string DownloadFilePath = $"{Path.GetTempPath()}";
+
+		/// <summary>
 		/// Полный путь к временному файлу.
 		/// </summary>
-		public static string FullDownloadFileName => $"{CurrentDirectory}{DownloadFileName}";
+		public static string FullDownloadFileName => $"{DownloadFilePath}{DownloadFileName}";
 
 		/// <summary>
 		/// Путь к программе.
@@ -59,7 +68,7 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		/// <summary>
 		/// Формат команды в cmd на подмену файла на скаченного.
 		/// </summary>
-		private static string CommandFormat => "taskkill /f /im \"{0}\" && timeout /t 1 && del \"{1}\" && ren \"{2}\" \"{0}\" && \"{1}\"";
+		private static string CommandFormat => "taskkill /f /im \"{0}\" && timeout /t 1 && del \"{1}{0}\" && move \"{2}{3}\" \"{1}\" && ren \"{1}{3}\" \"{0}\" && \"{1}{0}\"";
 
 		#endregion
 
@@ -97,6 +106,12 @@ namespace SteadyState.MainProject.WPF.Models.Update
 
 		#endregion
 
+		#region события
+
+		public static event Action<int>? HttpReceiveProgress;
+
+		#endregion
+
 		#region публичные методы
 
 		/// <summary>
@@ -124,20 +139,30 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		/// </summary>
 		public static async void UpdateProgramAsync()
 		{
+			Log.Info("Выполняется обновление программы");
 			await DeleteTempFilesAsync();
 
-			using var client = new HttpClient();
+			var progressMessageHandler = new ProgressMessageHandler(new HttpClientHandler());
+			progressMessageHandler.HttpReceiveProgress += (sender, e) =>
+			{
+				HttpReceiveProgress?.Invoke(e.ProgressPercentage);
+			};
 
+			Log.Info($"Ссылка на скачивание файла: {_downloadActualVersionPath}");
+
+			using var client = new HttpClient(progressMessageHandler);
 			if (_downloadActualVersionPath != null)
 			{
 				await using var stream = await client.GetStreamAsync(_downloadActualVersionPath);
-				await using var file = new FileStream(DownloadFileName, FileMode.CreateNew);
+				await using var file = new FileStream(FullDownloadFileName, FileMode.CreateNew);
 				{
 					await stream.CopyToAsync(file);
 				}
 			}
-
-			Сmd(string.Format(CommandFormat, ApplicationName, ApplicationPath, DownloadFileName));
+			
+			var cmdString = string.Format(CommandFormat, ApplicationName, CurrentDirectory, DownloadFilePath, DownloadFileName);
+			Log.Info($"Команда актуализации исполняемого файла: {cmdString}");
+			Сmd(cmdString);
 		}
 
 		/// <summary>
@@ -147,9 +172,21 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		{
 			await Task.Factory.StartNew(() =>
 			{
+				var file = $"{CurrentDirectory}{DownloadFileName}";
+				Log.Info("Поиск временных файлов");
+				Log.Info($"Путь к временному файлу в папке TEMP: {FullDownloadFileName}");
+				Log.Info($"Путь к временному файлу в корневой папке: {file}");
+
 				if (File.Exists(FullDownloadFileName))
 				{
 					File.Delete(FullDownloadFileName);
+					Log.Info($"Был обнаружен и удален файл в папке TEMP: {FullDownloadFileName}");
+				}
+
+				if (File.Exists(file))
+				{
+					File.Delete(file);
+					Log.Info($"Был обнаружен и удален файл в корневой папке: {file}");
 				}
 			});
 		}
@@ -163,6 +200,10 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		/// </summary>
 		private static void VersionComparison(NotifyActualVersion? notifyActualVersion, NotifyAvailabilityUpdate? notifyAvailabilityUpdate)
 		{
+			Log.Info("Выполняется проверка наличия обновлений");
+			Log.Info($"Текущая версия программы: {CurrentVersion}");
+			Log.Info($"Актуальная версия программы: {_actualVersion}");
+
 			var current = Convert.ToInt32(CurrentVersion?
 				.Replace(".", string.Empty)
 				.Replace(",", string.Empty));

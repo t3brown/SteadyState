@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Shapes;
 
 namespace SteadyState.MainProject.WPF.ViewModels
 {
@@ -94,13 +95,12 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		{
 			get
 			{
-				return _cancelCommand ??
-				  (_cancelCommand = new RelayCommand(obj =>
-				  {
-					  CopySettingsPropirties();
-					  var settingsWindow = obj as SettingsWindow;
-					  settingsWindow.Close();
-				  }));
+				return _cancelCommand = new RelayCommand(obj =>
+				{
+					CopySettingsPropirties();
+					var settingsWindow = obj as SettingsWindow;
+					settingsWindow.Close();
+				});
 			}
 		}
 		internal void OnSettingsWindowCloused(object sender, EventArgs e)
@@ -155,7 +155,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		private void OnDeleteDefaultSettingsCommandExucited(object obj)
 		{
-			string file_name = ApplicationViewModel.SettingsFileName;
+			var file_name = ApplicationViewModel.SettingsFileName;
 			if (File.Exists(file_name))
 			{
 				File.Delete(file_name);
@@ -164,10 +164,11 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		public void OnSetDefaultSettingsCommandExecuted(object p)
 		{
-			string file_name = ApplicationViewModel.SettingsFileName;
+			var file_name = ApplicationViewModel.SettingsFileName;
 
 			if (File.Exists(file_name)) File.Delete(file_name);
 
+			Directory.CreateDirectory(System.IO.Path.GetDirectoryName(file_name));
 			using (var writer = new StreamWriter(new FileStream(file_name, FileMode.Create, FileAccess.Write)))
 			{
 				writer.WriteLine(JsonConvert.SerializeObject(ApplicationViewModel.EnableColumns));
