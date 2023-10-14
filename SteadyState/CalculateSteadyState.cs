@@ -151,7 +151,7 @@ namespace SteadyState
 				vertices[i].VoltRe = reU[i];
 				vertices[i].VoltIm = imU[i];
 				vertices[i].VoltMagn = Math.Sqrt(reU[i] * reU[i] + imU[i] * imU[i]);
-				vertices[i].VoltAngle = Math.Atan(imU[i] / reU[i]) * 180 / Math.PI;
+				vertices[i].VoltAngle = Math.Atan2(imU[i], reU[i]) * 180 / Math.PI;
 
 				if (vertices[i].VoltSus != null && vertices[i].Shn == null)
 				{
