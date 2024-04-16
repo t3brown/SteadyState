@@ -120,18 +120,25 @@ namespace SteadyState.MainProject.WPF.Models.Update
 		public static async void GetActualVersionAsync(NotifyActualVersion? notifyActualVersion,
 			NotifyAvailabilityUpdate? notifyAvailabilityUpdate, NotifyLackInternet? notifyLackInternet)
 		{
-			if (!Internet.IsAccess())
+			try
 			{
-				notifyLackInternet?.Invoke();
-				return;
+				if (!Internet.IsAccess())
+				{
+					notifyLackInternet?.Invoke();
+					return;
+				}
+
+				var descriptor = await HttpResponse(DescriptorUri);
+
+				_actualVersion = JObject.Parse(descriptor)["version"]?.ToString();
+				_downloadActualVersionPath = JObject.Parse(descriptor)["downloadLink"]?.ToString();
+
+				VersionComparison(notifyActualVersion, notifyAvailabilityUpdate);
 			}
-
-			var descriptor = await HttpResponse(DescriptorUri);
-
-			_actualVersion = JObject.Parse(descriptor)["version"]?.ToString();
-			_downloadActualVersionPath = JObject.Parse(descriptor)["downloadLink"]?.ToString();
-
-			VersionComparison(notifyActualVersion, notifyAvailabilityUpdate);
+			catch (Exception e)
+			{
+				Log.Warn($"Не удалось установить соединение с удаленным сервером для получения обновления: \"{e.Message}\"");
+			}
 		}
 
 		/// <summary>
