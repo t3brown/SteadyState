@@ -660,9 +660,9 @@ namespace SteadyState.Grapher.Controls
 		private HitTestFilterBehavior VertexHitTestFilter(DependencyObject obj)
 		{
 			// Test for the object value you want to filter.
-			if (obj.GetType() == typeof(Vertex))
+			if (obj.GetType() == typeof(VertexClickGrid))
 			{
-				_hitObject = obj;
+				_hitObject = obj.FindParentOfType<Vertex>();
 
 				// Visual object and descendants are NOT part of hit test results enumeration.
 				return HitTestFilterBehavior.Stop;
@@ -839,6 +839,7 @@ namespace SteadyState.Grapher.Controls
 			_currentElement = vertex;
 			Canvas.SetTop(vertex, _horizontaLine.Y1 - 5);
 			Canvas.SetLeft(vertex, _verticalLine.X1 - 5);
+			vertex.CircuitElementClick += (o, _) => SetVerticesForEdge((Vertex)o);
 			//vertex.PreviewMouseLeftButtonDown += CircuitElement_PreviewMouseLeftButtonDown;
 			//vertex.MouseLeftButtonDown += Vertex_MouseLeftButtonDown;
 			//vertex.OnSelectionChanged += OnSelectionChanged;

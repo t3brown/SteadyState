@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using HandyControl.Tools.Extension;
 using Newtonsoft.Json;
+using SteadyState.Grapher.Helpers;
 using SteadyState.Interfaces;
 using Vector = System.Windows.Vector;
 
@@ -43,10 +46,219 @@ namespace SteadyState.Grapher.Elements
 		/// </summary>
 		public event Action VertexChanged;
 
-		#region Точки ветви
+		#region точки ветви
+
+		#region начальная точка ветви
+
+		/// <summary>
+		/// Начальная точка.
+		/// </summary>
+		public static readonly DependencyProperty StartPointProperty = DependencyProperty.Register(nameof(StartPoint),
+			typeof(Point), typeof(Edge), new PropertyMetadata(default(Point)));
+
+		/// <summary>
+		/// Начальная точка.
+		/// </summary>
+		public Point StartPoint
+		{
+			get => (Point)GetValue(StartPointProperty);
+			set => SetValue(StartPointProperty, value);
+		}
+
+		#endregion
+
+		#region конечная точка ветви
+
+		/// <summary>
+		/// Конечная точка.
+		/// </summary>
+		public static readonly DependencyProperty EndPointProperty = DependencyProperty.Register(nameof(EndPoint),
+			typeof(Point), typeof(Edge), new PropertyMetadata(default(Point)));
+
+		/// <summary>
+		/// Конечная точка.
+		/// </summary>
+		public Point EndPoint
+		{
+			get => (Point)GetValue(EndPointProperty);
+			set => SetValue(EndPointProperty, value);
+		}
+
+		#endregion
+
+		#region угол наклона начала ветви
+
+		/// <summary>
+		/// Угол наклона начала ветви.
+		/// </summary>
+		public static readonly DependencyProperty StartVectorAngleProperty = DependencyProperty.Register(nameof(StartVectorAngle),
+			typeof(double), typeof(Edge), new PropertyMetadata(default(double)));
+
+		/// <summary>
+		/// Угол наклона начала ветви.
+		/// </summary>
+		public double StartVectorAngle
+		{
+			get => (double)GetValue(StartVectorAngleProperty);
+			set => SetValue(StartVectorAngleProperty, value);
+		}
+
+		#endregion
+
+		#region угол наклона конца ветви
+
+		/// <summary>
+		/// Угол наклона конца ветви.
+		/// </summary>
+		public static readonly DependencyProperty EndVectorAngleProperty = DependencyProperty.Register(nameof(EndVectorAngle),
+			typeof(double), typeof(Edge), new PropertyMetadata(default(double)));
+
+		/// <summary>
+		/// Угол наклона конца ветви.
+		/// </summary>
+		public double EndVectorAngle
+		{
+			get => (double)GetValue(EndVectorAngleProperty);
+			set => SetValue(EndVectorAngleProperty, value);
+		}
+
+		#endregion
+
+		#region центральная точка вектора максимальной длины
+
+		/// <summary>
+		/// Центральная точка вектора максимальной длины.
+		/// </summary>
+		public static readonly DependencyProperty MaxVectorMidPointProperty = DependencyProperty.Register(nameof(MaxVectorMidPoint),
+			typeof(Point), typeof(Edge), new PropertyMetadata(default(Point)));
+
+		/// <summary>
+		/// Центральная точка вектора максимальной длины.
+		/// </summary>
+		public Point MaxVectorMidPoint
+		{
+			get => (Point)GetValue(MaxVectorMidPointProperty);
+			set => SetValue(MaxVectorMidPointProperty, value);
+		}
+
+		#endregion
+
+		#region центральная точка первого элемента трансформатора.
+
+		/// <summary>
+		/// Центральная точка первого элемента трансформатора.
+		/// </summary>
+		public static readonly DependencyProperty TransformerFirstElementPointProperty = DependencyProperty.Register(nameof(TransformerFirstElementPoint),
+			typeof(Point), typeof(Edge), new PropertyMetadata(default(Point)));
+
+		/// <summary>
+		/// Центральная точка первого элемента трансформатора.
+		/// </summary>
+		public Point TransformerFirstElementPoint
+		{
+			get => (Point)GetValue(TransformerFirstElementPointProperty);
+			set => SetValue(TransformerFirstElementPointProperty, value);
+		}
+
+		#endregion
+
+		#region центральная точка второго элемента трансформатора.
+
+		/// <summary>
+		/// Центральная точка второго элемента трансформатора.
+		/// </summary>
+		public static readonly DependencyProperty TransformerSecondElementPointProperty = DependencyProperty.Register(nameof(TransformerSecondElementPoint),
+			typeof(Point), typeof(Edge), new PropertyMetadata(default(Point)));
+
+		/// <summary>
+		/// Центральная точка второго элемента трансформатора.
+		/// </summary>
+		public Point TransformerSecondElementPoint
+		{
+			get => (Point)GetValue(TransformerSecondElementPointProperty);
+			set => SetValue(TransformerSecondElementPointProperty, value);
+		}
+
+		#endregion
+
+		#region область отрисовки.
+
+		/// <summary>
+		/// Область отрисовки.
+		/// </summary>
+		public static readonly DependencyProperty RectProperty = DependencyProperty.Register(nameof(Rect),
+			typeof(Rect), typeof(Edge), new PropertyMetadata(default(Rect)));
+
+		/// <summary>
+		/// Область отрисовки.
+		/// </summary>
+		public Rect Rect
+		{
+			get => (Rect)GetValue(RectProperty);
+			set => SetValue(RectProperty, value);
+		}
+
+		#endregion
+
+		#region угол наклона вектора максимальной длины
+
+		/// <summary>
+		/// Угол наклона вектора максимальной длины.
+		/// </summary>
+		public static readonly DependencyProperty MaxVectorAngleProperty = DependencyProperty.Register(nameof(MaxVectorAngle),
+			typeof(double), typeof(Edge), new PropertyMetadata(default(double)));
+
+		/// <summary>
+		/// Угол наклона вектора максимальной длины.
+		/// </summary>
+		public double MaxVectorAngle
+		{
+			get => (double)GetValue(MaxVectorAngleProperty);
+			set => SetValue(MaxVectorAngleProperty, value);
+		}
+
+		#endregion
+
+		#region точка отрисовки направления мощности начала ветви.
+
+		/// <summary>
+		/// Точка отрисовки направления мощности начала ветви.
+		/// </summary>
+		public static readonly DependencyProperty PowerStartPointProperty = DependencyProperty.Register(nameof(PowerStartPoint),
+			typeof(Point), typeof(Edge), new PropertyMetadata(default(Point)));
+
+		/// <summary>
+		/// Точка отрисовки направления мощности начала ветви.
+		/// </summary>
+		public Point PowerStartPoint
+		{
+			get => (Point)GetValue(PowerStartPointProperty);
+			set => SetValue(PowerStartPointProperty, value);
+		}
+
+		#endregion
 
 		public static readonly DependencyProperty PointCollectionProperty = DependencyProperty.Register(
-			"PointCollection", typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
+			"PointCollection", typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection), OnPointCollectionChanged));
+
+		private static void OnPointCollectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var edge = (Edge)d;
+			var points = edge.PointCollection.Distinct().ToList();
+			if (!points.Any()) return;
+			edge.StartPoint = points.First();
+			edge.EndPoint = points.Last();
+			edge.Rect = points.GetRectangleSize(2);
+			if (points.Count < 2) return;
+			edge.StartVectorAngle = points[0].AngleTo(points[1]);
+			edge.EndVectorAngle = points[^1].AngleTo(points[^2]);
+			var (maxPointStart, maxPointEnd) = points.GetMaxVectorPoints();
+			edge.MaxVectorMidPoint = maxPointStart.MidPointTo(maxPointEnd);
+			edge.TransformerFirstElementPoint = edge.MaxVectorMidPoint.PointAtDistance(maxPointStart, 1.875);
+			edge.TransformerSecondElementPoint = edge.MaxVectorMidPoint.PointAtDistance(maxPointEnd, 1.875);
+			edge.MaxVectorAngle = maxPointStart.AngleTo(maxPointEnd);
+			edge.PowerStartPoint = maxPointStart.PointAtDistance(edge.MaxVectorMidPoint, maxPointStart == edge.StartPoint ? 10 : 2.5);
+		}
 
 		[JsonProperty]
 		public PointCollection PointCollection
@@ -98,8 +310,6 @@ namespace SteadyState.Grapher.Elements
 		private CheckBox Q2;
 		private Path Transformer;
 		private Path InnerTransformer;
-		private Ellipse DotV1;
-		private Ellipse DotV2;
 
 		#region Есть ли у ветви коэффициент трансформации.
 
@@ -126,12 +336,8 @@ namespace SteadyState.Grapher.Elements
 
 			Q1 = GetTemplateChild("Q1") as CheckBox;
 			Q2 = GetTemplateChild("Q2") as CheckBox;
-			Transformer = GetTemplateChild("Transformer") as Path;
-			InnerTransformer = GetTemplateChild("InnerTransformer") as Path;
-			DotV1 = GetTemplateChild("DotV1") as Ellipse;
-			DotV2 = GetTemplateChild("DotV2") as Ellipse;
-
-
+			//Transformer = GetTemplateChild("Transformer") as Path;
+			//InnerTransformer = GetTemplateChild("InnerTransformer") as Path;
 		}
 
 		public Edge()
@@ -650,16 +856,6 @@ namespace SteadyState.Grapher.Elements
 
 		private void DrawDotsAndSwitches()
 		{
-			DotV1.RenderTransformOrigin = new Point(0.5, 0.5);
-			DotV1.RenderTransform = new TranslateTransform(-1.5d, -1.5d);
-			Canvas.SetLeft(DotV1, PointCollection[0].X);
-			Canvas.SetTop(DotV1, PointCollection[0].Y);
-
-			DotV2.RenderTransformOrigin = new Point(0.5, 0.5);
-			DotV2.RenderTransform = new TranslateTransform(-1.5d, -1.5d);
-			Canvas.SetLeft(DotV2, PointCollection[^1].X);
-			Canvas.SetTop(DotV2, PointCollection[^1].Y);
-
 			var points = PointCollection.Distinct().ToList();
 
 			Point point1 = points[0];
@@ -673,16 +869,16 @@ namespace SteadyState.Grapher.Elements
 			var pointQ1 = point1;
 			var h = 1.5d;
 			//var w = Q1.ActualWidth / 2;
-			Q1.RenderTransformOrigin = new Point(0, 0.5);
+			//Q1.RenderTransformOrigin = new Point(0, 0.5);
 			TransformGroup transform = new TransformGroup();
 			// transform.Children.Add(new ScaleTransform(0.5,0.5));
 			transform.Children.Add(new RotateTransform(angle));
 			transform.Children.Add(new TranslateTransform(0, -h));
 
 
-			Q1.RenderTransform = transform;
-			Canvas.SetLeft(Q1, pointQ1.X);
-			Canvas.SetTop(Q1, pointQ1.Y);
+			//Q1.RenderTransform = transform;
+			//Canvas.SetLeft(Q1, pointQ1.X);
+			//Canvas.SetTop(Q1, pointQ1.Y);
 
 
 			Point point3 = points[^1];
@@ -702,8 +898,8 @@ namespace SteadyState.Grapher.Elements
 			transform1.Children.Add(new RotateTransform(angle2));
 			transform1.Children.Add(new TranslateTransform(0, -h));
 			Q2.RenderTransform = transform1;
-			Canvas.SetLeft(Q2, pointQ2.X);
-			Canvas.SetTop(Q2, pointQ2.Y);
+			//Canvas.SetLeft(Q2, pointQ2.X);
+			//Canvas.SetTop(Q2, pointQ2.Y);
 
 			var maxVector = Point.Subtract(points[0], points[1]);
 			var c1 = new Complex(maxVector.X, maxVector.Y);
@@ -729,21 +925,21 @@ namespace SteadyState.Grapher.Elements
 			h = 5.125d;
 			var w = 8.25d;
 			var angle3 = c1.Phase * 180 / Math.PI;
-			Transformer.RenderTransformOrigin = new Point(0.5, 0.5);
-			InnerTransformer.RenderTransformOrigin = new Point(0.5, 0.5);
-			var transform2 = new TransformGroup();
+		//	Transformer.RenderTransformOrigin = new Point(0.5, 0.5);
+			//InnerTransformer.RenderTransformOrigin = new Point(0.5, 0.5);
+			//var transform2 = new TransformGroup();
 			//transform1.Children.Add(new ScaleTransform(0.5, 0.5));
-			transform2.Children.Add(new RotateTransform(angle3));
-			transform2.Children.Add(new TranslateTransform(-w, -h));
+		//	transform2.Children.Add(new RotateTransform(angle3));
+			//transform2.Children.Add(new TranslateTransform(-w, -h));
 
 			for (var i = 0; i < point6Index; i++)
 			{
-				PointCollectionStart.Add(PointCollection[i]);
+				//PointCollectionStart.Add(PointCollection[i]);
 			}
 
 			for (var i = point6Index; i < PointCollection.Count; i++)
 			{
-				PointCollectionEnd.Add(PointCollection[i]);
+				//PointCollectionEnd.Add(PointCollection[i]);
 			}
 
 			var centerX = (point5.X + point6.X) / 2;
@@ -752,15 +948,15 @@ namespace SteadyState.Grapher.Elements
 			var point5Temp = new Point(centerX + Math.Cos(c1.Phase) * w, centerY + Math.Sin(c1.Phase) * w);
 			var point6Temp = new Point(centerX - Math.Cos(c1.Phase) * w, centerY - Math.Sin(c1.Phase) * w);
 
-			PointCollectionStart.Add(point5Temp);
-			PointCollectionEnd.Insert(0, point6Temp);
+			//PointCollectionStart.Add(point5Temp);
+			//PointCollectionEnd.Insert(0, point6Temp);
 
-			Transformer.RenderTransform = transform2;
-			InnerTransformer.RenderTransform = transform2;
-			Canvas.SetLeft(Transformer, centerX);
-			Canvas.SetLeft(InnerTransformer, centerX);
-			Canvas.SetTop(Transformer, centerY);
-			Canvas.SetTop(InnerTransformer, centerY);
+			//Transformer.RenderTransform = transform2;
+			//InnerTransformer.RenderTransform = transform2;
+			//Canvas.SetLeft(Transformer, centerX);
+			//Canvas.SetLeft(InnerTransformer, centerX - 0.375f);
+			//Canvas.SetTop(Transformer, centerY);
+			//Canvas.SetTop(InnerTransformer, centerY - 0.375f);
 		}
 	}
 }
