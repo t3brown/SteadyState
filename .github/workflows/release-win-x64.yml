@@ -1,6 +1,8 @@
 name: Publish (FolderProfile only)
 
 on:
+  release:
+    types: [published]
   workflow_dispatch: {}   # ручной запуск из Actions
 
 jobs:
@@ -40,3 +42,10 @@ jobs:
           }
           Write-Host "Publish directory: $outDir"
           Get-ChildItem $outDir | Select-Object Name, Length, LastWriteTime
+
+      - name: Upload EXE as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Steady-State-ES
+          path: bin/Release/net6.0-windows/publish/win-x64/Steady-State\ ES.exe
+
