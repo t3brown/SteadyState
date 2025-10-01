@@ -1,9 +1,8 @@
-name: Publish (FolderProfile only)
+name: Publish EXE File
 
 on:
   release:
-    types: [published]      # запуск при публикации релиза
-  workflow_dispatch: {}      # и вручную из Actions (на время отладки)
+    types: [published]
 
 jobs:
   build:
@@ -21,36 +20,23 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'   # под net6.0-windows
+          dotnet-version: '6.0.x'
 
       - name: Compute version from tag
         id: ver
         shell: bash
         run: |
-          # 1) Берём тег из payload релиза (если есть), иначе из GITHUB_REF, иначе 0.0.0
-          TAG="${{ github.event.release.tag_name || '' }}"
-          if [[ -z "$TAG" ]]; then
-            if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-              TAG="${GITHUB_REF#refs/tags/}"
-            else
-              TAG="0.0.0"
-            fi
-          fi
-          # 2) Снимаем префикс v, если он есть (v1.2.3 -> 1.2.3)
-          TAG="${TAG#v}"
+          TAG="${{ github.event.release.tag_name }}"
+          ASM="${TAG}.0"
+          YEAR="$(date +%Y)"
 
-          # 3) Собираем четырёхсегментную версию для AssemblyVersion
-          IFS='.' read -r A B C D <<< "$TAG"
-          A=${A:-0}; B=${B:-0}; C=${C:-0}
-          if [[ -z "$D" ]]; then
-            ASM="$A.$B.$C.0"
-          else
-            ASM="$A.$B.$C.$D"
-          fi
+          {
+            echo "semver=$TAG"
+            echo "asmver=$ASM"
+            echo "year=$YEAR"
+          } >> "$GITHUB_OUTPUT"
 
-          echo "semver=$TAG" >> $GITHUB_OUTPUT
-          echo "asmver=$ASM" >> $GITHUB_OUTPUT
-          echo "Using SemVer=$TAG; AssemblyVersion=$ASM"
+          echo "Using SemVer=$TAG; AssemblyVersion=$ASM; Year=$YEAR"
 
       - name: Publish via FolderProfile with version injection
         run: >
@@ -61,31 +47,18 @@ jobs:
           /p:AssemblyVersion=${{ steps.ver.outputs.asmver }}
           /p:FileVersion=${{ steps.ver.outputs.asmver }}
           /p:InformationalVersion=${{ steps.ver.outputs.semver }}
-
-      - name: Show publish output
-        shell: pwsh
-        run: |
-          $outDir = "bin/Release/net6.0-windows/publish/win-x64"
-          if (-not (Test-Path $outDir)) {
-            Write-Host "Publish directory not found at expected path: $outDir"
-            Write-Host "Listing Release tree to help debug:"
-            Get-ChildItem -Recurse -Force "bin/Release" | Select-Object FullName, Length, LastWriteTime
-            throw "Expected publish directory missing"
-          }
-          Write-Host "Publish directory: $outDir"
-          Get-ChildItem $outDir | Select-Object Name, Length, LastWriteTime
+          /p:Copyright="Copyright © khramtsov.k ${{ steps.ver.outputs.year }}"
 
       - name: Locate EXE path
         id: out
         shell: pwsh
         run: |
           $outDir = "bin/Release/net6.0-windows/publish/win-x64"
-          $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
+          $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1         
           if (-not $exe) { throw "No .exe found in $outDir" }
           echo "exe=$($exe.FullName)" >> $env:GITHUB_OUTPUT
           Write-Host "EXE: $($exe.FullName)"
 
-      # Загружаем именно в релиз, который запустил workflow
       - name: Upload EXE to GitHub Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
