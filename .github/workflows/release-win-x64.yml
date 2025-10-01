@@ -1,0 +1,66 @@
+name: Build & Upload Windows EXE
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'   # под net6.0-windows
+
+      - name: Extract version from tag
+        id: ver
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+
+      # Публикация через твой .pubxml-профиль
+      - name: Publish (FolderProfile)
+        run: >
+          dotnet publish
+          SteadyState/SteadyState.MainProject.WPF/SteadyState.MainProject.WPF.csproj
+          -c Release
+          /p:PublishProfile=FolderProfile
+          /p:Version=${{ steps.ver.outputs.version }}
+          /p:AssemblyName="Steady-State ES"
+
+      # Определяем папку вывода и гарантируем нужное имя файла
+      - name: Locate and rename EXE
+        id: out
+        shell: pwsh
+        run: |
+          $outDir = "SteadyState/SteadyState.MainProject.WPF/bin/Release/net6.0-windows/publish/win-x64"
+          if (-not (Test-Path $outDir)) {
+            throw "Output directory not found: $outDir"
+          }
+
+          # Если /p:AssemblyName сработал, файл уже с нужным именем.
+          $desired = Join-Path $outDir "Steady-State ES.exe"
+          if (-not (Test-Path $desired)) {
+            $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
+            if (-not $exe) { throw "No .exe found in $outDir" }
+            Move-Item $exe.FullName $desired -Force
+          }
+
+          echo "exe=$desired" >> $env:GITHUB_OUTPUT
+          Write-Host "EXE: $desired"
+
+      - name: Upload EXE to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.out.outputs.exe }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
