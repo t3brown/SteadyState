@@ -1,0 +1,68 @@
+name: Publish EXE File
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: SteadyState.MainProject.WPF
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Compute version from tag
+        id: ver
+        shell: bash
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          ASM="${TAG}.0"
+          YEAR="$(date +%Y)"
+
+          {
+            echo "semver=$TAG"
+            echo "asmver=$ASM"
+            echo "year=$YEAR"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Using SemVer=$TAG; AssemblyVersion=$ASM; Year=$YEAR"
+
+      - name: Publish via FolderProfile with version injection
+        run: >
+          dotnet publish SteadyState.MainProject.WPF.csproj
+          -c Release
+          /p:PublishProfile=FolderProfile
+          /p:Version=${{ steps.ver.outputs.semver }}
+          /p:AssemblyVersion=${{ steps.ver.outputs.asmver }}
+          /p:FileVersion=${{ steps.ver.outputs.asmver }}
+          /p:InformationalVersion=${{ steps.ver.outputs.semver }}
+          /p:Copyright="Copyright © khramtsov.k ${{ steps.ver.outputs.year }}"
+
+      - name: Locate EXE path
+        id: out
+        shell: pwsh
+        run: |
+          $outDir = "bin/Release/net6.0-windows/publish/win-x64"
+          $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1         
+          if (-not $exe) { throw "No .exe found in $outDir" }
+          echo "exe=$($exe.FullName)" >> $env:GITHUB_OUTPUT
+          Write-Host "EXE: $($exe.FullName)"
+
+      - name: Upload EXE to GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.out.outputs.exe }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
