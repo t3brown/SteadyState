@@ -1,31 +1,26 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shell;
 using HandyControl.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using SteadyState.Grapher.Controls;
 using SteadyState.Grapher.Elements;
 using SteadyState.Interfaces;
-using SteadyState.MainProject.WPF.Components;
 using SteadyState.MainProject.WPF.Infrastructure;
 using SteadyState.MainProject.WPF.Models;
-using SteadyState.MainProject.WPF.Models.Update;
+using SteadyState.MainProject.WPF.Services.VersionInfrastructure.UpdateFeed;
+using SteadyState.MainProject.WPF.Services.VersionService;
 using SteadyState.MainProject.WPF.Views;
+using MessageBox = HandyControl.Controls.MessageBox;
 using RelayCommand = SteadyState.MainProject.WPF.Commands.RelayCommand;
 using TabItem = System.Windows.Controls.TabItem;
 using Window = HandyControl.Controls.Window;
@@ -733,27 +728,27 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		public ICommand WindowLoadedCommand { get; } = new RelayCommand(OnWindowLoadedCommandExecuteAsync);
 
-		private static async void OnWindowLoadedCommandExecuteAsync(object parameter)
+		private static void OnWindowLoadedCommandExecuteAsync(object parameter)
 		{
-			await VersionController.DeleteTempFilesAsync();
-			VersionController.GetActualVersionAsync(null, NotifyAvailabilityUpdate, null);
+			_ = VersionService.DeleteAllDownloadTempsAsync();
+			VersionService.GetActualVersionAsync(null, NotifyAvailabilityUpdate, null);
 		}
 
 		/// <summary>
-		/// Уведомляет о наличии новой версии через 0,5 секунды после запуска программы.
+		/// Уведомляет о наличии новой версии через 1 секунду после запуска программы.
 		/// </summary>
-		private static void NotifyAvailabilityUpdate()
+		private static void NotifyAvailabilityUpdate(UpdateInfo info)
 		{
-			Task.Factory.StartNew(() =>
+			Task.Run(() =>
 			{
-				Thread.Sleep(500);
+				Task.Delay(1000);
 
 				Growl.Ask("Обнаружена новая версия программы. Вы хотите обновить?",
 					result =>
 					{
 						if (result)
 						{
-							VersionController.UpdateProgramAsync();
+							VersionService.UpdateProgramAsync(info, (message) => MessageBox.Warning(message));
 						}
 
 						return true;
@@ -894,6 +889,9 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		public ApplicationViewModel()
 		{
+			VersionService.HttpDownloadFileProgress += OnDownloadNewVersionProgress;
+			VersionService.HttpDownloadFileProgress += (progress) => Progress = progress;
+
 			EnableColumns = new EnableColumns();
 			Units = new Units();
 			DisplayPrecision = new DisplayPrecision();
@@ -922,9 +920,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			OpenVertexSelectionWindowCommand = new RelayCommand(OnOpenSelectionWindowCommandExecute);
 
 			SetFirstApproximationCommand = new RelayCommand(OnSetFirstApproximationCommandExecute, OnSetFirstApproximationCanExecute);
-
-			VersionController.HttpReceiveProgress += (progress) => Progress = progress;
-			VersionController.HttpReceiveProgress += OnDownloadNewVersionProgress;
 		}
 
 		/// <summary>
@@ -933,7 +928,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// <param name="progress"></param>
 		private void OnDownloadNewVersionProgress(int progress)
 		{
-			VersionController.HttpReceiveProgress -= OnDownloadNewVersionProgress;
+			VersionService.HttpDownloadFileProgress -= OnDownloadNewVersionProgress;
 			IsReadOnly = true;
 			IsDownloadPanelVisible = true;
 		}

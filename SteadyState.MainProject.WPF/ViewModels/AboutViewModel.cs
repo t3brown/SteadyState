@@ -1,5 +1,4 @@
-﻿using SteadyState.MainProject.WPF.Models.Update;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -7,8 +6,8 @@ using SteadyState.MainProject.WPF.Commands;
 using MessageBox = HandyControl.Controls.MessageBox;
 using System.ComponentModel;
 using SteadyState.MainProject.WPF.Views;
-using HandyControl.Controls;
-using SteadyState.MainProject.WPF.Components;
+using SteadyState.MainProject.WPF.Services.VersionService;
+using SteadyState.MainProject.WPF.Services.VersionInfrastructure.UpdateFeed;
 
 namespace SteadyState.MainProject.WPF.ViewModels
 {
@@ -25,7 +24,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// <summary>
 		/// Авторские права.
 		/// </summary>
-		public string? CopyRight => FileVersionInfo.GetVersionInfo(VersionController.ApplicationPath).LegalCopyright;
+		public static readonly string? CopyRight = FileVersionInfo.GetVersionInfo(VersionService.ApplicationPath).LegalCopyright;
 
 		/// <summary>
 		/// Версия + версия .net.
@@ -54,7 +53,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			const string netVersion = ".NET 6.0";
 #endif
 
-			return $"v{VersionController.CurrentVersion} {netVersion}";
+			return $"v{VersionService.CurrentVersion} {netVersion}";
 		}
 
 		#endregion
@@ -76,7 +75,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// Уведомляет о наличи обновления.
 		/// Запускает обновление, если это нужно.
 		/// </summary>
-		private static void NotifyAvailabilityUpdate()
+		private static void NotifyAvailabilityUpdate(UpdateInfo info)
 		{
 			if (MessageBox.Show("Обнаружена новая версия программы. Вы хотите обновить?",
 					"Разрешение на обновление",
@@ -85,7 +84,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 			{
 				_aboutWindow?.Close();
 
-				VersionController.UpdateProgramAsync();
+				VersionService.UpdateProgramAsync(info, (message) => MessageBox.Warning(message));
 			}
 		}
 
@@ -94,7 +93,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// </summary>
 		private static void NotifyLackInternet()
 		{
-			MessageBox.Show("Отсутствует интернет подключение.",
+			MessageBox.Show("Не удалось получить обновление.",
 				"Сбой подключения",
 				MessageBoxButton.OK,
 				MessageBoxImage.Error);
@@ -112,7 +111,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 
 		private static void OnCheckUpdateCommand(object parameter)
 		{
-			VersionController.GetActualVersionAsync(NotifyActualVersion, NotifyAvailabilityUpdate, NotifyLackInternet);
+			VersionService.GetActualVersionAsync(NotifyActualVersion, NotifyAvailabilityUpdate, NotifyLackInternet);
 
 			if (parameter is AboutWindow aboutWindow)
 			{
