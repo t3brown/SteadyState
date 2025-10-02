@@ -123,6 +123,8 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
+		<Border x:Name="FocusSink" Width="0" Height="0" Focusable="True" Opacity="0"/>
+
 		<ScrollViewer Grid.Row="0" Grid.Column="0"
 		              Name="ScrollViewer"
 		              HorizontalScrollBarVisibility="Visible"
