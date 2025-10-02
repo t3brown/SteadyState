@@ -272,7 +272,9 @@
 
 							<DataTemplate x:Key="VertexDataTemplate" DataType="{x:Type elements:Vertex}">
 								<ScrollViewer>
-									<StackPanel Orientation="Vertical">
+									<StackPanel Orientation="Vertical"
+												KeyboardNavigation.TabNavigation="Cycle"
+												KeyboardNavigation.ControlTabNavigation="Cycle">
 
 										<c:PropertyEditor Title="Номер"
 								                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource VertexIndexCheckedProxy}}" 
@@ -356,7 +358,9 @@
 
 							<DataTemplate x:Key="EdgeDataTemplate" DataType="{x:Type elements:Edge}">
 								<ScrollViewer>
-									<StackPanel Orientation="Vertical">
+									<StackPanel Orientation="Vertical"
+												KeyboardNavigation.TabNavigation="Cycle"
+												KeyboardNavigation.ControlTabNavigation="Cycle">
 
 										<c:PropertyEditor Title="Номер"
 							                  Visibility="{Binding Data,Converter={StaticResource BoolToVisibilityConverter}, Source={StaticResource EdgeIndexCheckedProxy}}" 

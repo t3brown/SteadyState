@@ -919,6 +919,7 @@ namespace SteadyState.Grapher.Controls
 			if (SelectedElement != null)
 			{
 				SelectedElement.IsSelected = false;
+				Keyboard.Focus(FocusSink);
 				SelectedElement = null;
 			}
 		}
