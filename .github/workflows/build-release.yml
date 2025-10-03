@@ -76,6 +76,6 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           commit: ${{ github.sha }}
           generateReleaseNotes: true
-          makeLatest: ${{ !github.event.inputs.prerelease }}
+          makeLatest: ${{ inputs.prerelease && 'false' || 'true' }}
           artifacts: |
             ${{ steps.out.outputs.exe }}
