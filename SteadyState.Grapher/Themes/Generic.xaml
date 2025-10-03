@@ -1,11 +1,12 @@
-<ResourceDictionary
+﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:SteadyState.Grapher"
     xmlns:elements="clr-namespace:SteadyState.Grapher.Elements"
     xmlns:controls="clr-namespace:SteadyState.Grapher.Controls"
     xmlns:sw="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:helpers="clr-namespace:SteadyState.Grapher.Helpers">
+    xmlns:helpers="clr-namespace:SteadyState.Grapher.Helpers"
+    xmlns:converters="clr-namespace:SteadyState.Grapher.Helpers.Converters">
 
 	<DrawingBrush x:Key="HatchGroundBrush"
 				  TileMode="Tile"
@@ -41,6 +42,10 @@
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
 
+	<converters:MultiplyConverter x:Key="MultiplyConverter"/>
+	<converters:Object2VisibilityConverter x:Key="Object2VisibilityConverter"/>
+
+
 
 	<Style TargetType="{x:Type elements:Vertex}">
 		<Setter Property="UseLayoutRounding" Value="False"/>
@@ -54,46 +59,64 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type elements:Vertex}">
-
 					<Grid>
+						<Canvas RenderTransformOrigin="0.5,0.5" Width="5" Height="5">
+							<Canvas.RenderTransform>
+								<TransformGroup>
+									<TranslateTransform X="0" Y="0"/>
+									<RotateTransform Angle="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Angle, Converter={StaticResource MultiplyConverter}, ConverterParameter=-1}"/>
+								</TransformGroup>
+							</Canvas.RenderTransform>
+							<Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Left="7.5" Canvas.Top="5"
+							        x:Name="ElementLabel">
+								<StackPanel >
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Title}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Title, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=VoltNom, StringFormat= 'Uном={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=VoltNom, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=PowerRe, StringFormat= 'P={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=PowerRe, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=PowerIm, StringFormat= 'Q={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=PowerIm, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=VoltMagn, StringFormat= 'U={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=VoltMagn, Converter={StaticResource Object2VisibilityConverter}}"/>
+								</StackPanel>
+							</Border>
+						</Canvas>
 
+						<elements:VertexClickGrid x:Name="InteractiveGrid">
+							<Rectangle x:Name="InnerRectangle"
+							           Stroke="{x:Static Brushes.Black}"
+							           StrokeThickness="1"
+							           Fill="{x:Static Brushes.Transparent}"
+							           Height="6"
+							           Margin="-0.5,1.5"
+							           Visibility="Collapsed"/>
 
-						<Rectangle x:Name="InnerRectangle"
-						           Stroke="{x:Static Brushes.Black}"
-						           StrokeThickness="1"
-						           Fill="{x:Static Brushes.Transparent}"
-						           Height="6"
-						           Margin="-0.5,1.5"
-						           Visibility="Collapsed"/>
+							<Ellipse x:Name="InnerEllipse"
+							         Visibility="Collapsed"
+							         Stroke="{x:Static Brushes.Black}"
+							         StrokeThickness="1"
+							         Fill="{x:Static Brushes.Transparent}"
+							         Margin="1"
+							         Height="7"
+							         Width="7"/>
 
-						<Ellipse x:Name="InnerEllipse"
-						         Visibility="Collapsed"
-						         Stroke="{x:Static Brushes.Black}"
-						         StrokeThickness="1"
-						         Fill="{x:Static Brushes.Transparent}"
-						         Margin="1"
-						         Height="7"
-						         Width="7"/>
+							<Rectangle x:Name="Rectangle"
+							           Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
+							           StrokeThickness="{TemplateBinding StrokeThickness}"
+							           Fill="{TemplateBinding Fill}"
+							           Height="5"
+							           Margin="0,2.5"/>
 
-						<Rectangle x:Name="Rectangle"
-								   
-						           Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
-						           StrokeThickness="{TemplateBinding StrokeThickness}"
-						           Fill="{TemplateBinding Fill}"
-						           Height="5"
-						           Margin="0,2.5"/>
-
-						<Ellipse x:Name="Ellipse"
-						         Visibility="Collapsed"
-                                 Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
-                                 StrokeThickness="{TemplateBinding StrokeThickness}"
-                                 Fill="{TemplateBinding Fill}"
-                                 Margin="2"
-                                 Height="6"/>
-
-
-
-					
+							<Ellipse x:Name="Ellipse"
+							         Visibility="Collapsed"
+							         Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Vertex}, Path=Stroke}"
+							         StrokeThickness="{TemplateBinding StrokeThickness}"
+							         Fill="{TemplateBinding Fill}"
+							         Margin="2"
+							         Height="6"/>
+						</elements:VertexClickGrid>
 					</Grid>
 
 					<ControlTemplate.Triggers>
@@ -138,7 +161,12 @@
 							<Setter Property="Fill" Value="{StaticResource HatchGroundBrush}"/>
 						</Trigger>
 						<Trigger Property="elements:Vertex.IsBasic" Value="True">
-							<Setter Property="Fill" Value="{StaticResource GridBasicBrush}"/>
+							<Setter Property="Fill" Value="{x:Static Brushes.LightSkyBlue}"/>
+						</Trigger>
+
+						<Trigger Property="elements:Vertex.IsDraggingLabel" Value="True">
+							<Setter TargetName="Rectangle" Property="StrokeDashArray" Value="2 2"/>
+							<Setter TargetName="Ellipse" Property="StrokeDashArray" Value="2 2"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -154,156 +182,226 @@
 				<ControlTemplate TargetType="{x:Type elements:Edge}">
 
 					<Grid>
-
-						<Grid.Resources>
-							<Style TargetType="CheckBox">
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate TargetType="CheckBox">
-											<Grid>
-												<Line X1="0" X2="3.75"
+						<Grid x:Name="InteractiveGrid">
+							<Grid.Resources>
+								<Style TargetType="CheckBox">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate TargetType="CheckBox">
+												<Grid>
+													<Line X1="0" X2="3.75"
                                                       Y1="1.5" Y2="1.5"
                                                       x:Name="innerLine"
                                                       Stroke="{TemplateBinding BorderBrush}"
                                                       StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StrokeThickness}"/>
 
-												<Grid Margin="3.75,0,0,0">
-													<Rectangle Width="3" Height="3" 
+													<Grid Margin="3.75,0,0,0">
+														<Rectangle Width="3" Height="3" 
                                                                Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}" Fill="{x:Static Brushes.White}"
                                                                StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StrokeThickness}"/>
-													<Line x:Name="line"
+														<Line x:Name="line"
                                                           X1="0.75" X2="2.25"
                                                           Y1="1.5" Y2="1.5"
                                                           RenderTransformOrigin="0.5,0.5"
                                                           Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
                                                           StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StrokeThickness}"/>
 
+													</Grid>
 												</Grid>
-											</Grid>
-											<ControlTemplate.Triggers>
-												<Trigger Property="IsChecked" Value="False">
-													<Setter Property="RenderTransform" TargetName="line">
-														<Setter.Value>
-															<RotateTransform Angle="90"/>
-														</Setter.Value>
-													</Setter>
-													<Setter TargetName="line" Property="Stroke" Value="{x:Static Brushes.Gray}"/>
-												</Trigger>
-											</ControlTemplate.Triggers>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
+												<ControlTemplate.Triggers>
+													<Trigger Property="IsChecked" Value="False">
+														<Setter Property="RenderTransform" TargetName="line">
+															<Setter.Value>
+																<RotateTransform Angle="90"/>
+															</Setter.Value>
+														</Setter>
+														<Setter TargetName="line" Property="Stroke" Value="{x:Static Brushes.Gray}"/>
+													</Trigger>
+												</ControlTemplate.Triggers>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+								</Style>
 
-							<helpers:EdgeMaskMultiConverter x:Key="EdgeMaskMultiConverter"/>
+								<helpers:EdgeMaskMultiConverter x:Key="EdgeMaskMultiConverter"/>
 
-						</Grid.Resources>
+							</Grid.Resources>
 
-						<Polyline x:Name="ClickPolyline"
+							<Polyline x:Name="ClickPolyline"
 						          Stroke="{x:Static Brushes.Transparent}"
 						          StrokeThickness="2"
 						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}"/>
 
-						<Polyline x:Name="innerPolyline"
+							<!--Обводка основной линии ветви-->
+							<Polyline x:Name="innerPolyline"
 								  Visibility="Collapsed"
                                   Stroke="{x:Static Brushes.Black}"
                                   StrokeThickness="1.25"
-                                  Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}"/>
-
-						<Polyline x:Name="innerPolylineStart"
-						          Visibility="Collapsed"
-						          Stroke="{x:Static Brushes.Black}"
-						          StrokeThickness="1.25"
-						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollectionStart}"/>
-
-						<Polyline x:Name="innerPolylineEnd"
-						          Visibility="Collapsed"
-						          Stroke="{x:Static Brushes.Black}"
-						          StrokeThickness="1.25"
-						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollectionEnd}"/>
-						
-						<Polyline x:Name="Polyline"
-						          Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
-						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}"
-						          StrokeThickness="{TemplateBinding StrokeThickness}"/>
-
-						<Polyline x:Name="PolylineStart"
-								  Visibility="Hidden"
-						          Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
-						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollectionStart}"
-						          StrokeThickness="{TemplateBinding StrokeThickness}"/>
-
-						<Polyline x:Name="PolylineEnd"
-						          Visibility="Hidden"
-						          Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
-						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollectionEnd}"
-						          StrokeThickness="{TemplateBinding StrokeThickness}"/>
+                                  Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}">
+								<Polyline.Style>
+									<Style TargetType="Polyline">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=IsTrasnformer}" Value="True">
+												<Setter Property="Clip">
+													<Setter.Value>
+														<GeometryGroup>
+															<RectangleGeometry Rect="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Rect}"/>
+															<CombinedGeometry GeometryCombineMode="Union">
+																<CombinedGeometry.Geometry1>
+																	<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerFirstElementPoint}" RadiusX="3" RadiusY="3"/>
+																</CombinedGeometry.Geometry1>
+																<CombinedGeometry.Geometry2>
+																	<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerSecondElementPoint}" RadiusX="3" RadiusY="3"/>
+																</CombinedGeometry.Geometry2>
+															</CombinedGeometry>
+														</GeometryGroup>
+													</Setter.Value>
+												</Setter>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Polyline.Style>
+							</Polyline>
 
 
-						<Canvas>
-							<CheckBox x:Name="Q1"
-                                      IsChecked="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=On1}"
-                                      BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV1.Stroke}">
-								<CheckBox.RenderTransform>
-									<TranslateTransform x:Name="Q1Transform"/>
-								</CheckBox.RenderTransform>
-							</CheckBox>
-							<CheckBox x:Name="Q2"
-                                      IsChecked="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=On2}"
-                                      BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV2.Stroke}">
-								<CheckBox.RenderTransform>
-									<TranslateTransform x:Name="Q2Transform"/>
-								</CheckBox.RenderTransform>
-							</CheckBox>
-
+							<!--Обводка трансформатора-->
 							<Path x:Name="InnerTransformer" Visibility="Hidden"
 							      Stroke="{x:Static Brushes.Black}"
-								  Margin="-0.375,-0.375"
-							      StrokeThickness="0.75"
+							      StrokeThickness="1.25"
 							      Fill="{x:Static Brushes.Transparent}">
 
 								<Path.Data>
 									<GeometryGroup FillRule="Nonzero">
-										<EllipseGeometry Center="5,5" RadiusX="5.25" RadiusY="5.25"/>
-										<EllipseGeometry Center="11.25,5" RadiusX="5.25" RadiusY="5.25"/>
+										<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerFirstElementPoint}" RadiusX="3" RadiusY="3"/>
+										<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerSecondElementPoint}" RadiusX="3" RadiusY="3"/>
 									</GeometryGroup>
 								</Path.Data>
 							</Path>
 
+							<!--Основная линия ветви-->
+							<Polyline x:Name="Polyline"
+						          Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
+						          Points="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PointCollection}"
+						          StrokeThickness="{TemplateBinding StrokeThickness}">
+								<Polyline.Style>
+									<Style TargetType="Polyline">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=IsTrasnformer}" Value="True">
+												<Setter Property="Clip">
+													<Setter.Value>
+														<GeometryGroup>
+															<RectangleGeometry Rect="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Rect}"/>
+															<CombinedGeometry GeometryCombineMode="Union">
+																<CombinedGeometry.Geometry1>
+																	<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerFirstElementPoint}" RadiusX="3" RadiusY="3"/>
+																</CombinedGeometry.Geometry1>
+																<CombinedGeometry.Geometry2>
+																	<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerSecondElementPoint}" RadiusX="3" RadiusY="3"/>
+																</CombinedGeometry.Geometry2>
+															</CombinedGeometry>
+														</GeometryGroup>
+													</Setter.Value>
+												</Setter>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Polyline.Style>
+							</Polyline>
+
+							<!--Трансформатор-->
 							<Path x:Name="Transformer" Visibility="Hidden"
-                                  Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
-                                  StrokeThickness="{TemplateBinding StrokeThickness}"
-                                  Fill="{x:Static Brushes.Transparent}">
+						      Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}"
+						      StrokeThickness="{TemplateBinding StrokeThickness}"
+						      Fill="{x:Static Brushes.Transparent}">
 
 								<Path.Data>
 									<GeometryGroup FillRule="Nonzero">
-										<EllipseGeometry Center="5,5" RadiusX="5" RadiusY="5"/>
-										<EllipseGeometry Center="11.25,5" RadiusX="5" RadiusY="5"/>
+										<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerFirstElementPoint}" RadiusX="3" RadiusY="3"/>
+										<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=TransformerSecondElementPoint}" RadiusX="3" RadiusY="3"/>
 									</GeometryGroup>
 								</Path.Data>
 							</Path>
 
-							<Ellipse x:Name="DotV1"
-                                     StrokeThickness="{TemplateBinding StrokeThickness}"
-                                     Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV1.Stroke}"
-                                     Fill="{x:Static Brushes.White}"
-                                     Width="3" Height="3">
-								<Ellipse.RenderTransform>
-									<TranslateTransform x:Name="DotV1Transform"/>
-								</Ellipse.RenderTransform>
-							</Ellipse>
+							<Canvas>
+								<!--Выключатель в начале ветви-->
+								<CheckBox x:Name="Q1"
+								          IsChecked="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=On1}"
+								          BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV1.Stroke}"
+								          Canvas.Left="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StartPoint.X}"
+								          Canvas.Top="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StartPoint.Y}">
+									<CheckBox.RenderTransform>
+										<TransformGroup>
+											<TranslateTransform Y="-1.5"/>
+											<RotateTransform Angle="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StartVectorAngle}"/>
+										</TransformGroup>
+									</CheckBox.RenderTransform>
+								</CheckBox>
 
-							<Ellipse x:Name="DotV2"
-                                     StrokeThickness="{TemplateBinding StrokeThickness}"
-                                     Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV2.Stroke}"
-                                     Fill="{x:Static Brushes.White}"
-                                     Width="3" Height="3">
-								<Ellipse.RenderTransform>
-									<TranslateTransform x:Name="DotV2Transform"/>
-								</Ellipse.RenderTransform>
-							</Ellipse>
+								<!--Выключатель в конце ветви-->
+								<CheckBox x:Name="Q2"
+								          IsChecked="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=On2}"
+								          BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV2.Stroke}"
+								          Canvas.Left="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=EndPoint.X}"
+								          Canvas.Top="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=EndPoint.Y}">
+									<CheckBox.RenderTransform>
+										<TransformGroup>
+											<TranslateTransform Y="-1.5"/>
+											<RotateTransform Angle="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=EndVectorAngle}"/>
+										</TransformGroup>
+									</CheckBox.RenderTransform>
+								</CheckBox>
+
+								<Path Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=Stroke}" Data="M -1 1 L 1.5 0 L -1 -1"
+								      StrokeThickness="0.5"
+								      Canvas.Left="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PowerStartPoint.X}"
+								      Canvas.Top="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PowerStartPoint.Y}"
+								      RenderTransformOrigin="0, 0">
+									<Path.RenderTransform>
+										<RotateTransform Angle="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=MaxVectorAngle}"/>
+									</Path.RenderTransform>
+								</Path>
+							</Canvas>
+
+							<!--Начальная точка-->
+							<Path x:Name="DotV1"
+							      StrokeThickness="{TemplateBinding StrokeThickness}"
+							      Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV1.Stroke}"
+							      Fill="{x:Static Brushes.LightGray}">
+								<Path.Data>
+									<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=StartPoint}" RadiusX="1" RadiusY="1"/>
+								</Path.Data>
+							</Path>
+							<!--Конечная точка-->
+							<Path x:Name="DotV2"
+							      StrokeThickness="{TemplateBinding StrokeThickness}"
+							      Stroke="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=OldV2.Stroke}"
+							      Fill="{x:Static Brushes.LightGray}">
+								<Path.Data>
+									<EllipseGeometry Center="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=EndPoint}" RadiusX="1" RadiusY="1"/>
+								</Path.Data>
+							</Path>
+						</Grid>
+
+						<Canvas>
+							<Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+							        Padding="1.5"
+							        Canvas.Left="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PowerStartPoint.X}"
+							        Canvas.Top="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PowerStartPoint.Y}"
+							        x:Name="ElementLabel">
+								<StackPanel >
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=R, StringFormat= 'R={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=R, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=X, StringFormat= 'X={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=X, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PwrStRe, StringFormat= 'P={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PwrStRe, Converter={StaticResource Object2VisibilityConverter}}"/>
+									<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PwrStIm, StringFormat= 'Q={0:0.##}'}" FontSize="3"
+									           Visibility="{Binding RelativeSource={RelativeSource AncestorType=elements:Edge}, Path=PwrStIm, Converter={StaticResource Object2VisibilityConverter}}"/>
+								</StackPanel>
+							</Border>
 						</Canvas>
 					</Grid>
+
 					<ControlTemplate.Triggers>
 						<Trigger Property="elements:Edge.IsPreview" Value="True">
 							<Setter TargetName="Polyline" Property="StrokeDashArray" Value="5 2"/>
@@ -328,8 +426,7 @@
 								<Condition Property="IsTrasnformer" Value="True"/>
 								<Condition Property="IsSelected" Value="True"/>
 							</MultiTrigger.Conditions>
-							<Setter TargetName="innerPolylineStart" Property="Visibility" Value="Visible"/>
-							<Setter TargetName="innerPolylineEnd" Property="Visibility" Value="Visible"/>
+							<Setter TargetName="innerPolyline" Property="Visibility" Value="Visible"/>
 							<Setter TargetName="InnerTransformer" Property="Visibility" Value="Visible"/>
 						</MultiTrigger>
 
@@ -338,9 +435,11 @@
 						</Trigger>
 						<Trigger Property="elements:Edge.IsTrasnformer" Value="True">
 							<Setter TargetName="Transformer" Property="Visibility" Value="Visible"/>
-							<Setter TargetName="PolylineStart" Property="Visibility" Value="Visible"/>
-							<Setter TargetName="PolylineEnd" Property="Visibility" Value="Visible"/>
-							<Setter TargetName="Polyline" Property="Visibility" Value="Hidden"/>
+						</Trigger>
+
+						<Trigger Property="elements:Vertex.IsDraggingLabel" Value="True">
+							<Setter TargetName="Polyline" Property="StrokeDashArray" Value="2 2"/>
+							<Setter TargetName="Transformer" Property="StrokeDashArray" Value="2 2"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

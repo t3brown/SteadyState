@@ -11,7 +11,7 @@
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<Version>$(AssemblyVersion)</Version>
 		<SignAssembly>False</SignAssembly>
-		<Copyright>Copyright © khramtsov.k 2022</Copyright>
+		<Copyright>Copyright © khramtsov.k 2024</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -45,6 +45,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\SteadyState.Grapher\SteadyState.Grapher.csproj" />
 		<ProjectReference Include="..\SteadyState\SteadyState.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="SteadyState.Grapher">
+	    <HintPath>..\SteadyState.Grapher\bin\Release\net6.0-windows\SteadyState.Grapher.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>

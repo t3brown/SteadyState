@@ -24,7 +24,7 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		/// <summary>
 		/// Авторские права.
 		/// </summary>
-		public static readonly string? CopyRight = FileVersionInfo.GetVersionInfo(VersionService.ApplicationPath).LegalCopyright;
+		public string? CopyRight => FileVersionInfo.GetVersionInfo(VersionService.ApplicationPath).LegalCopyright;
 
 		/// <summary>
 		/// Версия + версия .net.
@@ -122,16 +122,6 @@ namespace SteadyState.MainProject.WPF.ViewModels
 		#endregion
 
 		#region при закрытии окнка
-
-		public ICommand WindowClosingCommand { get; } = new RelayCommand(OnWindowClosingCommandExecute);
-
-		private static void OnWindowClosingCommandExecute(object obj)
-		{
-			if (obj is CancelEventArgs e)
-			{
-
-			}
-		}
 
 		#endregion
 
