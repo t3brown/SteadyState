@@ -61,7 +61,7 @@ jobs:
         id: out
         shell: pwsh
         run: |
-          $outDir = ${{ steps.ver.outputs.publishDir }}
+          $outDir = '${{ steps.ver.outputs.publishDir }}'
           if (-not (Test-Path $outDir)) { throw "Publish dir not found: $outDir" }
           $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "No .exe found in $outDir" }
