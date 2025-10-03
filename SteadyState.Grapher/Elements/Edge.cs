@@ -267,24 +267,6 @@ namespace SteadyState.Grapher.Elements
 			set => SetValue(PointCollectionProperty, value);
 		}
 
-		public static readonly DependencyProperty PointCollectionStartProperty = DependencyProperty.Register(
-			nameof(PointCollectionStart), typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
-
-		public PointCollection PointCollectionStart
-		{
-			get => (PointCollection)GetValue(PointCollectionStartProperty);
-			set => SetValue(PointCollectionStartProperty, value);
-		}
-
-		public static readonly DependencyProperty PointCollectionEndProperty = DependencyProperty.Register(
-			nameof(PointCollectionEnd), typeof(PointCollection), typeof(Edge), new PropertyMetadata(default(PointCollection)));
-
-		public PointCollection PointCollectionEnd
-		{
-			get => (PointCollection)GetValue(PointCollectionEndProperty);
-			set => SetValue(PointCollectionEndProperty, value);
-		}
-
 		[JsonProperty]
 		public double WidthValue { get => Width; set => Width = value; }
 
@@ -306,11 +288,6 @@ namespace SteadyState.Grapher.Elements
 		private double? _u1;
 		private double? _u2;
 
-		private CheckBox Q1;
-		private CheckBox Q2;
-		private Path Transformer;
-		private Path InnerTransformer;
-
 		#region Есть ли у ветви коэффициент трансформации.
 
 		public static readonly DependencyProperty IsTrasnformerProperty = DependencyProperty.Register(
@@ -330,21 +307,9 @@ namespace SteadyState.Grapher.Elements
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(Edge), new FrameworkPropertyMetadata(typeof(Edge)));
 		}
 
-		public override void OnApplyTemplate()
-		{
-			base.OnApplyTemplate();
-
-			Q1 = GetTemplateChild("Q1") as CheckBox;
-			Q2 = GetTemplateChild("Q2") as CheckBox;
-			//Transformer = GetTemplateChild("Transformer") as Path;
-			//InnerTransformer = GetTemplateChild("InnerTransformer") as Path;
-		}
-
 		public Edge()
 		{
 			PointCollection = new PointCollection();
-			PointCollectionStart = new PointCollection();
-			PointCollectionEnd = new PointCollection();
 
 			Loaded += Edge_Loaded;
 			Initialized += Edge_Initialized;
@@ -359,7 +324,6 @@ namespace SteadyState.Grapher.Elements
 		{
 			if (V2Id != Guid.Empty && _isFirstLoaded)
 			{
-				DrawDotsAndSwitches();
 				_isFirstLoaded = false;
 			}
 		}
@@ -458,7 +422,6 @@ namespace SteadyState.Grapher.Elements
 
 				if (IsLoaded && _isFirstLoaded)
 				{
-					DrawDotsAndSwitches();
 					_isFirstLoaded = false;
 				}
 
@@ -852,111 +815,6 @@ namespace SteadyState.Grapher.Elements
 				_pwrDltIm = value;
 				OnPropertyChanged();
 			}
-		}
-
-		private void DrawDotsAndSwitches()
-		{
-			var points = PointCollection.Distinct().ToList();
-
-			Point point1 = points[0];
-			Point point2 = points[1];
-
-			Vector vector = Point.Subtract(point2, point1);
-			Complex complex = new Complex(vector.X, vector.Y);
-			double angle = complex.Phase * 180 / Math.PI;
-
-
-			var pointQ1 = point1;
-			var h = 1.5d;
-			//var w = Q1.ActualWidth / 2;
-			//Q1.RenderTransformOrigin = new Point(0, 0.5);
-			TransformGroup transform = new TransformGroup();
-			// transform.Children.Add(new ScaleTransform(0.5,0.5));
-			transform.Children.Add(new RotateTransform(angle));
-			transform.Children.Add(new TranslateTransform(0, -h));
-
-
-			//Q1.RenderTransform = transform;
-			//Canvas.SetLeft(Q1, pointQ1.X);
-			//Canvas.SetTop(Q1, pointQ1.Y);
-
-
-			Point point3 = points[^1];
-			Point point4 = points[^2];
-
-			Vector vector2 = Point.Subtract(point4, point3);
-			Complex complex2 = new Complex(vector2.X, vector2.Y);
-			double angle2 = complex2.Phase * 180 / Math.PI;
-
-
-			var pointQ2 = point3;
-			//var h = Q1.ActualHeight / 2;
-			//var w = Q1.ActualWidth / 2;
-			Q2.RenderTransformOrigin = new Point(0, 0.5);
-			TransformGroup transform1 = new TransformGroup();
-			//transform1.Children.Add(new ScaleTransform(0.5, 0.5));
-			transform1.Children.Add(new RotateTransform(angle2));
-			transform1.Children.Add(new TranslateTransform(0, -h));
-			Q2.RenderTransform = transform1;
-			//Canvas.SetLeft(Q2, pointQ2.X);
-			//Canvas.SetTop(Q2, pointQ2.Y);
-
-			var maxVector = Point.Subtract(points[0], points[1]);
-			var c1 = new Complex(maxVector.X, maxVector.Y);
-			var point5 = points[0];
-			var point6 = points[1];
-
-			for (var i = 1; i < points.Count - 1; i++)
-			{
-				var temp = Point.Subtract(points[i], points[i + 1]);
-				var c2 = new Complex(temp.X, temp.Y);
-
-				if (c2.Magnitude > c1.Magnitude)
-				{
-					//maxVector = temp;
-					c1 = c2;
-					point5 = points[i];
-					point6 = points[i + 1];
-				}
-			}
-
-			var point6Index = PointCollection.IndexOf(point6);
-
-			h = 5.125d;
-			var w = 8.25d;
-			var angle3 = c1.Phase * 180 / Math.PI;
-		//	Transformer.RenderTransformOrigin = new Point(0.5, 0.5);
-			//InnerTransformer.RenderTransformOrigin = new Point(0.5, 0.5);
-			//var transform2 = new TransformGroup();
-			//transform1.Children.Add(new ScaleTransform(0.5, 0.5));
-		//	transform2.Children.Add(new RotateTransform(angle3));
-			//transform2.Children.Add(new TranslateTransform(-w, -h));
-
-			for (var i = 0; i < point6Index; i++)
-			{
-				//PointCollectionStart.Add(PointCollection[i]);
-			}
-
-			for (var i = point6Index; i < PointCollection.Count; i++)
-			{
-				//PointCollectionEnd.Add(PointCollection[i]);
-			}
-
-			var centerX = (point5.X + point6.X) / 2;
-			var centerY = (point5.Y + point6.Y) / 2;
-
-			var point5Temp = new Point(centerX + Math.Cos(c1.Phase) * w, centerY + Math.Sin(c1.Phase) * w);
-			var point6Temp = new Point(centerX - Math.Cos(c1.Phase) * w, centerY - Math.Sin(c1.Phase) * w);
-
-			//PointCollectionStart.Add(point5Temp);
-			//PointCollectionEnd.Insert(0, point6Temp);
-
-			//Transformer.RenderTransform = transform2;
-			//InnerTransformer.RenderTransform = transform2;
-			//Canvas.SetLeft(Transformer, centerX);
-			//Canvas.SetLeft(InnerTransformer, centerX - 0.375f);
-			//Canvas.SetTop(Transformer, centerY);
-			//Canvas.SetTop(InnerTransformer, centerY - 0.375f);
 		}
 	}
 }
