@@ -8,8 +8,8 @@ on:
         required: true
       prerelease:
         description: 'Пометить как prerelease?'
-        required: false
-        default: 'false'
+        type: boolean
+        default: false
 
 jobs:
   build-release:
@@ -33,18 +33,17 @@ jobs:
 
       - name: Compute versions
         id: ver
-        shell: bash
+        shell: pwsh
         run: |
-          TAG="${{ github.event.inputs.version }}"
-          ASM="${TAG}.0"
-          YEAR="$(date +%Y)"
-          DIR="${{ runner.temp }}\publish\"
-          {
-            echo "semver=$TAG"
-            echo "asmver=$ASM"
-            echo "year=$YEAR"
-            echo "publishDir=$DIR"
-          } >> "$GITHUB_OUTPUT"
+          $TAG  = "${{ github.event.inputs.version }}"
+          $ASM  = "$TAG.0"
+          $YEAR = Get-Date -Format yyyy
+          $DIR  = Join-Path $env:RUNNER_TEMP 'publish'
+
+          "semver=$TAG"     >> $env:GITHUB_OUTPUT
+          "asmver=$ASM"     >> $env:GITHUB_OUTPUT
+          "year=$YEAR"      >> $env:GITHUB_OUTPUT
+          "publishDir=$DIR" >> $env:GITHUB_OUTPUT
 
       - name: Publish via FolderProfile with version injection
         run: >
@@ -72,11 +71,11 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.ver.outputs.semver }}
-          name: v${{ steps.ver.outputs.semver }}
+          tag: ${{ github.event.inputs.version }}
+          name: v${{ github.event.inputs.version }}
           prerelease: ${{ github.event.inputs.prerelease }}
           commit: ${{ github.sha }}
           generateReleaseNotes: true
-          makeLatest: ${{ github.event.inputs.prerelease == 'false' }}
+          makeLatest: ${{ !github.event.inputs.prerelease }}
           artifacts: |
             ${{ steps.out.outputs.exe }}
