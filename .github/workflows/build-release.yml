@@ -65,9 +65,8 @@ jobs:
           if (-not (Test-Path $outDir)) { throw "Publish dir not found: $outDir" }
           $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "No .exe found in $outDir" }
-          $exePosix = $exe.FullName -replace '\\','/'
-          "exe_posix=$exePosix" >> $env:GITHUB_OUTPUT
-          Write-Host "EXE: $exePosix"
+          "exe=$($exe.FullName)" >> $env:GITHUB_OUTPUT
+          Write-Host "EXE: $($exe.FullName)"
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -79,4 +78,4 @@ jobs:
           generateReleaseNotes: true
           makeLatest: ${{ !github.event.inputs.prerelease }}
           artifacts: |
-            ${{ steps.out.outputs.exe_posix }}
+            ${{ steps.out.outputs.exe }}
