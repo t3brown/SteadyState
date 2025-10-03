@@ -1,0 +1,93 @@
+name: Build & Release EXE
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Укажите версию'
+        required: true
+      prerelease:
+        description: 'Пометить как prerelease?'
+        required: false
+        default: 'false'
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: SteadyState.MainProject.WPF
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Compute versions
+        id: ver
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.version }}"
+          ASM="${{ github.event.inputs.version }}.0"
+          YEAR="$(date +%Y)"
+          {
+            echo "tag=$TAG"
+            echo "semver=${{ github.event.inputs.version }}"
+            echo "asmver=$ASM"
+            echo "year=$YEAR"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish via FolderProfile with version injection
+        run: >
+          dotnet publish SteadyState.MainProject.WPF.csproj
+          -c Release
+          /p:PublishProfile=FolderProfile
+          /p:Version=${{ steps.ver.outputs.semver }}
+          /p:AssemblyVersion=${{ steps.ver.outputs.asmver }}
+          /p:FileVersion=${{ steps.ver.outputs.asmver }}
+          /p:InformationalVersion=${{ steps.ver.outputs.semver }}
+          /p:Copyright="Copyright © khramtsov.k ${{ steps.ver.outputs.year }}"
+
+      - name: Locate EXE path
+        id: out
+        shell: pwsh
+        run: |
+          $outDir = "bin/Release/net6.0-windows/publish/win-x64"
+          if (-not (Test-Path $outDir)) { throw "Publish dir not found: $outDir" }
+          $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
+          if (-not $exe) { throw "No .exe found in $outDir" }
+          "exe=$($exe.FullName)" >> $env:GITHUB_OUTPUT
+          Write-Host "EXE: $($exe.FullName)"
+
+      - name: Compute SHA256
+        id: shasum
+        shell: pwsh
+        run: |
+          $sha = (Get-FileHash "${{ steps.out.outputs.exe }}" -Algorithm SHA256).Hash
+          "sha256=$sha" >> $env:GITHUB_OUTPUT
+          $fileName = [System.IO.Path]::GetFileName(${{ steps.out.outputs.exe }})
+          $shaLine  = "$sha  $fileName"
+          Set-Content -Path "$env:RUNNER_TEMP/$fileName.sha256" -Value $shaLine -NoNewline
+          "sha_file=$env:RUNNER_TEMP/$fileName.sha256" >> $env:GITHUB_OUTPUT
+          Write-Host "SHA256: $sha"
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.ver.outputs.tag }}
+          name: Release ${{ steps.ver.outputs.tag }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+          commit: ${{ github.sha }}
+          generateReleaseNotes: true
+          makeLatest: true
+          artifacts: |
+            ${{ steps.out.outputs.exe }}
+            ${{ steps.shasum.outputs.sha_file }}
