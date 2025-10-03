@@ -35,13 +35,15 @@ jobs:
         id: ver
         shell: bash
         run: |
-          TAG="${{ github.event.release.tag_name }}"
+          TAG="${{ github.event.inputs.version }}"
           ASM="${TAG}.0"
           YEAR="$(date +%Y)"
+          DIR="${{ runner.temp }}\publish\"
           {
             echo "semver=$TAG"
             echo "asmver=$ASM"
             echo "year=$YEAR"
+            echo "publishDir=$DIR"
           } >> "$GITHUB_OUTPUT"
 
       - name: Publish via FolderProfile with version injection
@@ -49,6 +51,7 @@ jobs:
           dotnet publish SteadyState.MainProject.WPF.csproj
           -c Release
           /p:PublishProfile=FolderProfile
+          /p:PublishDir=${{ steps.ver.outputs.publishDir }}
           /p:Version=${{ steps.ver.outputs.semver }}
           /p:AssemblyVersion=${{ steps.ver.outputs.asmver }}
           /p:FileVersion=${{ steps.ver.outputs.asmver }}
@@ -59,11 +62,7 @@ jobs:
         id: out
         shell: pwsh
         run: |
-          $profile = Join-Path (Get-Location) "Properties/PublishProfiles/FolderProfile.pubxml"
-          if (-not (Test-Path $profile)) { throw "Profile not found: $profile" }
-          [xml]$xml = Get-Content $profile
-          $pg = ($xml.Project.PropertyGroup | Where-Object { $_.PublishDir } | Select-Object -First 1)
-          $outDir = $pg.PublishDir
+          $outDir = ${{ steps.ver.outputs.publishDir }}
           if (-not (Test-Path $outDir)) { throw "Publish dir not found: $outDir" }
           $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "No .exe found in $outDir" }
@@ -78,6 +77,6 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           commit: ${{ github.sha }}
           generateReleaseNotes: true
-          makeLatest: true
+          makeLatest: ${{ github.event.inputs.prerelease == 'false' }}
           artifacts: |
             ${{ steps.out.outputs.exe }}
