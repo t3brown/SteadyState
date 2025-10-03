@@ -20,14 +20,6 @@
 		<vm:AboutViewModel/>
 	</hc:Window.DataContext>
 
-	<!--<hc:Interaction.Triggers>
-		<hc:EventTrigger EventName="Closing">
-			<hc:EventToCommand Command="{Binding WindowClosingCommand}"
-			                   PassEventArgsToCommand="True"/>
-		</hc:EventTrigger>
-	</hc:Interaction.Triggers>-->
-
-
 	<hc:SimplePanel>
 		<Image Source="/Resources/icon.png"
 			   Width="40" Height="40"
