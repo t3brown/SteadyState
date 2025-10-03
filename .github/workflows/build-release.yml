@@ -7,7 +7,7 @@ on:
         description: 'Укажите версию'
         required: true
       prerelease:
-        description: 'Пометить как prerelease?'
+        description: 'Пометить как pre-release?'
         type: boolean
         default: false
 
@@ -50,11 +50,10 @@ jobs:
           dotnet publish SteadyState.MainProject.WPF.csproj
           -c Release
           /p:PublishProfile=FolderProfile
-          /p:TargetName="Steady-State ES"
           /p:PublishDir=${{ steps.ver.outputs.publishDir }}
           /p:Version=${{ steps.ver.outputs.semver }}
-          /p:AssemblyVersion=${{ steps.ver.outputs.asmver }}
-          /p:FileVersion=${{ steps.ver.outputs.asmver }}
+          /p:AssemblyVersion=${{ steps.ver.outputs.semver }}
+          /p:FileVersion=${{ steps.ver.outputs.semver }}
           /p:InformationalVersion=${{ steps.ver.outputs.semver }}
           /p:Copyright="Copyright © khramtsov.k ${{ steps.ver.outputs.year }}"
 
@@ -66,8 +65,9 @@ jobs:
           if (-not (Test-Path $outDir)) { throw "Publish dir not found: $outDir" }
           $exe = Get-ChildItem $outDir -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "No .exe found in $outDir" }
-          "exe=$($exe.FullName)" >> $env:GITHUB_OUTPUT
-          Write-Host "EXE: $($exe.FullName)"
+          $exePosix = $exe.FullName -replace '\\','/'
+          "exe_posix=$exePosix" >> $env:GITHUB_OUTPUT
+          Write-Host "EXE: $exePosix"
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -79,4 +79,4 @@ jobs:
           generateReleaseNotes: true
           makeLatest: ${{ !github.event.inputs.prerelease }}
           artifacts: |
-            ${{ steps.out.outputs.exe }}
+            ${{ steps.out.outputs.exe_posix }}
