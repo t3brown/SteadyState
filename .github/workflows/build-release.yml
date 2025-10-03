@@ -50,6 +50,7 @@ jobs:
           dotnet publish SteadyState.MainProject.WPF.csproj
           -c Release
           /p:PublishProfile=FolderProfile
+          /p:TargetName="Steady-State ES"
           /p:PublishDir=${{ steps.ver.outputs.publishDir }}
           /p:Version=${{ steps.ver.outputs.semver }}
           /p:AssemblyVersion=${{ steps.ver.outputs.asmver }}
